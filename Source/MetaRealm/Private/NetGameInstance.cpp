@@ -3,6 +3,7 @@
 
 #include "NetGameInstance.h"
 #include <string>
+
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "Online/OnlineSessionNames.h"
@@ -32,7 +33,7 @@ void UNetGameInstance::Init()
 
 }
 
-void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
+void UNetGameInstance::CreateMySession(FString roomName)
 {
 	FOnlineSessionSettings sessionSettings;
 
@@ -49,7 +50,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	sessionSettings.bAllowJoinViaPresence = true;
       
 	// 인원 수 
-	sessionSettings.NumPublicConnections = maxPlayer;
+	//sessionSettings.NumPublicConnections = maxPlayer;
 
 	// base64로 Encode
 	roomName = StringBase64Encode(roomName);
@@ -71,7 +72,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
 		// Battle Map 으로 이동하자
-		GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
+		GetWorld()->ServerTravel(TEXT("/Game/KHH/KHH_TestMap/KHH_TESTMap?listen"));
 	}
 	else
 	{
@@ -113,40 +114,43 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
-		auto results = sessionSearch->SearchResults;
-		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
-
-		for (int32 i = 0; i < results.Num(); i++)
+		if(sessionSearch)
 		{
-			FOnlineSessionSearchResult si = results[i];
-			FString roomName;
-			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);   
+			auto results = sessionSearch->SearchResults;
+			UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
+
+			for (int32 i = 0; i < results.Num(); i++)
+			{
+				FOnlineSessionSearchResult si = results[i];
+				FString roomName;
+				si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);   
          
-			// 세션 정보 ---> String 으로 
-			// 세션의 최대 인원
-			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
-			// 세션의 참여 인원 (최대 인원 - 남은 인원)
+				// 세션 정보 ---> String 으로 
+				// 세션의 최대 인원
+				int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
+				// 세션의 참여 인원 (최대 인원 - 남은 인원)
 
-			int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
+				int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
-			roomName = StringBase64Decode(roomName);
-			// 방이름 ( 5 / 10 )
-			FString sessionInfo = FString::Printf(
-			   TEXT("%s ( %d / %d )"), 
-			   *roomName, currPlayer, maxPlayer);
+				roomName = StringBase64Decode(roomName);
+				// 방이름 ( 5 / 10 )
+				FString sessionInfo = FString::Printf(
+				   TEXT("%s ( %d )"), 
+				   *roomName, currPlayer);
 
-			onSearchComplete.ExecuteIfBound(i, sessionInfo);
-		}
+				onSearchComplete.ExecuteIfBound(i, sessionInfo);
+			}
       
-		// idx 에 -1 셋팅해서 검색 완료 알려주자
-		onSearchComplete.ExecuteIfBound(-1, TEXT(""));
+			// idx 에 -1 셋팅해서 검색 완료 알려주자
+			onSearchComplete.ExecuteIfBound(-1, TEXT(""));
 
       
-		/*for (auto si : results)
-		{
-		   FString roomName;
-		   si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
-		}*/
+			/*for (auto si : results)
+			{
+			   FString roomName;
+			   si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
+			}*/
+		}		
 	}
 	else
 	{

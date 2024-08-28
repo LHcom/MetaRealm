@@ -18,7 +18,7 @@ public:
 
 	// 세션 만드는 함수
 	UFUNCTION(BlueprintCallable)
-	void CreateMySession(FString roomName, int32 maxPlayer);	// 방만들때 사용 (버튼 이벤트)
+	void CreateMySession(FString roomName);	// 방만들때 사용 (버튼 이벤트)
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
 	// 세션 파괴하는 함수
@@ -48,7 +48,7 @@ public:
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
 	// 세션 이름
-	FString mySessionName = TEXT("lokimve7");
+	FString mySessionName = TEXT("메아미");
 
 	// 세션 검색이 완료되면 호출해야 하는 Delegate
 	FSearchComplete onSearchComplete;
