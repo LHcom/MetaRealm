@@ -64,6 +64,8 @@ void UNetGameInstance::CreateMySession(FString roomName)
 
 	int32 rand = FMath::RandRange(1, 100000);
 	mySessionName += FString::Printf(TEXT("%d"), rand);
+
+	NowSession = mySessionName;
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
@@ -137,6 +139,9 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 
 				int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
+				NowSession = si.Session.GetSessionIdStr();
+				UE_LOG(LogTemp, Warning, TEXT("NowRoomName : %s"), *si.Session.GetSessionIdStr());
+				UE_LOG(LogTemp, Warning, TEXT("NowSession : %s"), *si.Session.GetSessionIdStr());
 				roomName = StringBase64Decode(roomName);
 				// 방이름 ( 5 / 10 )
 				FString sessionInfo = FString::Printf(
@@ -147,7 +152,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			}
 
 			// idx 에 -1 셋팅해서 검색 완료 알려주자
-			onSearchComplete.ExecuteIfBound(-1, TEXT(""));
+			// onSearchComplete.ExecuteIfBound(-1, TEXT(""));
 
 
 			/*for (auto si : results)
@@ -208,51 +213,47 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
 	if (OnlineSubsystem)
 	{
+		FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(NowSession));
+		if (NamedSession)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("NamedSession is nullPtr"));
+		}
 		IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			if (sessionSearch)
-			{
-				auto results = sessionSearch->SearchResults;
-				UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
-				if (results.Num() > 0)
-				{
-					//results[0].Session.SessionInfo->GetSessionId();
-					const FOnlineSessionSetting& setting = results[0].Session.SessionSettings.Settings[FName("ROOM_NAME")];
-					FString sessionName = setting.Data.ToString();
-					UE_LOG(LogTemp, Log, TEXT("Found session: %s"), *sessionName);
-					
-					FString sessionOwnerName = results[0].Session.OwningUserName;
-					UE_LOG(LogTemp, Log, TEXT("Found session owned by: %s"), *sessionOwnerName);
+			if (!NamedSession)
+				return;
 
-					// 세션에서 플레이어 제거
-					if (PlayerToKick && PlayerToKick->PlayerState)
-					{
-						TSharedPtr<const FUniqueNetId> PlayerId = PlayerToKick->PlayerState->GetUniqueId().GetUniqueNetId();
-						if (PlayerId.IsValid())
-						{
-							SessionInterface->UnregisterPlayer(FName(*sessionName), *PlayerId);
-							// *를 사용해 TSharedPtr을 const FUniqueNetId&로 변환
-						}
-						else
-						{
-							UE_LOG(LogTemp, Warning, TEXT("Invalid PlayerId, cannot unregister player."));
-						}
-					}
-					// 세션 종료 시도
-					bool bEndSessionSuccess = SessionInterface->EndSession(FName(*sessionName));
-					if (bEndSessionSuccess)
-					{
-						UE_LOG(LogTemp, Log, TEXT("EndSession successful."));
-					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("EndSession failed."));
-					}
-					// 플레이어를 메인 메뉴로 이동시킴
-					PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
-					//sessionSearch.Reset();
+			// 세션에서 플레이어 제거
+			if (PlayerToKick && PlayerToKick->PlayerState)
+			{
+				TSharedPtr<const FUniqueNetId> PlayerId = PlayerToKick->PlayerState->GetUniqueId().
+				                                                        GetUniqueNetId();
+				if (PlayerId.IsValid())
+				{
+					SessionInterface->UnregisterPlayer(*NamedSession->SessionName.ToString(), *PlayerId);
+					// *를 사용해 TSharedPtr을 const FUniqueNetId&로 변환
 				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Invalid PlayerId, cannot unregister player."));
+				}
+				// 세션 종료 시도
+				bool bEndSessionSuccess = SessionInterface->EndSession(*NamedSession->SessionName.ToString());
+				if (bEndSessionSuccess)
+				{
+					UE_LOG(LogTemp, Log, TEXT("EndSession successful."));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("EndSession failed."));
+				}
+				// 플레이어를 메인 메뉴로 이동시킴
+				PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
 			}
 		}
 	}
