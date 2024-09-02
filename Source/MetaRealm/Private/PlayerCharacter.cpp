@@ -34,7 +34,7 @@ APlayerCharacter::APlayerCharacter()
 	{
 		ReactionComp->SetWidgetClass(TempReactionUI.Class);
 		ReactionComp->SetDrawSize(FVector2D(100, 100));
-		ReactionComp->SetRelativeLocation(FVector(0, 0, 120));
+		ReactionComp->SetRelativeLocation(FVector(0, 0, 170));
 	}
 
 	AudioCapture = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("AudioCapture"));
@@ -45,7 +45,9 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	ReactionWidget = Cast<UReaction_UserWidget>(ReactionComp->GetWidget());
+
 }
 
 // Called every frame
@@ -53,6 +55,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector target = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
+	FVector dir = target - ReactionComp->GetComponentLocation();
+	dir.Normalize();
+
+	FRotator rot = dir.ToOrientationRotator();
+	ReactionComp->SetWorldRotation(rot);
 }
 
 // Called to bind functionality to input
