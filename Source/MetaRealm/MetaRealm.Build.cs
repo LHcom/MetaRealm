@@ -8,7 +8,7 @@ public class MetaRealm : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "HTTP", "Json", "JsonUtilities", "UMG", "OnlineSubsystem", "OnlineSubsystemSteam"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "HTTP", "Json", "JsonUtilities", "UMG", "OnlineSubsystem", "OnlineSubsystemSteam", "AudioCapture" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

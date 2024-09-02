@@ -4,6 +4,7 @@
 #include "Reaction_UserWidget.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "../../../../Plugins/Runtime/AudioCapture/Source/AudioCapture/Public/AudioCaptureComponent.h"
 
 
 
@@ -35,6 +36,9 @@ APlayerCharacter::APlayerCharacter()
 		ReactionComp->SetDrawSize(FVector2D(100, 100));
 		ReactionComp->SetRelativeLocation(FVector(0, 0, 120));
 	}
+
+	AudioCapture = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("AudioCapture"));
+	AudioCapture->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
