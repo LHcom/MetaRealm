@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionComp;
 	
-	/*UPROPERTY()
-	class * ReactionWidget;*/
+	UPROPERTY(BlueprintReadOnly)
+	class UReaction_UserWidget* ReactionWidget;
 
 };
