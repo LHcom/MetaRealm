@@ -18,4 +18,10 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void PostNetInit() override;
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void MoveToMeetingRoomMap();
+	
+	UFUNCTION(BlueprintCallable)
+	void MoveToMainMap();
 };
