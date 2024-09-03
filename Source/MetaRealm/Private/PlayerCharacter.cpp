@@ -55,12 +55,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector target = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
+	/*FVector target = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
 	FVector dir = target - ReactionComp->GetComponentLocation();
 	dir.Normalize();
 
 	FRotator rot = dir.ToOrientationRotator();
-	ReactionComp->SetWorldRotation(rot);
+	ReactionComp->SetWorldRotation(rot);*/
 }
 
 // Called to bind functionality to input
