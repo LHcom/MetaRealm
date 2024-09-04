@@ -48,6 +48,4 @@ public:
 
 	void StopVoice(); //StopNetworkVoice
 
-	void RegisterRemoteTalker();
-
 };

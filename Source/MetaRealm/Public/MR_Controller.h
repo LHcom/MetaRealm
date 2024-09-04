@@ -18,27 +18,10 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void PostNetInit() override;
 	virtual void BeginPlay() override;
-	virtual void SetupInputComponent() override;
-
 
 	UFUNCTION(BlueprintCallable)
 	void MoveToMeetingRoomMap();
 	
 	UFUNCTION(BlueprintCallable)
 	void MoveToMainMap();
-
-	void SendMessage(const FText& Text);
-
-	UFUNCTION()
-	void FocusGame();
-
-	UFUNCTION()
-	void FocusChatInputText();
-
-private:
-	UFUNCTION(Server, Unreliable)
-	void CtoS_SendMessage(const FString& Message);
-
-	UFUNCTION(Client, Unreliable)
-	void StoC_SendMessage(const FString& Message);
 };
