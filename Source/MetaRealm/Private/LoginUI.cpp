@@ -4,7 +4,10 @@
 #include "LoginUI.h"
 #include "Components/Button.h"
 #include "LobyWidget.h"
+#include "NetGameInstance.h"
 #include "SignUpUI.h"
+
+class UNetGameInstance;
 
 void ULoginUI::NativeConstruct()
 {
@@ -14,17 +17,26 @@ void ULoginUI::NativeConstruct()
 
 void ULoginUI::ButtonLoginClicked()
 {
-	// ³ªÁß¿¡ º¯°æÇÒ ³»¿ë
-	SetVisibility(ESlateVisibility::Hidden);
-	LobbyUI->SetVisibility(ESlateVisibility::Visible);
+	// ë¡œê·¸ì¸ ì •ë³´ë¥¼ ì²´í¬í•˜ëŠ” API ì¶”ê°€í•´ì•¼ëŒ
+
+	// LogIn Session
+	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+	if (GI)
+	{
+		GI->LogInSession();
+	}
 	
-	// ¿©±âºÎÅÏ ³ªÁß¿¡ ¾µ ³»¿ë
+	// ë‚˜ì¤‘ì— ë³€ê²½í•  ë‚´ìš©
+	//SetVisibility(ESlateVisibility::Hidden);
+	//LobbyUI->SetVisibility(ESlateVisibility::Visible);
+	
+	// ì—¬ê¸°ë¶€í„´ ë‚˜ì¤‘ì— ì“¸ ë‚´ìš©
 	/*TMap<FString, FString> LoginData;
 	LoginData.Add("id", IDEditable->GetText().ToString());
 	LoginData.Add("pass", PSEditable->GetText().ToString());
 
 	FString json = UJsonParseLib::MakeJson(LoginData);
-	FString LoginURL = "urlÀÌ µé¾î°¥ ÀÚ¸®";
+	FString LoginURL = "urlì´ ë“¤ì–´ê°ˆ ìë¦¬";
 	LoginActor->ReqLoginSuccess(LoginURL, json);*/
 }
 

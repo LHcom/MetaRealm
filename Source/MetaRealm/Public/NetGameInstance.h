@@ -60,4 +60,7 @@ public:
 	FSearchComplete onSearchComplete;
 
 	FString NowSession;
+
+	UFUNCTION()
+	void LogInSession();
 };

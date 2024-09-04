@@ -125,9 +125,14 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			auto results = sessionSearch->SearchResults;
 			UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
 
-			for (int32 i = 0; i < results.Num(); i++)
+			// Create Session
+			if (results.Num() == 0)
 			{
-				FOnlineSessionSearchResult si = results[i];
+				CreateMySession(FString("UNREAL"));
+			}
+			else
+			{
+				FOnlineSessionSearchResult si = results[0];
 				FString roomName;
 				si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
 				UE_LOG(LogTemp, Warning, TEXT("%s"), *si.Session.GetSessionIdStr());
@@ -148,18 +153,9 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 					TEXT("%s ( %d )"),
 					*roomName, currPlayer);
 
-				onSearchComplete.ExecuteIfBound(i, sessionInfo);
+				JoinOtherSession(0);
+				//onSearchComplete.ExecuteIfBound(0, sessionInfo);
 			}
-
-			// idx 에 -1 셋팅해서 검색 완료 알려주자
-			// onSearchComplete.ExecuteIfBound(-1, TEXT(""));
-
-
-			/*for (auto si : results)
-			{
-			   FString roomName;
-			   si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
-			}*/
 		}
 	}
 	else
@@ -274,4 +270,9 @@ FString UNetGameInstance::StringBase64Decode(FString str)
 	FBase64::Decode(str, arrayData);
 	std::string ut8String((char*)(arrayData.GetData()), arrayData.Num());
 	return UTF8_TO_TCHAR(ut8String.c_str());
+}
+
+void UNetGameInstance::LogInSession()
+{
+	FindOtherSession();
 }
