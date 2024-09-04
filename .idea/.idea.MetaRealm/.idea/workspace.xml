@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/LoginActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/LoginActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/LoginUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/LoginUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/KHH/Chat/WB_Chat.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/KHH/Chat/WB_Main.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/KHH/Chat/WB_Main.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,9 +62,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "C++ 프로젝트.MetaRealm.executor": "Debug",
+    "C++ 프로젝트.MetaRealm.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "LHJ__Ver2",
+    "git-widget-placeholder": "Main__Ver__20240903",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -536,6 +534,7 @@
       <workItem from="1724936651010" duration="720000" />
       <workItem from="1724942926479" duration="7438000" />
       <workItem from="1725431240430" duration="1973000" />
+      <workItem from="1725447214404" duration="914000" />
     </task>
     <servers />
   </component>
