@@ -44,4 +44,10 @@ public:
 	// VOIP 관련 초기화 작업을 수행합니다.
 	void InitializeVOIP();
 
+	void SetUpNetworkVoice(); //StartNetworkVoice
+
+	void StopVoice(); //StopNetworkVoice
+
+	void RegisterRemoteTalker();
+
 };

@@ -4,6 +4,8 @@
 #include "BDVocieChatCharacter.h"
 #include "Net/VoiceConfig.h" //VOIPTalker 헤더
 #include "GameFramework/PlayerState.h"
+#include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
+#include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/VoiceInterface.h"
 
 // Sets default values
 ABDVocieChatCharacter::ABDVocieChatCharacter()
@@ -63,6 +65,50 @@ void ABDVocieChatCharacter::InitializeVOIP()
 					PlayerController->ConsoleCommand("OSS.VoiceLoopback 1");
 				}
 			}
+
+			// 원격 Talker 등록
+			RegisterRemoteTalker();
+		}
+	}
+}
+
+void ABDVocieChatCharacter::SetUpNetworkVoice()
+{
+	if (IsLocallyControlled())
+	{
+		APlayerController* PlayerController = GetController<APlayerController>();
+		if (PlayerController)
+		{
+			IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+			if (OnlineSub)
+			{
+				IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
+				if (VoiceInterface.IsValid())
+				{
+					// 플레이어에 Voice Channel 할당
+					VoiceInterface->StartNetworkedVoice(PlayerController->GetLocalPlayer()->GetControllerId());
+				}
+			}
+		}
+	}
+}
+
+void ABDVocieChatCharacter::StopVoice()
+{
+	if (IsLocallyControlled())
+	{
+		APlayerController* PlayerController = GetController<APlayerController>();
+		if (PlayerController)
+		{
+			IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+			if (OnlineSub)
+			{
+				IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
+				if (VoiceInterface.IsValid())
+				{
+					VoiceInterface->StopNetworkedVoice(PlayerController->GetLocalPlayer()->GetControllerId());
+				}
+			}
 		}
 	}
 }
@@ -89,4 +135,30 @@ void ABDVocieChatCharacter::RegisterWithPlayerState()
 bool ABDVocieChatCharacter::IsLocallyControlled() const
 {
 	return IsPlayerControlled();
+}
+
+
+// 원격 Talker 등록 함수
+void ABDVocieChatCharacter::RegisterRemoteTalker()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+		if (OnlineSub)
+		{
+			IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
+			if (VoiceInterface.IsValid())
+			{
+				// 플레이어의 고유 네트워크 ID를 가져옵니다.
+				TSharedPtr<const FUniqueNetId> UniqueNetId = PlayerController->PlayerState->UniqueId.GetUniqueNetId();
+
+				if (UniqueNetId.IsValid())
+				{
+					// 고유 네트워크 ID를 사용하여 원격 Talker를 등록합니다.
+					VoiceInterface->RegisterRemoteTalker(*UniqueNetId);
+				}
+			}
+		}
+	}
 }
