@@ -30,9 +30,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionComp;
 	
-	UPROPERTY(BlueprintReadOnly)
-	class UReaction_UserWidget* ReactionWidget;
+	/*UPROPERTY()
+	class * ReactionWidget;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UAudioCaptureComponent* AudioCapture;
 };
