@@ -39,10 +39,10 @@ void AMR_Controller::BeginPlay()
 
 void AMR_Controller::MoveToMeetingRoomMap()
 {
-	ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, false);
+	ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
 }
 
 void AMR_Controller::MoveToMainMap()
 {
-	ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, false);
+	ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }

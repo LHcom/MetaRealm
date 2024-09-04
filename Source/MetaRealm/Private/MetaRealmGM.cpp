@@ -9,6 +9,7 @@
 AMetaRealmGM::AMetaRealmGM()
 {
 	GameStateClass = AMetaRealmGameState::StaticClass();
+	bUseSeamlessTravel = true;
 }
 
 void AMetaRealmGM::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
