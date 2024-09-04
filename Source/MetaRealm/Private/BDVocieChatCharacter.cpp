@@ -65,35 +65,12 @@ void ABDVocieChatCharacter::InitializeVOIP()
 					PlayerController->ConsoleCommand("OSS.VoiceLoopback 1");
 				}
 			}
+
+			// 원격 Talker 등록
+			RegisterRemoteTalker();
 		}
 	}
 }
-
-// 마이크 임계값을 설정합니다.
-void ABDVocieChatCharacter::SetMicThreshold(float Threshold)
-{
-	if (VOIPTalkerComponent)
-	{
-		UVOIPStatics::SetMicThreshold(Threshold);
-	}
-}
-
-// 플레이어 상태에 등록합니다.
-void ABDVocieChatCharacter::RegisterWithPlayerState()
-{
-	if (VOIPTalkerComponent && GetPlayerState())
-	{
-		VOIPTalkerComponent->RegisterWithPlayerState(GetPlayerState());
-	}
-}
-
-// 로컬 플레이어가 제어 중인지 확인합니다.
-bool ABDVocieChatCharacter::IsLocallyControlled() const
-{
-	return IsPlayerControlled();
-}
-
-
 
 void ABDVocieChatCharacter::SetUpNetworkVoice()
 {
@@ -130,6 +107,56 @@ void ABDVocieChatCharacter::StopVoice()
 				if (VoiceInterface.IsValid())
 				{
 					VoiceInterface->StopNetworkedVoice(PlayerController->GetLocalPlayer()->GetControllerId());
+				}
+			}
+		}
+	}
+}
+
+// 마이크 임계값을 설정합니다.
+void ABDVocieChatCharacter::SetMicThreshold(float Threshold)
+{
+	if (VOIPTalkerComponent)
+	{
+		UVOIPStatics::SetMicThreshold(Threshold);
+	}
+}
+
+// 플레이어 상태에 등록합니다.
+void ABDVocieChatCharacter::RegisterWithPlayerState()
+{
+	if (VOIPTalkerComponent && GetPlayerState())
+	{
+		VOIPTalkerComponent->RegisterWithPlayerState(GetPlayerState());
+	}
+}
+
+// 로컬 플레이어가 제어 중인지 확인합니다.
+bool ABDVocieChatCharacter::IsLocallyControlled() const
+{
+	return IsPlayerControlled();
+}
+
+
+// 원격 Talker 등록 함수
+void ABDVocieChatCharacter::RegisterRemoteTalker()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+		if (OnlineSub)
+		{
+			IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
+			if (VoiceInterface.IsValid())
+			{
+				// 플레이어의 고유 네트워크 ID를 가져옵니다.
+				TSharedPtr<const FUniqueNetId> UniqueNetId = PlayerController->PlayerState->UniqueId.GetUniqueNetId();
+
+				if (UniqueNetId.IsValid())
+				{
+					// 고유 네트워크 ID를 사용하여 원격 Talker를 등록합니다.
+					VoiceInterface->RegisterRemoteTalker(*UniqueNetId);
 				}
 			}
 		}
