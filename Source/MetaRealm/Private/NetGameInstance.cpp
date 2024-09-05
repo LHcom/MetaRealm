@@ -75,7 +75,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
 		// Battle Map 으로 이동하자
-		GetWorld()->ServerTravel(TEXT("/Game/KHH/KHH_TestMap/KHH_TESTMap?listen"));
+		GetWorld()->ServerTravel(TEXT("/Game/KHH/KHH_TestMap/KHH_level?listen"));
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			// Create Session
 			if (results.Num() == 0)
 			{
-				CreateMySession(FString("UNREAL"));
+				CreateMySession(mySessionName);
 			}
 			else
 			{
