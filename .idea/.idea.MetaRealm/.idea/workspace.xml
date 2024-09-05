@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/KHH/Chat/WB_Chat.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/KHH/Chat/WB_Main.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/KHH/Chat/WB_Main.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,18 +28,16 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/HttpLib.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/JsonParseLib.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/LobyWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/MR_Controller.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/MetaRealmGM.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/MetaRealmGameState.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/TESTPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/HttpLib.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/JsonParseLib.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/LobyWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/MR_Controller.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/MetaRealmGM.h" root0="FORCE_HIGHLIGHTING" />
@@ -50,6 +46,9 @@
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/TESTPlayer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/isteamapplist.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/steam_api_internal.h" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="PerforceDirect.Settings">
+    <option name="CHARSET" value="없음" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -64,7 +63,7 @@
   "keyToString": {
     "C++ 프로젝트.MetaRealm.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Main__Ver__20240903",
+    "git-widget-placeholder": "LHJ__Ver2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -535,6 +534,8 @@
       <workItem from="1724942926479" duration="7438000" />
       <workItem from="1725431240430" duration="1973000" />
       <workItem from="1725447214404" duration="914000" />
+      <workItem from="1725526110154" duration="777000" />
+      <workItem from="1725532674271" duration="5008000" />
     </task>
     <servers />
   </component>
@@ -547,16 +548,5 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/MetaRealm/Private/LoginActor.cpp</url>
-          <line>25</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
