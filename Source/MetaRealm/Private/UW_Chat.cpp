@@ -21,6 +21,11 @@ void UUW_Chat::AddChatMessage(const FString& Message)
 	UTextBlock* NewTextBlock = NewObject<UTextBlock>(Chat_ScrollBox);
 	NewTextBlock->SetText(FText::FromString(Message));
 
+	// 글씨 크기를 변경하기 위해 폰트 정보를 설정한다.
+	FSlateFontInfo FontInfo = NewTextBlock->Font;
+	FontInfo.Size = 15;  
+	NewTextBlock->SetFont(FontInfo);
+
 	Chat_ScrollBox->AddChild(NewTextBlock);
 	Chat_ScrollBox->ScrollToEnd(); // 가장 최근 채팅을 보기 위해, 스크롤을 가장 아래로 내린다.
 }
