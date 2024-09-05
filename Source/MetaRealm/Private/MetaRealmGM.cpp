@@ -5,11 +5,18 @@
 
 #include "MetaRealmGameState.h"
 #include "MetaRealm/MetaRealm.h"
+#include "MR_Controller.h"
+#include "Main_HUD.h"
+#include "GameFramework/Character.h"
+
 
 AMetaRealmGM::AMetaRealmGM()
 {
 	GameStateClass = AMetaRealmGameState::StaticClass();
-	bUseSeamlessTravel = true;
+
+	DefaultPawnClass = ACharacter::StaticClass();
+	PlayerControllerClass = AMR_Controller::StaticClass();
+	HUDClass = AMain_HUD::StaticClass();
 }
 
 void AMetaRealmGM::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
