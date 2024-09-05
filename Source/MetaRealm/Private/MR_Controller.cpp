@@ -86,7 +86,7 @@ void AMR_Controller::SendMessage(const FText& Text)
 
 void AMR_Controller::FocusGame()
 {
-	SetInputMode(FInputModeGameOnly());
+	SetInputMode(FInputModeGameAndUI());
 }
 
 void AMR_Controller::FocusChatInputText()
