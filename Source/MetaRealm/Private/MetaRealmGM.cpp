@@ -8,6 +8,8 @@
 #include "MR_Controller.h"
 #include "Main_HUD.h"
 #include "GameFramework/Character.h"
+#include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
+#include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineIdentityInterface.h"
 
 
 AMetaRealmGM::AMetaRealmGM()
@@ -63,6 +65,33 @@ void AMetaRealmGM::PostLogin(APlayerController* NewPlayer)
 	else
 	{
 		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("No NetDriver"));
+	}
+
+	// 스팀 ID 및 닉네임 가져오기
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+		if (Identity.IsValid())
+		{
+			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(NewPlayer->GetLocalPlayer()->GetControllerId());
+			if (UserId.IsValid())
+			{
+				// 스팀 닉네임을 가져옴
+				FString UserName = Identity->GetPlayerNickname(*UserId);
+				FString JoinMessage = FString::Printf(TEXT("%s Join."), *UserName);
+
+				// 모든 플레이어에게 알림 전송
+				for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+				{
+					AMR_Controller* PC = Cast<AMR_Controller>(*It);
+					if (PC)
+					{
+						PC->StoC_SendMessage_Implementation(JoinMessage);
+					}
+				}
+			}
+		}
 	}
 
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
