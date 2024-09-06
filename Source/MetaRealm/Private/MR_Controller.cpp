@@ -9,6 +9,7 @@
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
 #include "Online/CoreOnline.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineIdentityInterface.h"
+#include "GameFramework/Character.h"
 
 void AMR_Controller::PostInitializeComponents()
 {
@@ -39,6 +40,7 @@ void AMR_Controller::BeginPlay()
 {
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 	Super::BeginPlay();
+	me = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 }
 
@@ -52,12 +54,34 @@ void AMR_Controller::SetupInputComponent()
 
 void AMR_Controller::MoveToMeetingRoomMap()
 {
-	ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
+	TArray<AActor*> MeetingRoomActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MeetingRoom"), MeetingRoomActors);
+
+	if (MeetingRoomActors.Num() > 0) {
+		AActor* MeetingRoom = MeetingRoomActors[0];
+		if (me) {
+			me->SetActorLocation(MeetingRoom->GetActorLocation());
+		}
+	}
+	// ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
 }
 
 void AMR_Controller::MoveToMainMap()
 {
-	ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
+	TArray<AActor*> MainMapActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MainRoom"), MainMapActors);
+
+	if (MainMapActors.Num() > 0) {
+		AActor* MainMap = MainMapActors[0];
+
+		if (me) {
+			me->SetActorLocation(MainMap->GetActorLocation());
+			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, "Move!", false);
+		}
+	}
+	
+	
+	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
 void AMR_Controller::SendMessage(const FText& Text)
