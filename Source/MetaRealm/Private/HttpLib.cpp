@@ -6,18 +6,18 @@
 #include "HttpModule.h"
 #include "JsonParseLib.h"
 
-void UHttpLib::ReqSignUp(const FString& JSON)
+void AHttpLib::ReqSignUp(const FString& JSON)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetURL(SignUpURL);
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this, &UHttpLib::OnResSignUp);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSignUp);
 	req->ProcessRequest();
 }
 
-void UHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void AHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
@@ -33,18 +33,18 @@ void UHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, b
 	}
 }
 
-void UHttpLib::ReqLogin(const FString& JSON)
+void AHttpLib::ReqLogin(const FString& JSON)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetURL(SignUpURL);
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this, &UHttpLib::OnResLogin);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResLogin);
 	req->ProcessRequest();
 }
 
-void UHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
@@ -60,18 +60,58 @@ void UHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bo
 	}
 }
 
-void UHttpLib::ReqSoundToText(const FString& JSON)
+void AHttpLib::ReqSoundToText(const FString& FilePath)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
-	req->SetURL(SignUpURL);
-	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this, &UHttpLib::OnResSoundToText);
+	req->SetURL(SoundToTextURL);
+	req->SetVerb("POST");
+	FString Boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
+	req->SetHeader(TEXT("Content-Type"), TEXT("multipart/form-data; boundary=") + Boundary);
+
+	TArray<uint8> FileData;
+	if (!FFileHelper::LoadFileToArray(FileData, *FilePath))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to read file: %s"), *FilePath);
+		return;
+	}
+
+	// multipart/form-data 포맷에 맞게 데이터 구성
+	FString BeginBoundary = FString("--") + Boundary + "\r\n";
+	FString EndBoundary = FString("--") + Boundary + "--\r\n";
+
+	// 파일 부분 구성
+	FString FileHeader = "Content-Disposition: form-data; name=\"voice\"; filename=\"" + FPaths::GetCleanFilename(FilePath) + "\"\r\n";
+	FileHeader.Append("Content-Type: audio/wav\r\n\r\n");
+
+	// 전체 페이로드 구성
+	FString PayloadString = BeginBoundary + FileHeader;
+	TArray<uint8> Payload;
+	Payload.Append((uint8*)TCHAR_TO_UTF8(*PayloadString), PayloadString.Len());
+	Payload.Append(FileData);
+	FString EndPayloadString = "\r\n" + EndBoundary;
+	Payload.Append((uint8*)TCHAR_TO_UTF8(*EndPayloadString), EndPayloadString.Len());
+
+	// 요청 바디 설정
+	req->SetContent(Payload);
+
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSoundToText);
 	req->ProcessRequest();
+
+
+	/*req->SetHeader(TEXT("Content-Type"), TEXT("audio/wav"));
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSoundToText);
+	TArray<uint8> FileContent;
+	if (FFileHelper::LoadFileToArray(FileContent, *FilePath)) {
+		req->SetContent(FileContent);
+		req->ProcessRequest();
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load file: %s"), *FilePath);
+	}*/
 }
 
-void UHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
@@ -87,18 +127,18 @@ void UHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 	}
 }
 
-void UHttpLib::ReqGenerateColor(const FString& JSON)
+void AHttpLib::ReqGenerateColor(const FString& JSON)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetURL(SignUpURL);
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this, &UHttpLib::OnResGenerateColor);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResGenerateColor);
 	req->ProcessRequest();
 }
 
-void UHttpLib::OnResGenerateColor(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void AHttpLib::OnResGenerateColor(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
