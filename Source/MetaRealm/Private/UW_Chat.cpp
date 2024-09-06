@@ -11,8 +11,12 @@
 void UUW_Chat::NativeConstruct()
 {
 	Super::NativeConstruct();
+	if (ChatInputBox)
+	{
+		ChatInputBox->OnTextCommitted.AddDynamic(this, &UUW_Chat::OnChatTextCommitted);
 
-	ChatInputBox->OnTextCommitted.AddDynamic(this, &UUW_Chat::OnChatTextCommitted);
+	}
+	ChatInputBox->SetIsEnabled(false);
 }
 
 void UUW_Chat::AddChatMessage(const FString& Message)
@@ -53,7 +57,9 @@ void UUW_Chat::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMe
 			MyPC->SendMessage(Text); // 메시지 보냄.
 			SetChatInputTextMessage(FText::GetEmpty()); // 메세지 전송했으니, 비워줌.
 		}
-		MyPC->FocusGame(); // 다시 게임으로 포커싱.
+		//MyPC->FocusGame(); // 다시 게임으로 
+		//break;
+		MyPC->FocusChatInputText(); // 다시 채팅창으로 
 		break;
 	case ETextCommit::OnCleared:
 		MyPC->FocusGame(); // 다시 게임으로 포커싱.

@@ -94,10 +94,11 @@ void AMR_Controller::FocusChatInputText()
 	AMain_HUD* HUD = GetHUD<AMain_HUD>();
 	if (HUD == nullptr) return;
 
-	FInputModeUIOnly InputMode;
+	FInputModeGameAndUI InputMode;
 	InputMode.SetWidgetToFocus(HUD->GetChatInputTextObject());
 
 	SetInputMode(InputMode);
+
 }
 
 void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
@@ -123,3 +124,4 @@ void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 
 	HUD->AddChatMessage(Message);
 }
+
