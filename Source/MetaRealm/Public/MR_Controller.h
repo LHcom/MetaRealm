@@ -35,6 +35,8 @@ public:
 	UFUNCTION()
 	void FocusChatInputText();
 
+	UPROPERTY()
+	class ACharacter* me;
 
 private:
 	UFUNCTION(Server, Unreliable)
