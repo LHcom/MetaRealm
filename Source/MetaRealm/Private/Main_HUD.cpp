@@ -7,7 +7,7 @@
 
 AMain_HUD::AMain_HUD()
 {
-	static ConstructorHelpers::FClassFinder<UUW_Main> WB_Main(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/KHH/Chat/WB_Main.WB_Main_C'"));
+	static ConstructorHelpers::FClassFinder<UUW_Main> WB_Main(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/KHH/UI/Chat/WB_Main.WB_Main_C'"));
 	if (WB_Main.Succeeded())
 	{
 		MainUIClass = WB_Main.Class;
