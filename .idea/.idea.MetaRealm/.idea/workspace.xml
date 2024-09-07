@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/KHH/KHH_TestMap/KHH_level.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/KHH/KHH_TestMap/KHH_level.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +73,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "C++ 프로젝트.MetaRealm.executor": "Debug",
+    "C++ 프로젝트.MetaRealm.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "LHJ__Ver2",
     "node.js.detected.package.eslint": "true",
@@ -550,6 +550,7 @@
       <workItem from="1725532674271" duration="5008000" />
       <workItem from="1725630182155" duration="1217000" />
       <workItem from="1725705013186" duration="1021000" />
+      <workItem from="1725706116828" duration="655000" />
     </task>
     <servers />
   </component>
@@ -562,21 +563,5 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp</url>
-          <line>295</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp</url>
-          <line>285</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

@@ -63,9 +63,9 @@ void UNetGameInstance::CreateMySession(FString roomName)
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
 	                                    GetUniqueNetId();
 
-	int32 rand = FMath::RandRange(1, 100000);
-	mySessionName += FString::Printf(TEXT("%d"), rand);
-	NowSession = mySessionName;
+	//int32 rand = FMath::RandRange(1, 100000);
+	//mySessionName += FString::Printf(TEXT("%d"), rand);
+	//NowSession = mySessionName;
 	
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
@@ -102,7 +102,7 @@ void UNetGameInstance::DestroyMySession()
 
 	// 세션 관련 데이터 초기화
 	sessionSearch.Reset();
-	NowSession.Empty();
+	//NowSession.Empty();
 }
 
 void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -161,9 +161,9 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 
 				int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
-				NowSession = si.Session.GetSessionIdStr();
-				UE_LOG(LogTemp, Warning, TEXT("NowRoomName : %s"), *si.Session.GetSessionIdStr());
-				UE_LOG(LogTemp, Warning, TEXT("NowSession : %s"), *si.Session.GetSessionIdStr());
+				//NowSession = si.Session.GetSessionIdStr();
+				//UE_LOG(LogTemp, Warning, TEXT("NowRoomName : %s"), *si.Session.GetSessionIdStr());
+				//UE_LOG(LogTemp, Warning, TEXT("NowSession : %s"), *si.Session.GetSessionIdStr());
 				roomName = StringBase64Decode(roomName);
 				// 방이름 ( 5 / 10 )
 				FString sessionInfo = FString::Printf(
@@ -274,7 +274,7 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
 	 IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
     if (OnlineSubsystem)
     {
-        FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(NowSession));
+        FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(mySessionName));
         if (NamedSession)
         {
             UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
