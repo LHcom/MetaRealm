@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +72,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "C++ 프로젝트.MetaRealm.executor": "Run",
+    "C++ 프로젝트.MetaRealm.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "LHJ__Ver2",
     "node.js.detected.package.eslint": "true",
@@ -551,6 +550,7 @@
       <workItem from="1725630182155" duration="1217000" />
       <workItem from="1725705013186" duration="1021000" />
       <workItem from="1725706116828" duration="655000" />
+      <workItem from="1725708451621" duration="159000" />
     </task>
     <servers />
   </component>
