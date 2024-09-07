@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/KHH/KHH_TestMap/KHH_level.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/KHH/KHH_TestMap/KHH_level.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,9 +50,6 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/isteamapplist.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/steam_api_internal.h" root0="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="PerforceDirect.Settings">
-    <option name="CHARSET" value="없음" />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -74,9 +74,9 @@
   },
   "keyToStringList": {
     "rider.external.source.directories": [
-      "C:\\Users\\Admin\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\Admin\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\Admin\\AppData\\Local\\Symbols\\src"
+      "C:\\Users\\hakju\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\hakju\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\hakju\\AppData\\Local\\Symbols\\src"
     ]
   }
 }]]></component>
@@ -536,6 +536,7 @@
       <workItem from="1725447214404" duration="914000" />
       <workItem from="1725526110154" duration="777000" />
       <workItem from="1725532674271" duration="5008000" />
+      <workItem from="1725630182155" duration="1217000" />
     </task>
     <servers />
   </component>
