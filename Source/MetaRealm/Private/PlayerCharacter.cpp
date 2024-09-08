@@ -2,10 +2,12 @@
 
 #include "PlayerCharacter.h"
 
+#include "ProceedingWidget.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
@@ -16,7 +18,7 @@ APlayerCharacter::APlayerCharacter()
 	//	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	//	GetMesh()->SetRelativeScale3D(FVector(0.85f));
 	//}
-	//// ÀÌµ¿¹æÇâÀ¸·Î È¸ÀüÇÏµµ·Ï Ã³¸®ÇÏ°í½Í´Ù.
+	//// ì´ë™ë°©í–¥ìœ¼ë¡œ íšŒì „í•˜ë„ë¡ ì²˜ë¦¬í•˜ê³ ì‹¶ë‹¤.
 	//GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	//HPComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPComp"));
@@ -31,26 +33,42 @@ APlayerCharacter::APlayerCharacter()
 	//	HPComp->SetRelativeLocation(FVector(0, 0, 120));
 	//}
 	//FSMComp = CreateDefaultSubobject<UFSMComponent>(TEXT("FSMComp"));
+	initProceedingUI();
+}
+
+void APlayerCharacter::initProceedingUI()
+{
+	auto* pc = Cast<APlayerController>(Controller);
+	if (nullptr == pc)
+	{
+		ProceedingWidget = nullptr; 
+		return;
+	}
+
+	if (!ProceedingFactory)
+		return;
+
+	ProceedingWidget = CastChecked<UProceedingWidget>(CreateWidget(GetWorld(), ProceedingFactory));
+	if (ProceedingWidget)
+	{
+		ProceedingWidget->AddToViewport(0);
+	}
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
-

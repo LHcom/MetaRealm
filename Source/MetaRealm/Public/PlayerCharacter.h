@@ -26,11 +26,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Ã¼·ÂUI¸¦ »ý¼ºÇØ¼­ ¸Ó¸®À§¿¡ ¹èÄ¡ÇÏ°í½Í´Ù.
+	// Ã¼ï¿½ï¿½UIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ï°ï¿½Í´ï¿½.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionComp;
 	
 	/*UPROPERTY()
 	class * ReactionWidget;*/
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> ProceedingFactory;
+
+	UPROPERTY()
+	class UProceedingWidget* ProceedingWidget = nullptr;
+
+	void initProceedingUI();
 };

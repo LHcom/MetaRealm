@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e2591fbb-5149-420a-b48e-4319338e2b08" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MetaRealm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LHJ/BluePrints/Main/WBP_SessionExit.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/MR_Controller.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/MR_Controller.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Private/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Private/PlayerCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/MetaRealm/Public/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/MetaRealm/Public/PlayerCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,19 +31,6 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/HttpLib.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/JsonParseLib.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/LobyWidget.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -49,6 +38,7 @@
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/MetaRealmGM.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/MetaRealmGameState.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/NetGameInstance.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/ProceedingWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Private/TESTPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/HttpLib.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/JsonParseLib.h" root0="FORCE_HIGHLIGHTING" />
@@ -57,6 +47,7 @@
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/MetaRealmGM.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/MetaRealmGameState.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/NetGameInstance.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/ProceedingWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/MetaRealm/Public/TESTPlayer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/isteamapplist.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.4/Engine/Source/ThirdParty/Steamworks/Steamv157/sdk/public/steam/steam_api_internal.h" root0="SKIP_HIGHLIGHTING" />
@@ -551,6 +542,7 @@
       <workItem from="1725705013186" duration="1021000" />
       <workItem from="1725706116828" duration="655000" />
       <workItem from="1725708451621" duration="159000" />
+      <workItem from="1725784647951" duration="4225000" />
     </task>
     <servers />
   </component>
@@ -558,6 +550,10 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnrealLogPanelSettings">
+    <option name="showErrors" value="false" />
+    <option name="showMessages" value="false" />
+  </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
