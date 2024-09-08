@@ -13,6 +13,11 @@ UCLASS()
 class METAREALM_API UProceedingWidget : public UUserWidget
 {
 	GENERATED_BODY()
+private:
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnMyClose();
 public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* txt_Member;
@@ -25,4 +30,6 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_Close;
+
+	
 };

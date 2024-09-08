@@ -34,22 +34,22 @@ void AMetaRealmGM::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Æ¯Á¤ Ã¢ ÇÚµé Ã£±â (¿¹: "ChatGPT - Chrome")
+	// Æ¯ï¿½ï¿½ Ã¢ ï¿½Úµï¿½ Ã£ï¿½ï¿½ (ï¿½ï¿½: "ChatGPT - Chrome")
 	FindTargetWindow();
 
-	// Æ¯Á¤ Ã¢ÀÌ Á¸ÀçÇÏ¸é ±× Ã¢ÀÇ È­¸éÀ» Ä¸Ã³
+	// Æ¯ï¿½ï¿½ Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ Ã¢ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³
 	if (TargetWindowHandle != nullptr)
 	{
-		// Æ¯Á¤ Ã¢ÀÇ È­¸éÀ» Ä¸Ã³ÇÏ°í ÅØ½ºÃ³·Î º¯È¯
+		// Æ¯ï¿½ï¿½ Ã¢ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³ï¿½Ï°ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½È¯
 		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
 		imageTexture = MatToTexture2D(windowImage);
 		UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
-		// Å¸°Ù Ã¢À» Ã£Áö ¸øÇÑ °æ¿ì ÁÖ ¸ð´ÏÅÍ È­¸éÀ» Ä¸Ã³
-		//ReadFrame();  // ÁÖ ¸ð´ÏÅÍ Ä¸Ã³ ÇÔ¼ö È£Ãâ
+		//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
+		// Å¸ï¿½ï¿½ Ã¢ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³
+		//ReadFrame();  // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³ ï¿½Ô¼ï¿½ È£ï¿½ï¿½
 	}
 }
 
@@ -111,17 +111,17 @@ void AMetaRealmGM::StartPlay()
 
 void AMetaRealmGM::ReadFrame()
 {
-	// ÁÖ ¸ð´ÏÅÍ È­¸éÀ» Ä¸Ã³ÇÏ¿© ÅØ½ºÃ³·Î º¯È¯
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³ï¿½Ï¿ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½È¯
 	//cv::Mat desktopImage = GetScreenToCVMat();
 	//imageTexture = MatToTexture2D(desktopImage);
 }
 
 UTexture2D* AMetaRealmGM::MatToTexture2D(const cv::Mat InMat)
 {
-	// »õ·Î¿î ÅØ½ºÃ³¸¦ »ý¼ºÇÏ°í ¼³Á¤
+	// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UTexture2D* Texture = UTexture2D::CreateTransient(InMat.cols, InMat.rows, PF_B8G8R8A8);
 
-	// 3Ã¤³Î ÀÌ¹ÌÁö¸¦ BGRA·Î º¯È¯ÇÑ ÈÄ ÅØ½ºÃ³¿¡ º¹»ç
+	// 3Ã¤ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ BGRAï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (InMat.type() == CV_8UC3)
 	{
 		cv::Mat bgraImage;
@@ -135,7 +135,7 @@ UTexture2D* AMetaRealmGM::MatToTexture2D(const cv::Mat InMat)
 		Texture->UpdateResource();
 		return Texture;
 	}
-	// 4Ã¤³Î ÀÌ¹ÌÁö¸¦ ±×´ë·Î ÅØ½ºÃ³·Î º¹»ç
+	// 4Ã¤ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	else if (InMat.type() == CV_8UC4)
 	{
 		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
@@ -147,7 +147,7 @@ UTexture2D* AMetaRealmGM::MatToTexture2D(const cv::Mat InMat)
 		return Texture;
 	}
 
-	// ½ÇÆÐ ½Ã ¹ÝÈ¯
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È¯
 	Texture->PostEditChange();
 	Texture->UpdateResource();
 	return Texture;
@@ -173,7 +173,7 @@ cv::Mat AMetaRealmGM::GetScreenToCVMat()
 
 cv::Mat AMetaRealmGM::GetWindowToCVMat(HWND hwnd)
 {
-	// Ã¢ÀÇ ÀüÃ¼ Å©±â¸¦ °¡Á®¿È (Å¬¶óÀÌ¾ðÆ® ¿µ¿ª»Ó ¾Æ´Ï¶ó Á¦¸ñ Ç¥½ÃÁÙ, Å×µÎ¸® Æ÷ÇÔ)
+	// Ã¢ï¿½ï¿½ ï¿½ï¿½Ã¼ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½ï¿½, ï¿½×µÎ¸ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	RECT windowRect;
 	GetWindowRect(hwnd, &windowRect);
 
@@ -186,17 +186,17 @@ cv::Mat AMetaRealmGM::GetWindowToCVMat(HWND hwnd)
 	HBITMAP hBitmap = CreateCompatibleBitmap(hWindowDC, windowWidth, windowHeight);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
 
-	// BitBlt¸¦ ÅëÇØ Ã¢ÀÇ ÀüÃ¼ È­¸éÀ» º¹»ç
+	// BitBltï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¢ï¿½ï¿½ ï¿½ï¿½Ã¼ È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	BitBlt(hMemoryDC, 0, 0, windowWidth, windowHeight, hWindowDC, 0, 0, SRCCOPY);
 	SelectObject(hMemoryDC, hOldBitmap);
 
-	// Ä¸Ã³ÇÑ Ã¢À» OpenCVÀÇ Mat·Î º¯È¯
+	// Ä¸Ã³ï¿½ï¿½ Ã¢ï¿½ï¿½ OpenCVï¿½ï¿½ Matï¿½ï¿½ ï¿½ï¿½È¯
 	cv::Mat windowImage(windowHeight, windowWidth, CV_8UC4);
 	GetBitmapBits(hBitmap, windowImage.total() * windowImage.elemSize(), windowImage.data);
 
 	UE_LOG(LogTemp, Warning, TEXT("GetWindowToCVMat Succed"));
 
-	// ¸®¼Ò½º ÇØÁ¦
+	// ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ReleaseDC(hwnd, hWindowDC);
 	DeleteDC(hMemoryDC);
 	DeleteObject(hBitmap);
@@ -206,31 +206,31 @@ cv::Mat AMetaRealmGM::GetWindowToCVMat(HWND hwnd)
 
 void AMetaRealmGM::LogActiveWindowTitles()
 {
-	WindowTitles.Empty(); // ±âÁ¸ ¸®½ºÆ® ºñ¿ì±â
+	WindowTitles.Empty(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 
 	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
 		{
 			int length = GetWindowTextLength(hwnd);
 			if (length == 0)
-				return true; // Ã¢ Å¸ÀÌÆ²ÀÌ ¾øÀ¸¸é ¹«½Ã
+				return true; // Ã¢ Å¸ï¿½ï¿½Æ²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			if (!IsWindowVisible(hwnd))
-				return true; // º¸ÀÌÁö ¾Ê´Â Ã¢ ¹«½Ã
+				return true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½
 
 			WINDOWPLACEMENT placement;
 			placement.length = sizeof(WINDOWPLACEMENT);
 			GetWindowPlacement(hwnd, &placement);
 			if (placement.showCmd == SW_SHOWMINIMIZED)
-				return true; // ÃÖ¼ÒÈ­µÈ Ã¢ ¹«½Ã
+				return true; // ï¿½Ö¼ï¿½È­ï¿½ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½
 
 			LONG style = GetWindowLong(hwnd, GWL_STYLE);
 			if (!(style & WS_OVERLAPPEDWINDOW))
-				return true; // ÀÏ¹Ý Ã¢ÀÌ ¾Æ´Ï¸é ¹«½Ã
+				return true; // ï¿½Ï¹ï¿½ Ã¢ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			TCHAR windowTitle[256];
 			GetWindowText(hwnd, windowTitle, 256);
 
-			// Ã¢ Á¦¸ñÀ» ¹è¿­¿¡ Ãß°¡
+			// Ã¢ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ß°ï¿½
 			TArray<FString>* WindowList = (TArray<FString>*)lParam;
 			WindowList->Add(FString(windowTitle));
 
@@ -242,27 +242,27 @@ void AMetaRealmGM::LogActiveWindowTitles()
 
 void AMetaRealmGM::FindTargetWindow()
 {
-	TargetWindowHandle = nullptr;  // ÃÊ±âÈ­
+	TargetWindowHandle = nullptr;  // ï¿½Ê±ï¿½È­
 
 	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
 		{
 			TCHAR windowTitle[256];
 			GetWindowText(hwnd, windowTitle, 256);
 
-			// "Ä«Ä«¿ÀÅå" Ã¢ Ã£±â
+			// "Ä«Ä«ï¿½ï¿½ï¿½ï¿½" Ã¢ Ã£ï¿½ï¿½
 			if (FString(windowTitle) == "MetaRealm - Microsoft Visual Studio")
 			{
 				HWND* targetHandle = (HWND*)lParam;
 				*targetHandle = hwnd;
-				return false;  // Ã¢À» Ã£À¸¸é ¿­°Å ÁßÁö
+				return false;  // Ã¢ï¿½ï¿½ Ã£ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			}
 
-			return true;  // Ã¢À» °è¼Ó ¿­°Å
+			return true;  // Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		}, (LPARAM)&TargetWindowHandle);
 
 	if (TargetWindowHandle == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
+		//UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
 	}
 	else
 	{

@@ -53,6 +53,7 @@ public:
 	// 세션 검색에 쓰이는 클래스
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
+	FString MyroomName = TEXT("UNREAL");
 	// 세션 이름
 	FString mySessionName = TEXT("MTVSUNREAL");
 

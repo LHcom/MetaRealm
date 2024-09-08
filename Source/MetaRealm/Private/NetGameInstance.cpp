@@ -54,7 +54,6 @@ void UNetGameInstance::CreateMySession(FString roomName)
 	sessionSettings.NumPublicConnections = 10;
 
 	// base64로 Encode
-	//NowSession = roomName;
 	roomName = StringBase64Encode(roomName);
 	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
@@ -63,8 +62,8 @@ void UNetGameInstance::CreateMySession(FString roomName)
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
 	                                    GetUniqueNetId();
 
-	// int32 rand = FMath::RandRange(1, 100000);
-	// mySessionName += FString::Printf(TEXT("%d"), rand);
+	int32 rand = FMath::RandRange(1, 100000);
+	mySessionName += FString::Printf(TEXT("%d"), rand);
 	//NowSession = mySessionName;
 	
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
@@ -145,7 +144,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			// Create Session
 			if (results.Num() == 0)
 			{
-				CreateMySession(mySessionName);
+				CreateMySession(MyroomName);
 			}
 			else
 			{
