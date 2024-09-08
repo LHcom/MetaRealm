@@ -2,7 +2,12 @@
 
 #include "PlayerCharacter.h"
 
+#include <chrono>
+
+#include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
+#include "Components/TextBlock.h"
+#include "Interfaces/OnlineIdentityInterface.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -33,7 +38,6 @@ APlayerCharacter::APlayerCharacter()
 	//	HPComp->SetRelativeLocation(FVector(0, 0, 120));
 	//}
 	//FSMComp = CreateDefaultSubobject<UFSMComponent>(TEXT("FSMComp"));
-	initProceedingUI();
 }
 
 void APlayerCharacter::initProceedingUI()
@@ -41,7 +45,7 @@ void APlayerCharacter::initProceedingUI()
 	auto* pc = Cast<APlayerController>(Controller);
 	if (nullptr == pc)
 	{
-		ProceedingWidget = nullptr; 
+		ProceedingWidget = nullptr;
 		return;
 	}
 
@@ -52,13 +56,71 @@ void APlayerCharacter::initProceedingUI()
 	if (ProceedingWidget)
 	{
 		ProceedingWidget->AddToViewport(0);
+		ProceedingWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void APlayerCharacter::setTextProceedingUI(FString strMember, FString strTime, FString strCondensation)
+{
+	if (ProceedingWidget)
+	{
+		ProceedingWidget->SetVisibility(ESlateVisibility::Visible);
+
+		if (!strMember.IsEmpty())
+			ProceedingWidget->txt_Member->SetText(FText::FromString(strMember));
+		if (!strTime.IsEmpty())
+			ProceedingWidget->txt_Time->SetText(FText::FromString(strTime));
+		if (!strCondensation.IsEmpty())
+			ProceedingWidget->txt_Condensation->SetText(FText::FromString(strCondensation));
+	}
+}
+
+FString APlayerCharacter::GetSystemTime()
+{
+	// 현재 시스템 시간을 가져오기
+	auto now = std::chrono::system_clock::now();
+	std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+
+	// tm 구조체로 변환 (로컬 시간)
+	std::tm localTime;
+	localtime_s(&localTime, &currentTime);
+
+	// 시간 포맷 설정 (yyyy-MM-dd HH:mm:ss)
+	char buffer[100];
+	std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &localTime);
+
+	// FString로 변환하여 Unreal에서 출력
+	FString TimeString = FString(buffer);
+
+	return TimeString;
+}
+
+FString APlayerCharacter::GetMemberName()
+{
+	FString UserName;
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+		if (Identity.IsValid())
+		{
+			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
+			if (UserId.IsValid())
+			{
+				UserName = Identity->GetPlayerNickname(*UserId);
+			}
+		}
+	}
+
+	return UserName;
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	initProceedingUI();
 }
 
 // Called every frame

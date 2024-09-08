@@ -45,4 +45,6 @@ private:
 	UFUNCTION(Client, Unreliable)
 	void StoC_SendMessage(const FString& Message);
 
+	UPROPERTY()
+	class AMetaRealmGM* gm;
 };

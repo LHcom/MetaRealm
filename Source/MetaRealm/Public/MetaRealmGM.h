@@ -29,34 +29,38 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
-	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
-	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
+	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
+	                      FString& ErrorMessage) override;
+	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal,
+	                                 const FString& Options, const FUniqueNetIdRepl& UniqueId,
+	                                 FString& ErrorMessage) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void StartPlay() override;
 
 public:
 	cv::VideoCapture capture;
 	cv::Mat image;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ReadFrame();
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* imageTexture;
 	UTexture2D* MatToTexture2D(const cv::Mat InMat);
-	
-	
+
+
 	cv::Mat GetScreenToCVMat();
 	cv::Mat GetWindowToCVMat(HWND hwnd);
 
 	void LogActiveWindowTitles();
 
-	// Ä¸Ã³ÇÒ Æ¯Á¤ Ã¢ÀÇ ÇÚµéÀ» ÀúÀåÇÏ´Â º¯¼ö
+	// ìº¡ì²˜í•  íŠ¹ì • ì°½ì˜ í•¸ë“¤ì„ ì €ì¥í•˜ëŠ” ë³€ìˆ˜
 	HWND TargetWindowHandle;
 
 	void FindTargetWindow();
 
-	// Ã¢ Á¦¸ñÀ» ÀúÀåÇÒ º¯¼ö Ãß°¡
+	// ì°½ ì œëª©ì„ ì €ì¥í•  ë³€ìˆ˜ ì¶”ê°€
 	TArray<FString> WindowTitles;
 
+	FString MeetingMember = "";
 };

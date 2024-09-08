@@ -19,6 +19,6 @@ public:
 	// Json에서 데이터 추출
 	static FString SignUpJsonParse(const FString& strJson);
 	static FString LoginJsonParse(const FString& strJson);
-	static FString SoundToTextJsonParse(const FString& strJson);
+	static FString SoundToTextJsonParse(const FString& strJson, FString& outStrMessage);
 	static FString GenerateColorJsonParse(const FString& strJson);
 };

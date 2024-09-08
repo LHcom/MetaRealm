@@ -63,8 +63,8 @@ void UNetGameInstance::CreateMySession(FString roomName)
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
 	                                    GetUniqueNetId();
 
-	//int32 rand = FMath::RandRange(1, 100000);
-	//mySessionName += FString::Printf(TEXT("%d"), rand);
+	// int32 rand = FMath::RandRange(1, 100000);
+	// mySessionName += FString::Printf(TEXT("%d"), rand);
 	//NowSession = mySessionName;
 	
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);

@@ -67,7 +67,7 @@ FString UJsonParseLib::LoginJsonParse(const FString& strJson)
 	return returnValue;
 }
 
-FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson)
+FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson, FString& outStrMessage)
 {
 	// 리더기를 만들고
 	TSharedRef<TJsonReader<TCHAR>> reader = TJsonReaderFactory<TCHAR>::Create(strJson);
@@ -78,7 +78,10 @@ FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson)
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		
+		if(result->HasField("messages"))
+		{
+			outStrMessage=result->GetStringField("messages");
+		}
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
 		// {

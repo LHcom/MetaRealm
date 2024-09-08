@@ -5,6 +5,8 @@
 
 #include "MetaRealm/MetaRealm.h"
 #include "Main_HUD.h"
+#include "MetaRealmGM.h"
+#include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
 #include "Online/CoreOnline.h"
@@ -41,6 +43,16 @@ void AMR_Controller::BeginPlay()
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 	Super::BeginPlay();
 	me = GetWorld()->GetFirstPlayerController()->GetCharacter();
+	gm = Cast<AMetaRealmGM>(GetWorld()->GetAuthGameMode());
+	if (gm)
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is not null"));
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is null"));
+	}
+
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 }
 
@@ -48,7 +60,7 @@ void AMR_Controller::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	// ¾×¼Ç Å° ¹ÙÀÎµù.
+	// ï¿½×¼ï¿½ Å° ï¿½ï¿½ï¿½Îµï¿½.
 	InputComponent->BindAction(TEXT("Chat"), EInputEvent::IE_Pressed, this, &AMR_Controller::FocusChatInputText);
 }
 
@@ -57,10 +69,25 @@ void AMR_Controller::MoveToMeetingRoomMap()
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MeetingRoom"), MeetingRoomActors);
 
-	if (MeetingRoomActors.Num() > 0) {
+	if (MeetingRoomActors.Num() > 0)
+	{
 		AActor* MeetingRoom = MeetingRoomActors[0];
-		if (me) {
+		if (me)
+		{
 			me->SetActorLocation(MeetingRoom->GetActorLocation());
+			auto player = CastChecked<APlayerCharacter>(me);
+			if (player)
+			{
+				player->MeetingStartTime = player->GetSystemTime();
+
+				if (gm)
+				{
+					if (gm->MeetingMember.IsEmpty())
+						gm->MeetingMember = player->GetMemberName();
+					else
+						gm->MeetingMember += "," + player->GetMemberName();
+				}
+			}
 		}
 	}
 	// ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
@@ -71,37 +98,42 @@ void AMR_Controller::MoveToMainMap()
 	TArray<AActor*> MainMapActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MainRoom"), MainMapActors);
 
-	if (MainMapActors.Num() > 0) {
+	if (MainMapActors.Num() > 0)
+	{
 		AActor* MainMap = MainMapActors[0];
 
-		if (me) {
+		if (me)
+		{
 			me->SetActorLocation(MainMap->GetActorLocation());
 			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, "Move!", false);
+			auto player = CastChecked<APlayerCharacter>(me);
+			if (player)
+				player->MeetingEndTime = player->GetSystemTime();
 		}
 	}
-	
-	
+
+
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
 void AMR_Controller::SendMessage(const FText& Text)
 {
-	// ¿Â¶óÀÎ ¼­ºê½Ã½ºÅÛ¿¡¼­ Identity ÀÎÅÍÆäÀÌ½º¸¦ °¡Á®¿È
+	// ï¿½Â¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½ Identity ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
 		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
 		if (Identity.IsValid())
 		{
-			// 0¹øÂ° ·ÎÄÃ ÇÃ·¹ÀÌ¾îÀÇ °íÀ¯ ID¸¦ °¡Á®¿È
+			// 0ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
 			if (UserId.IsValid())
 			{
-				// ½ºÆÀ ´Ð³×ÀÓÀ» °¡Á®¿È
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				FString UserName = Identity->GetPlayerNickname(*UserId);
 				FString Message = FString::Printf(TEXT("%s : %s"), *UserName, *Text.ToString());
 
-				// ¼­¹ö·Î ¸Þ½ÃÁö¸¦ Àü¼Û (CtoS_SendMessage È£Ãâ)
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (CtoS_SendMessage È£ï¿½ï¿½)
 				CtoS_SendMessage(Message);
 			}
 		}
@@ -122,12 +154,11 @@ void AMR_Controller::FocusChatInputText()
 	InputMode.SetWidgetToFocus(HUD->GetChatInputTextObject());
 
 	SetInputMode(InputMode);
-
 }
 
 void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 {
-	// ¼­¹ö¿¡¼­´Â ¸ðµç PlayerController¿¡°Ô ÀÌº¥Æ®¸¦ º¸³½´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ PlayerControllerï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetPawn()->GetWorld(), APlayerController::StaticClass(), OutActors);
 	for (AActor* OutActor : OutActors)
@@ -142,10 +173,9 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 
 void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 {
-	// ¼­¹ö¿Í Å¬¶óÀÌ¾ðÆ®´Â ÀÌ ÀÌº¥Æ®¸¦ ¹Þ¾Æ¼­ ½ÇÇàÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	AMain_HUD* HUD = GetHUD<AMain_HUD>();
 	if (HUD == nullptr) return;
 
 	HUD->AddChatMessage(Message);
 }
-

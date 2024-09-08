@@ -5,6 +5,26 @@
 
 #include "HttpModule.h"
 #include "JsonParseLib.h"
+#include "MetaRealmGM.h"
+#include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "MetaRealm/MetaRealm.h"
+
+void AHttpLib::BeginPlay()
+{
+	Super::BeginPlay();
+
+	player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	gm = Cast<AMetaRealmGM>(GetWorld()->GetAuthGameMode());
+	if (gm)
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is not null"));
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is null"));
+	}
+}
 
 void AHttpLib::ReqSignUp(const FString& JSON)
 {
@@ -81,7 +101,8 @@ void AHttpLib::ReqSoundToText(const FString& FilePath)
 	FString EndBoundary = FString("--") + Boundary + "--\r\n";
 
 	// 파일 부분 구성
-	FString FileHeader = "Content-Disposition: form-data; name=\"voice\"; filename=\"" + FPaths::GetCleanFilename(FilePath) + "\"\r\n";
+	FString FileHeader = "Content-Disposition: form-data; name=\"voice\"; filename=\"" +
+		FPaths::GetCleanFilename(FilePath) + "\"\r\n";
 	FileHeader.Append("Content-Type: audio/wav\r\n\r\n");
 
 	// 전체 페이로드 구성
@@ -118,7 +139,21 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 		// 성공
 		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		UJsonParseLib::SoundToTextJsonParse(Result);
+		FString outStrMessage;
+		UJsonParseLib::SoundToTextJsonParse(Result, outStrMessage);
+		if (player)
+		{
+			FString strMeetingTime = FString::Printf(TEXT("%s%s%s"), *player->MeetingStartTime, TEXT("~"),
+			                                         *player->MeetingEndTime);
+			FString meetingMember="";
+			if(gm)
+			{
+				meetingMember=gm->MeetingMember;
+				gm->MeetingMember="";				
+			}
+				
+			player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
+		}
 	}
 	else
 	{
