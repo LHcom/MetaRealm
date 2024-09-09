@@ -43,7 +43,7 @@ void AMetaRealmGM::Tick(float DeltaTime)
 		// Ư�� â�� ȭ���� ĸó�ϰ� �ؽ�ó�� ��ȯ
 		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
 		imageTexture = MatToTexture2D(windowImage);
-		UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
+		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
 	}
 	else
 	{
@@ -194,7 +194,7 @@ cv::Mat AMetaRealmGM::GetWindowToCVMat(HWND hwnd)
 	cv::Mat windowImage(windowHeight, windowWidth, CV_8UC4);
 	GetBitmapBits(hBitmap, windowImage.total() * windowImage.elemSize(), windowImage.data);
 
-	UE_LOG(LogTemp, Warning, TEXT("GetWindowToCVMat Succed"));
+	//UE_LOG(LogTemp, Warning, TEXT("GetWindowToCVMat Succed"));
 
 	// ���ҽ� ����
 	ReleaseDC(hwnd, hWindowDC);
@@ -237,7 +237,7 @@ void AMetaRealmGM::LogActiveWindowTitles()
 			return true;
 		}, (LPARAM)&WindowTitles);
 
-	UE_LOG(LogTemp, Log, TEXT("Window List Updated. Total Windows: %d"), WindowTitles.Num());
+	//UE_LOG(LogTemp, Log, TEXT("Window List Updated. Total Windows: %d"), WindowTitles.Num());
 }
 
 void AMetaRealmGM::FindTargetWindow()
@@ -266,6 +266,6 @@ void AMetaRealmGM::FindTargetWindow()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Target window found: "));
+		//UE_LOG(LogTemp, Log, TEXT("Target window found: "));
 	}
 }
