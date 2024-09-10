@@ -60,7 +60,7 @@ void APlayerCharacter::initProceedingUI()
 	}
 }
 
-void APlayerCharacter::setTextProceedingUI(FString strMember, FString strTime, FString strCondensation)
+void APlayerCharacter::setTextProceedingUI(FString& strMember, FString& strTime, FString& strCondensation)
 {
 	if (ProceedingWidget)
 	{
@@ -72,6 +72,10 @@ void APlayerCharacter::setTextProceedingUI(FString strMember, FString strTime, F
 			ProceedingWidget->txt_Time->SetText(FText::FromString(strTime));
 		if (!strCondensation.IsEmpty())
 			ProceedingWidget->txt_Condensation->SetText(FText::FromString(strCondensation));
+
+		strMember = "";
+		strTime = "";
+		strCondensation = "";
 	}
 }
 
