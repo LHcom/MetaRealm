@@ -73,6 +73,3 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 test.bat
-.idea/.idea.MetaRealm/.idea/encodings.xml
-.idea/.idea.MetaRealm/.idea/indexLayout.xml
-.idea/.idea.MetaRealm/.idea/vcs.xml
