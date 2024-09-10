@@ -25,8 +25,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyMySession();	// 방 없앨때 사용 (서버 플레이어가 종료하면 호출)
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
-	UFUNCTION(BlueprintCallable)
-	void SessionDestroyMonitor();
 	
 	// 세션을 검색 함수
 	UFUNCTION(BlueprintCallable)

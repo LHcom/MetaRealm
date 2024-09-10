@@ -27,8 +27,7 @@ void UNetGameInstance::Init()
 		// 세션 인터페이스 가져오자
 		sessionInterface = subsys->GetSessionInterface();
 		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnCreateSessionComplete);
-		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(
-			this, &UNetGameInstance::OnDestroySessionComplete);
+		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnDestroySessionComplete);
 		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UNetGameInstance::OnFindSessionComplete);
 		sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnJoinSessionComplete);
 	}
@@ -37,7 +36,11 @@ void UNetGameInstance::Init()
 void UNetGameInstance::CreateMySession(FString roomName)
 {
 	FOnlineSessionSettings sessionSettings;
-
+	
+	// LAN 연결인지 DEDICATED 연결인지 설정한다.
+	sessionSettings.bIsDedicated = false;
+	sessionSettings.bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == FName("NULL");
+	
 	// true 세션이 검색 된다.
 	sessionSettings.bShouldAdvertise = true;
 
@@ -54,19 +57,20 @@ void UNetGameInstance::CreateMySession(FString roomName)
 	sessionSettings.NumPublicConnections = 10;
 
 	// base64로 Encode
-	roomName = StringBase64Encode(roomName);
+	//roomName = StringBase64Encode(roomName);
 	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	sessionSettings.Set(FName("HOST_NAME"), mySessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 
 	// 세션 생성 요청
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
 	                                    GetUniqueNetId();
-
-	int32 rand = FMath::RandRange(1, 100000);
-	mySessionName += FString::Printf(TEXT("%d"), rand);
+	
+	// int32 rand = FMath::RandRange(1, 100000);
+	// mySessionName += FString::Printf(TEXT("%d"), rand);
 	//NowSession = mySessionName;
 	
-	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
+	sessionInterface->CreateSession(*netID, FName(roomName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -116,18 +120,15 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 	}
 }
 
-void UNetGameInstance::SessionDestroyMonitor()
-{
-}
-
 void UNetGameInstance::FindOtherSession()
 {
-	sessionSearch = MakeShared<FOnlineSessionSearch>();
-
+	sessionSearch = MakeShareable(new FOnlineSessionSearch());
+	// 세션 검색을 LAN으로 할 것인지 여부를 설정한다.
+	sessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == FName("NULL");
+	// 세션 쿼리(query) 설정한다.
 	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
-
-	sessionSearch->MaxSearchResults = 10;
-
+	// 세션의 검색량을 설정한다.
+	sessionSearch->MaxSearchResults = 50;
 	// 세션 검색 요청
 	sessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
 }
@@ -147,27 +148,29 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 				CreateMySession(MyroomName);
 			}
 			else
-			{
+			{				
 				FOnlineSessionSearchResult si = results[0];
 				FString roomName;
 				si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
+				FString hostName;
+				si.Session.SessionSettings.Get(FName("HOST_NAME"), hostName);
 				UE_LOG(LogTemp, Warning, TEXT("%s"), *si.Session.GetSessionIdStr());
 
 				// 세션 정보 ---> String 으로 
 				// 세션의 최대 인원
-				int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
+				//int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
 				// 세션의 참여 인원 (최대 인원 - 남은 인원)
 
-				int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
+				//int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
 				//NowSession = si.Session.GetSessionIdStr();
 				//UE_LOG(LogTemp, Warning, TEXT("NowRoomName : %s"), *si.Session.GetSessionIdStr());
 				//UE_LOG(LogTemp, Warning, TEXT("NowSession : %s"), *si.Session.GetSessionIdStr());
-				roomName = StringBase64Decode(roomName);
-				// 방이름 ( 5 / 10 )
-				FString sessionInfo = FString::Printf(
-					TEXT("%s ( %d )"),
-					*roomName, currPlayer);
+				// roomName = StringBase64Decode(roomName);
+				// // 방이름 ( 5 / 10 )
+				// FString sessionInfo = FString::Printf(
+				// 	TEXT("%s ( %d )"),
+				// 	*roomName, currPlayer);
 
 				JoinOtherSession(0);
 				//onSearchComplete.ExecuteIfBound(0, sessionInfo);
@@ -182,7 +185,8 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 
 void UNetGameInstance::JoinOtherSession(int32 idx)
 {
-	//TArray<FOnlineSessionSearchResult> 
+	//TArray<FOnlineSessionSearchResult>
+	
 	auto results = sessionSearch->SearchResults;
 	if (sessionInterface == nullptr)
 	{
