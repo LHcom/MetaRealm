@@ -277,18 +277,20 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
 	 IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
     if (OnlineSubsystem)
     {
-        FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(mySessionName));
-        if (NamedSession)
+    	//IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+        
+        if (sessionInterface.IsValid())
         {
-            UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("NamedSession is nullPtr"));
-        }
-        IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
-        if (SessionInterface.IsValid())
-        {
+        	FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(mySessionName));
+        	if (NamedSession)
+        	{
+        		UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
+        	}
+        	else
+        	{
+        		UE_LOG(LogTemp, Warning, TEXT("NamedSession is nullPtr"));
+        	}
+        	
             if (!NamedSession)
                 return;
 
@@ -301,7 +303,7 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
                 TSharedPtr<const FUniqueNetId> PlayerId = PlayerToKick->PlayerState->GetUniqueId().GetUniqueNetId();
                 if (PlayerId.IsValid())
                 {
-                    SessionInterface->UnregisterPlayer(*NamedSession->SessionName.ToString(), *PlayerId);
+                    sessionInterface->UnregisterPlayer(*NamedSession->SessionName.ToString(), *PlayerId);
                 }
                 else
                 {
