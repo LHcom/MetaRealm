@@ -34,13 +34,12 @@ void AMetaRealmGM::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Ư�� â �ڵ� ã�� (��: "ChatGPT - Chrome")
 	FindTargetWindow();
 
 	// Ư�� â�� �����ϸ� �� â�� ȭ���� ĸó
 	if (TargetWindowHandle != nullptr)
 	{
-		// Ư�� â�� ȭ���� ĸó�ϰ� �ؽ�ó�� ��ȯ
+		//특정 앱만 찾아서 화면 공유
 		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
 		imageTexture = MatToTexture2D(windowImage);
 		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
@@ -249,12 +248,12 @@ void AMetaRealmGM::FindTargetWindow()
 			TCHAR windowTitle[256];
 			GetWindowText(hwnd, windowTitle, 256);
 
-			// "īī����" â ã��
+			// 비주얼 스튜디오를 찾음
 			if (FString(windowTitle) == "MetaRealm - Microsoft Visual Studio")
 			{
 				HWND* targetHandle = (HWND*)lParam;
 				*targetHandle = hwnd;
-				return false;  // â�� ã���� ���� ����
+				return false; 
 			}
 
 			return true;  // â�� ��� ����
