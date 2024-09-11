@@ -36,37 +36,96 @@ void UNetGameInstance::Init()
 
 void UNetGameInstance::CreateMySession(FString roomName)
 {
-	FOnlineSessionSettings sessionSettings;
+	if (sessionInterface.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("sessionInterface isValid"));
+		auto ExistingSession = sessionInterface->GetNamedSession(FName("MTVSUNREAL")); // 현재 세션 정보 얻기
+		if (ExistingSession) // 세션이 이미 존재한다면
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Existing session found. Destroying the session..."));
+			sessionInterface->DestroySession(FName("MTVSUNREAL")); // 기존에 명명된 세션을 파괴
+			// 실행되면 'DestroySession'이 델리게이트에 정보를 제공한다. 즉, 바로 델리게이트가 호출된다.
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("session is not found."));
+			FOnlineSessionSettings sessionSettings;
+			if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
+				// OnlineSubsystem 이 NULL 로 세팅되면 (NULL : 로컬 연결 설정)
+			{
+				sessionSettings.bIsLANMatch = true; // true 시 : 같은 네트워크에 있는 사람을 찾음 (로컬 연결 설정) 
+			}
 
-	// true 세션이 검색 된다.
-	sessionSettings.bShouldAdvertise = true;
+			else
+			{
+				sessionSettings.bIsLANMatch = false; // false 시 : 다른 네트워크와 연결 가능하도록 함. (Steam, XBox 등 공식플랫폼 연결 설정)
+			}
 
-	// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
-	sessionSettings.bUseLobbiesIfAvailable = true;
+			// true 세션이 검색 된다.
+			sessionSettings.bShouldAdvertise = true;
 
-	// 내가 게임중인 아닌지를 보여줄건지
-	sessionSettings.bUsesPresence = true;
-	// 게임 플레이 중에 참여할 수 있게
-	sessionSettings.bAllowJoinInProgress = true;
-	sessionSettings.bAllowJoinViaPresence = true;
+			// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
+			sessionSettings.bUseLobbiesIfAvailable = true;
 
-	// 인원 수 
-	sessionSettings.NumPublicConnections = 10;
+			// 내가 게임중인 아닌지를 보여줄건지
+			sessionSettings.bUsesPresence = true;
+			// 게임 플레이 중에 참여할 수 있게
+			sessionSettings.bAllowJoinInProgress = true;
+			sessionSettings.bAllowJoinViaPresence = true;
 
-	// base64로 Encode
-	roomName = StringBase64Encode(roomName);
-	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+			// 인원 수 
+			sessionSettings.NumPublicConnections = 10;
+
+			// base64로 Encode
+			roomName = StringBase64Encode(roomName);
+			sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 
-	// 세션 생성 요청
-	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
-	                                    GetUniqueNetId();
+			// 세션 생성 요청
+			FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
+												GetUniqueNetId();
 
-	int32 rand = FMath::RandRange(1, 100000);
-	mySessionName += FString::Printf(TEXT("%d"), rand);
-	//NowSession = mySessionName;
+			// int32 rand = FMath::RandRange(1, 100000);
+			// mySessionName += FString::Printf(TEXT("%d"), rand);
+			//NowSession = mySessionName;
+
+			sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
+		}
+	}
+	else
+	{
+		FOnlineSessionSettings sessionSettings;
+
+		// true 세션이 검색 된다.
+		sessionSettings.bShouldAdvertise = true;
+
+		// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
+		sessionSettings.bUseLobbiesIfAvailable = true;
+
+		// 내가 게임중인 아닌지를 보여줄건지
+		sessionSettings.bUsesPresence = true;
+		// 게임 플레이 중에 참여할 수 있게
+		sessionSettings.bAllowJoinInProgress = true;
+		sessionSettings.bAllowJoinViaPresence = true;
+
+		// 인원 수 
+		sessionSettings.NumPublicConnections = 10;
+
+		// base64로 Encode
+		roomName = StringBase64Encode(roomName);
+		sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
+
+		// 세션 생성 요청
+		FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
+											GetUniqueNetId();
+
+		// int32 rand = FMath::RandRange(1, 100000);
+		// mySessionName += FString::Printf(TEXT("%d"), rand);
+		//NowSession = mySessionName;
 	
-	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
+		sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
+	}	
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -86,19 +145,22 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 void UNetGameInstance::DestroyMySession()
 {
 	//sessionInterface->DestroySession(FName(mySessionName));
+	// if (sessionInterface.IsValid())
+	// {
+	// 	if (sessionInterface->GetNamedSession(FName(mySessionName)) != nullptr)
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("Destroying session: %s"), *mySessionName);
+	// 		sessionInterface->DestroySession(FName(mySessionName));
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("No session found to destroy."));
+	// 	}
+	// }
 	if (sessionInterface.IsValid())
 	{
-		if (sessionInterface->GetNamedSession(FName(mySessionName)) != nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Destroying session: %s"), *mySessionName);
-			sessionInterface->DestroySession(FName(mySessionName));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No session found to destroy."));
-		}
+		sessionInterface->DestroySession(FName(mySessionName));
 	}
-
 	// 세션 관련 데이터 초기화
 	sessionSearch.Reset();
 	//NowSession.Empty();
@@ -270,61 +332,65 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
 	// 	}
 	// }
 
-	 IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
-    if (OnlineSubsystem)
-    {
-        FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(mySessionName));
-        if (NamedSession)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("NamedSession is nullPtr"));
-        }
-        IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
-        if (SessionInterface.IsValid())
-        {
-            if (!NamedSession)
-                return;
-
-            // 호스트인지 확인
-            bool bIsHost = PlayerToKick == GetWorld()->GetFirstPlayerController();
-
-            // 세션에서 플레이어 제거
-            if (PlayerToKick && PlayerToKick->PlayerState)
-            {
-                TSharedPtr<const FUniqueNetId> PlayerId = PlayerToKick->PlayerState->GetUniqueId().GetUniqueNetId();
-                if (PlayerId.IsValid())
-                {
-                    SessionInterface->UnregisterPlayer(*NamedSession->SessionName.ToString(), *PlayerId);
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Invalid PlayerId, cannot unregister player."));
-                }
-
-                // 플레이어를 메인 메뉴로 이동시킴
-                PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
-
-                // 호스트라면 세션 종료
-                if (bIsHost)
-                {
-                    UE_LOG(LogTemp, Log, TEXT("Host is being kicked, ending session."));
-                    DestroyMySession();  // 호스트가 나가면 세션을 종료
-                    return;
-                }
-            }
-
-            // 세션에 남아 있는 플레이어 수 확인
-            int32 RemainingPlayers = NamedSession->RegisteredPlayers.Num();
-            if (RemainingPlayers <= 0)
-            {
-                UE_LOG(LogTemp, Log, TEXT("No players left, ending session."));
-                DestroyMySession();  // 플레이어가 없으면 세션 종료
-            }
-        }
-    }
+	 // IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+  //   if (OnlineSubsystem)
+  //   {
+  //       FNamedOnlineSession* NamedSession = sessionInterface->GetNamedSession(FName(mySessionName));
+  //       if (NamedSession)
+  //       {
+  //           UE_LOG(LogTemp, Warning, TEXT("NamedSession : %s"), *NamedSession->SessionName.ToString());
+  //       }
+  //       else
+  //       {
+  //           UE_LOG(LogTemp, Warning, TEXT("NamedSession is nullPtr"));
+  //       }
+  //       IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+  //       if (SessionInterface.IsValid())
+  //       {
+  //           if (!NamedSession)
+  //               return;
+  //
+  //           // 호스트인지 확인
+  //           bool bIsHost = PlayerToKick == GetWorld()->GetFirstPlayerController();
+  //
+  //           // 세션에서 플레이어 제거
+  //           if (PlayerToKick && PlayerToKick->PlayerState)
+  //           {
+  //               TSharedPtr<const FUniqueNetId> PlayerId = PlayerToKick->PlayerState->GetUniqueId().GetUniqueNetId();
+  //               if (PlayerId.IsValid())
+  //               {
+  //                   SessionInterface->UnregisterPlayer(*NamedSession->SessionName.ToString(), *PlayerId);
+  //               }
+  //               else
+  //               {
+  //                   UE_LOG(LogTemp, Warning, TEXT("Invalid PlayerId, cannot unregister player."));
+  //               }
+  //
+  //               // 플레이어를 메인 메뉴로 이동시킴
+  //               PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
+  //
+  //               // 호스트라면 세션 종료
+  //               if (bIsHost)
+  //               {
+  //                   UE_LOG(LogTemp, Log, TEXT("Host is being kicked, ending session."));
+  //                   DestroyMySession();  // 호스트가 나가면 세션을 종료
+  //                   return;
+  //               }
+  //           }
+  //
+  //           // 세션에 남아 있는 플레이어 수 확인
+  //           int32 RemainingPlayers = NamedSession->RegisteredPlayers.Num();
+  //           if (RemainingPlayers <= 0)
+  //           {
+  //               UE_LOG(LogTemp, Log, TEXT("No players left, ending session."));
+  //               DestroyMySession();  // 플레이어가 없으면 세션 종료
+  //           }
+  //       }
+  //   }
+	
+	if (PlayerToKick && PlayerToKick->IsLocalController())
+		// 플레이어를 메인 메뉴로 이동시킴
+			PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
 }
 
 FString UNetGameInstance::StringBase64Encode(FString str)
@@ -346,5 +412,10 @@ FString UNetGameInstance::StringBase64Decode(FString str)
 
 void UNetGameInstance::LogInSession()
 {
-	FindOtherSession();
+	//FindOtherSession();
+
+	UE_LOG(LogTemp, Warning, TEXT("LogInSession Start"));
+	//FindOtherSession();
+	CreateMySession(mySessionName);
+	UE_LOG(LogTemp, Warning, TEXT("LogInSession End"));
 }
