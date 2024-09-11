@@ -141,8 +141,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strContent)
 {
-	if (HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, *strContent);
-	}
+		UE_LOG(LogTemp, Warning, TEXT("Content : %s"), *strContent);
+	// if (HasAuthority())
+	// {
+	// 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, *strContent);
+	// }
 }

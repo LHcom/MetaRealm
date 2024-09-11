@@ -4,20 +4,29 @@
 #include "MemoWidget.h"
 
 #include "PlayerCharacter.h"
-#include "Kismet/GameplayStatics.h"
 
 void UMemoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	
 }
 
 void UMemoWidget::setContent(const FString strContent)
 {
-	auto player = Cast<APlayerCharacter>(GetWorld()->GetFirstLocalPlayerFromController()->PlayerController->Player);
-	if(player&&player->IsLocallyControlled())
+	APlayerController* pc = GetOwningPlayer();
+	if (pc)
 	{
-		player->ServerRPC_ContentSave(strContent); 
+		auto player = Cast<APlayerCharacter>(pc->GetPawn());
+		if (player && player->IsLocallyControlled())
+		{
+			player->ServerRPC_ContentSave(strContent);
+		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("player is nullptr"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("player controller is nullptr"));
 	}
 }
