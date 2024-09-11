@@ -92,40 +92,6 @@ void UNetGameInstance::CreateMySession(FString roomName)
 			sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 		}
 	}
-	else
-	{
-		FOnlineSessionSettings sessionSettings;
-
-		// true 세션이 검색 된다.
-		sessionSettings.bShouldAdvertise = true;
-
-		// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
-		sessionSettings.bUseLobbiesIfAvailable = true;
-
-		// 내가 게임중인 아닌지를 보여줄건지
-		sessionSettings.bUsesPresence = true;
-		// 게임 플레이 중에 참여할 수 있게
-		sessionSettings.bAllowJoinInProgress = true;
-		sessionSettings.bAllowJoinViaPresence = true;
-
-		// 인원 수 
-		sessionSettings.NumPublicConnections = 10;
-
-		// base64로 Encode
-		roomName = StringBase64Encode(roomName);
-		sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-
-
-		// 세션 생성 요청
-		FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().
-											GetUniqueNetId();
-
-		// int32 rand = FMath::RandRange(1, 100000);
-		// mySessionName += FString::Printf(TEXT("%d"), rand);
-		//NowSession = mySessionName;
-	
-		sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
-	}	
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -416,6 +382,7 @@ void UNetGameInstance::LogInSession()
 
 	UE_LOG(LogTemp, Warning, TEXT("LogInSession Start"));
 	//FindOtherSession();
-	CreateMySession(mySessionName);
+	//CreateMySession(mySessionName);
+	FindOtherSession();
 	UE_LOG(LogTemp, Warning, TEXT("LogInSession End"));
 }
