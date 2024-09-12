@@ -20,6 +20,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void setContent(const FString strContent);
 
+	UFUNCTION()
+	void OnMyVisibilityChanged(ESlateVisibility newVisibility);
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString strMemo;

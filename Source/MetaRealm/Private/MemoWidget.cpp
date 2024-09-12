@@ -4,10 +4,12 @@
 #include "MemoWidget.h"
 
 #include "PlayerCharacter.h"
+#include "Components/EditableText.h"
 
 void UMemoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	this->OnVisibilityChanged.AddDynamic(this, &UMemoWidget::OnMyVisibilityChanged);
 }
 
 void UMemoWidget::setContent(const FString strContent)
@@ -22,17 +24,22 @@ void UMemoWidget::setContent(const FString strContent)
 		}
 		else
 		{
-			UE_LOG(LogTemp,Warning,TEXT("player is nullptr"));
+			UE_LOG(LogTemp, Warning, TEXT("player is nullptr"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("player controller is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("player controller is nullptr"));
 	}
+}
+
+void UMemoWidget::OnMyVisibilityChanged(ESlateVisibility newVisibility)
+{
+	if (newVisibility == ESlateVisibility::Visible)
+		EditableText_0->SetText(FText::FromString(strMemo));
 }
 
 void UMemoWidget::setMemo(const FString& strContent)
 {
 	strMemo = strContent;
 }
-

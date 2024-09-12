@@ -79,7 +79,7 @@ void APlayerCharacter::initMemoUI()
 	if (nullptr == pc)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
-		MemoWidget = nullptr;
+		//MemoWidget = nullptr;
 		return;
 	}
 
@@ -294,9 +294,12 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	if (MemoWidget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
-		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+		//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+		MemoWidget->strMemo = strContent;
 		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-		       *MemoWidget->EditableText_0->GetText().ToString());
+		       *MemoWidget->strMemo);
+		// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+		// 	   *MemoWidget->EditableText_0->GetText().ToString());
 	}
 	else
 	{
