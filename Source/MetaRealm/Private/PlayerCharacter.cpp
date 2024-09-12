@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "EngineUtils.h"
+#include "InteractionWidget.h"
 #include "MemoWidget.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
@@ -62,6 +63,26 @@ void APlayerCharacter::initProceedingUI()
 	{
 		ProceedingWidget->AddToViewport(0);
 		ProceedingWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void APlayerCharacter::initMemoUI()
+{
+	auto* pc = Cast<APlayerController>(Controller);
+	if (nullptr == pc)
+	{
+		MemoWidget = nullptr;
+		return;
+	}
+
+	if (!MemoFactory)
+		return;
+
+	MemoWidget = CastChecked<UMemoWidget>(CreateWidget(GetWorld(), MemoFactory));
+	if (MemoWidget)
+	{
+		MemoWidget->AddToViewport(0);
+		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -130,7 +151,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	initProceedingUI();
-	//WhiteBoard
+	initMemoUI();
 }
 
 // Called every frame
@@ -153,58 +174,71 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	if (!WhiteBoard)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WhiteBoard is nullptr"));
+	// if (!WhiteBoard)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("WhiteBoard is nullptr"));
+	//
+	// 	for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
+	// 	{
+	// 		AActor* Actor = *It;
+	// 		if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
+	// 		{
+	// 			WhiteBoard = Actor;
+	// 			break;
+	// 		}
+	// 	}
+	// }
+	//
+	// if (!WhiteBoard)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
+	// 	return;
+	// }
+	//
+	// auto boardActor = Cast<AWhiteBoardActor>(WhiteBoard);
+	// if (!boardActor)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("boardActor is nullptr"));
+	// 	return;
+	// }
+	//
+	// auto board = boardActor->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget"));
+	// if (!board)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("board is nullptr"));
+	// 	return;
+	// }
+	//
+	// auto boardWidget = Cast<UWidgetComponent>(board);
+	// if (!boardWidget)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("boardWidget is nullptr"));
+	// 	return;
+	// }
+	//
+	// auto memoComp = Cast<UMemoWidget>(boardWidget->GetUserWidgetObject());
 
-		for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
-		{
-			AActor* Actor = *It;
-			if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
-			{
-				WhiteBoard = Actor;
-				break;
-			}
-		}
-	}
+	// if (memoComp)
+	// {
+	// 	//memoComp->strMemo = strContent;
+	// 	memoComp->EditableText_0->SetText(FText::FromString(strContent));
+	// 	UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+	// 	       *memoComp->EditableText_0->GetText().ToString());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
+	// }
 
-	if (!WhiteBoard)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
-		return;
-	}
-
-	auto boardActor = Cast<AWhiteBoardActor>(WhiteBoard);
-	if (!boardActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("boardActor is nullptr"));
-		return;
-	}
-	
-	auto board = boardActor->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget"));
-	if (!board)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("board is nullptr"));
-		return;
-	}
-
-	auto boardWidget = Cast<UWidgetComponent>(board);
-	if (!boardWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("boardWidget is nullptr"));
-		return;
-	}
-	
-	auto memoComp = Cast<UMemoWidget>(boardWidget->GetUserWidgetObject());
-
-	if (memoComp)
+	if (MemoWidget)
 	{
 		//memoComp->strMemo = strContent;
-		memoComp->EditableText_0->SetText(FText::FromString(strContent));
-		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->EditableText_0->GetText().ToString());
+		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+			   *MemoWidget->EditableText_0->GetText().ToString());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
 	}
 }

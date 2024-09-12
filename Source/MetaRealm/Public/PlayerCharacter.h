@@ -49,6 +49,12 @@ public:
 	FString GetMemberName();
 
 	//-----------------------------------------게시판 관련
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UMemoWidget> MemoFactory;
+	UPROPERTY(BlueprintReadWrite)
+	class UMemoWidget* MemoWidget;
+	void initMemoUI();
+	
 	UPROPERTY()
 	class AActor* WhiteBoard;
 	
