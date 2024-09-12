@@ -30,3 +30,9 @@ void UMemoWidget::setContent(const FString strContent)
 		UE_LOG(LogTemp,Warning,TEXT("player controller is nullptr"));
 	}
 }
+
+void UMemoWidget::setMemo(const FString& strContent)
+{
+	strMemo = strContent;
+}
+

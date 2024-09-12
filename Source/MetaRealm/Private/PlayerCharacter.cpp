@@ -4,9 +4,12 @@
 
 #include <chrono>
 
+#include "EngineUtils.h"
+#include "MemoWidget.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 
 // Sets default values
@@ -125,6 +128,19 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	initProceedingUI();
+	//WhiteBoard
+
+	if(IsLocallyControlled())
+	{
+		for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
+		{
+			AActor* Actor = *It;
+			if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
+			{
+				WhiteBoard=Actor;
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -141,9 +157,25 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strContent)
 {
-		UE_LOG(LogTemp, Warning, TEXT("Content : %s"), *strContent);
-	// if (HasAuthority())
-	// {
-	// 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, *strContent);
-	// }
+	UE_LOG(LogTemp, Warning, TEXT("Content : %s"), *strContent);
+	MulticastRPC_ContentSave(strContent);
+}
+
+void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
+{
+	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(GetComponentByClass(UWidgetComponent::StaticClass()));
+	if (WidgetComp)
+	{
+		// 위젯의 UserWidget 가져오기
+		UUserWidget* UserWidget = WidgetComp->GetUserWidgetObject();
+		if (UserWidget)
+		{
+			auto memoComp = Cast<UMemoWidget>(UserWidget);
+			if(memoComp)
+			{
+				memoComp->strMemo = strContent;
+				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
+			}
+		}
+	}
 }

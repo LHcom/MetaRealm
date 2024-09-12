@@ -19,4 +19,10 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void setContent(const FString strContent);
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FString strMemo;
+
+	void setMemo(const FString& strContent);
 };
