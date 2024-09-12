@@ -68,21 +68,36 @@ void APlayerCharacter::initProceedingUI()
 
 void APlayerCharacter::initMemoUI()
 {
+	if(!IsLocallyControlled())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is not Local"));
+		return;
+	}
+
 	auto* pc = Cast<APlayerController>(Controller);
 	if (nullptr == pc)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
 		MemoWidget = nullptr;
 		return;
 	}
 
 	if (!MemoFactory)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoFactory is null"));
 		return;
+	}
 
 	MemoWidget = CastChecked<UMemoWidget>(CreateWidget(GetWorld(), MemoFactory));
 	if (MemoWidget)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is null"));
 	}
 }
 
@@ -230,15 +245,43 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	// 	UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
 	// }
 
-	if (MemoWidget)
+	// if(IsLocallyControlled())
+	// {
+	// 	if (MemoWidget)
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
+	// 		//memoComp->strMemo = strContent;
+	// 		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+	// 		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+	// 			   *MemoWidget->EditableText_0->GetText().ToString());
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
+	// 	}
+	// }
+	//
+}
+
+void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strContent)
+{
+	if(IsLocallyControlled())
 	{
-		//memoComp->strMemo = strContent;
-		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-			   *MemoWidget->EditableText_0->GetText().ToString());
+		if (MemoWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
+			//memoComp->strMemo = strContent;
+			MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+			UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+				   *MemoWidget->EditableText_0->GetText().ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("is not local player"));
 	}
 }
