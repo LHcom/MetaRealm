@@ -199,9 +199,9 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 
 	if (memoComp)
 	{
-		memoComp->strMemo = strContent;
+		//memoComp->strMemo = strContent;
 		memoComp->EditableText_0->SetText(FText::FromString(strContent));
-		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
+		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->EditableText_0->GetText().ToString());
 	}
 	else
 	{
