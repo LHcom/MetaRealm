@@ -38,29 +38,29 @@ public:
 	virtual void StartPlay() override;
 
 public:
-	cv::VideoCapture capture;
-	cv::Mat image;
+	//cv::VideoCapture capture;
+	//cv::Mat image;
 
-	UFUNCTION(BlueprintCallable)
-	void ReadFrame();
+	//UFUNCTION(BlueprintCallable)
+	//void ReadFrame();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* imageTexture;
-	UTexture2D* MatToTexture2D(const cv::Mat InMat);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UTexture2D* imageTexture;
+	//UTexture2D* MatToTexture2D(const cv::Mat InMat);
 
 
-	cv::Mat GetScreenToCVMat();
-	cv::Mat GetWindowToCVMat(HWND hwnd);
+	//cv::Mat GetScreenToCVMat();
+	//cv::Mat GetWindowToCVMat(HWND hwnd);
 
-	void LogActiveWindowTitles();
+	//void LogActiveWindowTitles();
 
-	// 캡처할 특정 창의 핸들을 저장하는 변수
-	HWND TargetWindowHandle;
+	//// 캡처할 특정 창의 핸들을 저장하는 변수
+	//HWND TargetWindowHandle;
 
-	void FindTargetWindow();
+	//void FindTargetWindow();
 
-	// 창 제목을 저장할 변수 추가
-	TArray<FString> WindowTitles;
+	//// 창 제목을 저장할 변수 추가
+	//TArray<FString> WindowTitles;
 
 	FString MeetingMember = "";
 };
