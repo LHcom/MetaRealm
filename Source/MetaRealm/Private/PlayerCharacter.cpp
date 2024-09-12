@@ -8,6 +8,7 @@
 #include "MemoWidget.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
+#include "Components/EditableText.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "Interfaces/OnlineIdentityInterface.h"
@@ -129,18 +130,6 @@ void APlayerCharacter::BeginPlay()
 
 	initProceedingUI();
 	//WhiteBoard
-
-	if(IsLocallyControlled())
-	{
-		for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
-		{
-			AActor* Actor = *It;
-			if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
-			{
-				WhiteBoard=Actor;
-			}
-		}
-	}
 }
 
 // Called every frame
@@ -163,7 +152,29 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(WhiteBoard->GetComponentByClass(UWidgetComponent::StaticClass()));
+	if (!WhiteBoard)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WhiteBoard is nullptr"));
+
+		for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
+		{
+			AActor* Actor = *It;
+			if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
+			{
+				WhiteBoard = Actor;
+				break;
+			}
+		}
+	}
+
+	if (!WhiteBoard)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
+		return;
+	}
+
+	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(
+		WhiteBoard->GetComponentByClass(UWidgetComponent::StaticClass()));
 	if (WidgetComp)
 	{
 		// 위젯의 UserWidget 가져오기
@@ -171,9 +182,10 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 		if (UserWidget)
 		{
 			auto memoComp = Cast<UMemoWidget>(UserWidget);
-			if(memoComp)
+			if (memoComp)
 			{
 				memoComp->strMemo = strContent;
+				memoComp->EditableText_0->SetText(FText::FromString(strContent));
 				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
 			}
 			else

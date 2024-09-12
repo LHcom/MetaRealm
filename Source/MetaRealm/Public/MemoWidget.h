@@ -24,5 +24,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString strMemo;
 
+	UPROPERTY(meta=(BindWidget), BlueprintReadWrite, EditDefaultsOnly)
+	class UEditableText* EditableText_0;
+
 	void setMemo(const FString& strContent);
 };
