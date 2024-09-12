@@ -172,34 +172,17 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 		UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
 		return;
 	}
-
-	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(
-		WhiteBoard->GetComponentByClass(UWidgetComponent::StaticClass()));
-	if (WidgetComp)
+	
+	auto memoComp=Cast<UMemoWidget>(WhiteBoard->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget")));
+	
+	if (memoComp)
 	{
-		// 위젯의 UserWidget 가져오기
-		UUserWidget* UserWidget = WidgetComp->GetUserWidgetObject();
-		if (UserWidget)
-		{
-			auto memoComp = Cast<UMemoWidget>(UserWidget);
-			if (memoComp)
-			{
-				memoComp->strMemo = strContent;
-				memoComp->EditableText_0->SetText(FText::FromString(strContent));
-				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("UserWidget is nullptr"));
-		}
+		memoComp->strMemo = strContent;
+		memoComp->EditableText_0->SetText(FText::FromString(strContent));
+		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WidgetComp is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
 	}
 }
