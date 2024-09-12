@@ -8,6 +8,7 @@
 #include "MemoWidget.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
+#include "WhiteBoardActor.h"
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
@@ -172,9 +173,30 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 		UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
 		return;
 	}
+
+	auto boardActor = Cast<AWhiteBoardActor>(WhiteBoard);
+	if (!boardActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("boardActor is nullptr"));
+		return;
+	}
 	
-	auto memoComp=Cast<UMemoWidget>(WhiteBoard->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget")));
+	auto board = boardActor->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget"));
+	if (!board)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("board is nullptr"));
+		return;
+	}
+
+	auto boardWidget = Cast<UWidgetComponent>(board);
+	if (!boardWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("boardWidget is nullptr"));
+		return;
+	}
 	
+	auto memoComp = Cast<UMemoWidget>(boardWidget->GetUserWidgetObject());
+
 	if (memoComp)
 	{
 		memoComp->strMemo = strContent;
