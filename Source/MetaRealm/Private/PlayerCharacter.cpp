@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "InteractionWidget.h"
 #include "MemoWidget.h"
+#include "MR_Controller.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
 #include "WhiteBoardActor.h"
@@ -68,7 +69,7 @@ void APlayerCharacter::initProceedingUI()
 
 void APlayerCharacter::initMemoUI()
 {
-	if(!IsLocallyControlled())
+	if (!IsLocallyControlled())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is not Local"));
 		return;
@@ -185,6 +186,7 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 {
 	UE_LOG(LogTemp, Warning, TEXT("Content : %s"), *strContent);
 	MulticastRPC_ContentSave(strContent);
+	//ClientRPC_ContentSave(strContent);
 }
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
@@ -247,41 +249,58 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 
 	// if(IsLocallyControlled())
 	// {
-	// 	if (MemoWidget)
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
-	// 		//memoComp->strMemo = strContent;
-	// 		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-	// 		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-	// 			   *MemoWidget->EditableText_0->GetText().ToString());
-	// 	}
-	// 	else
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
-	// 	}
+	// 	
 	// }
-	//
-}
-
-void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strContent)
-{
-	if(IsLocallyControlled())
+	auto pc = Cast<AMR_Controller>(Controller);
+	if (pc)
 	{
-		if (MemoWidget)
+		auto MR_player = Cast<APlayerCharacter>(pc->GetPawn());
+		if (MR_player)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
-			//memoComp->strMemo = strContent;
-			MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-			UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-				   *MemoWidget->EditableText_0->GetText().ToString());
+			if (MR_player->MemoWidget)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null"));
+				//memoComp->strMemo = strContent;
+				MR_player->MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+				       *MR_player->MemoWidget->EditableText_0->GetText().ToString());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr"));
+			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
+			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MR_player Is Nullptr"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("is not local player"));
+		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Player Controller Is Nullptr"));
 	}
+}
+
+void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strContent)
+{
+	if (MemoWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
+		//memoComp->strMemo = strContent;
+		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+		UE_LOG(LogTemp, Warning, TEXT("Client RPC Memo Content: %s"),
+		       *MemoWidget->EditableText_0->GetText().ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
+	}
+	// if(IsLocallyControlled())
+	// {
+	// 	
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("is not local player"));
+	// }
 }

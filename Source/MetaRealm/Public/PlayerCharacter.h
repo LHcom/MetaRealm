@@ -50,7 +50,7 @@ public:
 
 	//-----------------------------------------게시판 관련
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UMemoWidget> MemoFactory;
+	TSubclassOf<class UUserWidget> MemoFactory;
 	UPROPERTY(BlueprintReadWrite)
 	class UMemoWidget* MemoWidget;
 	void initMemoUI();
