@@ -69,13 +69,13 @@ void APlayerCharacter::initProceedingUI()
 
 void APlayerCharacter::initMemoUI()
 {
-	if (!IsLocallyControlled())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is not Local"));
-		return;
-	}
+	// if (!IsLocallyControlled())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is not Local"));
+	// 	return;
+	// }
 
-	auto* pc = Cast<APlayerController>(Controller);
+	auto* pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
@@ -83,16 +83,17 @@ void APlayerCharacter::initMemoUI()
 		return;
 	}
 
-	if (!MemoFactory)
+	if (!pc->MemoUIFactory)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoFactory is null"));
 		return;
 	}
 
-	MemoWidget = CastChecked<UMemoWidget>(CreateWidget(GetWorld(), MemoFactory));
-	if (MemoWidget)
+	pc->MemoUI = CastChecked<UMemoWidget>(CreateWidget(GetWorld(), pc->MemoUIFactory));
+	if (pc->MemoUI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
+		MemoWidget = pc->MemoUI;
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -167,7 +168,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	initProceedingUI();
-	initMemoUI();
+	if (IsLocallyControlled())
+		initMemoUI();
 }
 
 // Called every frame
@@ -251,33 +253,54 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	// {
 	// 	
 	// }
-	auto pc = Cast<AMR_Controller>(Controller);
-	if (pc)
+
+	// auto pc = Cast<AMR_Controller>(Controller);
+	// if (pc)
+	// {
+	// 	auto MR_player = Cast<APlayerCharacter>(pc->GetPawn());
+	// 	if (MR_player)
+	// 	{
+	// 		if (MR_player->MemoWidget)
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null"));
+	// 			//memoComp->strMemo = strContent;
+	// 			MR_player->MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+	// 			UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+	// 			       *MR_player->MemoWidget->EditableText_0->GetText().ToString());
+	// 		}
+	// 		else
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr"));
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MR_player Is Nullptr"));
+	// 	}
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Player Controller Is Nullptr"));
+	// }
+
+	// 각 클라이언트에서 MemoWidget이 nullptr인지 확인하고, 필요 시 초기화
+	if (!MemoWidget)
 	{
-		auto MR_player = Cast<APlayerCharacter>(pc->GetPawn());
-		if (MR_player)
-		{
-			if (MR_player->MemoWidget)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null"));
-				//memoComp->strMemo = strContent;
-				MR_player->MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-				       *MR_player->MemoWidget->EditableText_0->GetText().ToString());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MR_player Is Nullptr"));
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
+		initMemoUI(); // MemoWidget 초기화 시도
+	}
+
+	// MemoWidget이 정상적으로 존재하는지 확인 후 동기화
+	if (MemoWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
+		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+		       *MemoWidget->EditableText_0->GetText().ToString());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Player Controller Is Nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Failed to initialize MemoWidget"));
 	}
 }
 
