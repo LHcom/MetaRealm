@@ -163,7 +163,7 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(GetComponentByClass(UWidgetComponent::StaticClass()));
+	UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(WhiteBoard->GetComponentByClass(UWidgetComponent::StaticClass()));
 	if (WidgetComp)
 	{
 		// 위젯의 UserWidget 가져오기
@@ -176,6 +176,18 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 				memoComp->strMemo = strContent;
 				UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"), *memoComp->strMemo);
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
+			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UserWidget is nullptr"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WidgetComp is nullptr"));
 	}
 }
