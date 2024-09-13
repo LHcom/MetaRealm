@@ -19,7 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -29,7 +29,7 @@ public:
 	// ü��UI�� �����ؼ� �Ӹ����� ��ġ�ϰ�ʹ�.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionComp;
-	
+
 	/*UPROPERTY()
 	class * ReactionWidget;*/
 
@@ -47,4 +47,28 @@ public:
 	FString MeetingEndTime;
 
 	FString GetMemberName();
+
+	//-----------------------------------------게시판 관련
+	// UPROPERTY(EditDefaultsOnly)
+	// TSubclassOf<class UUserWidget> MemoFactory;
+	UPROPERTY(BlueprintReadWrite)
+	class UMemoWidget* MemoWidget;
+	void initMemoUI();
+	
+	UPROPERTY()
+	class AActor* WhiteBoard;
+	
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ContentSave(const FString& strContent); // 서버로 게시한 정보를 보내서 저장시킨다.
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
+
+	//----------------------------------------------
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UWidgetComponent* ReactionUIComponent;
+	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
+	class UStaticMeshComponent* Cylinder;
+
 };
