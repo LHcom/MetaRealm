@@ -118,7 +118,7 @@ public:
 	// ======================================================== State Button Binding Start
 
 	UPROPERTY(meta=(BindWidget))
-	class UBorder* PlayerStateBar;
+	class UCanvasPanel* PlayerStateBar;
 
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	class UButton* OpenStateUI;

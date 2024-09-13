@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/Border.h"
 #include "PlayerCharacter.h"
+#include "Components/CanvasPanel.h"
 
 void UPlayerWidget::NativeConstruct()
 {
