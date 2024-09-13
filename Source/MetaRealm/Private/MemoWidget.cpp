@@ -3,6 +3,7 @@
 
 #include "MemoWidget.h"
 
+#include "MetaRealmGameState.h"
 #include "PlayerCharacter.h"
 #include "Components/EditableText.h"
 
@@ -36,7 +37,13 @@ void UMemoWidget::setContent(const FString strContent)
 void UMemoWidget::OnMyVisibilityChanged(ESlateVisibility newVisibility)
 {
 	if (newVisibility == ESlateVisibility::Visible)
-		EditableText_0->SetText(FText::FromString(strMemo));
+	{
+		auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState());
+		if (gs)
+		{
+			EditableText_0->SetText(FText::FromString(gs->gsContent));
+		}
+	}
 }
 
 void UMemoWidget::setMemo(const FString& strContent)

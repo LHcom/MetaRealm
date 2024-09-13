@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "InteractionWidget.h"
 #include "MemoWidget.h"
+#include "MetaRealmGameState.h"
 #include "MR_Controller.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
@@ -15,6 +16,7 @@
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "Interfaces/OnlineIdentityInterface.h"
+#include "MetaRealm/MetaRealm.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -90,6 +92,8 @@ void APlayerCharacter::initProceedingUI()
 	}
 }
 
+AMR_Controller* pc;
+
 void APlayerCharacter::initMemoUI()
 {
 	// if (!IsLocallyControlled())
@@ -98,7 +102,7 @@ void APlayerCharacter::initMemoUI()
 	// 	return;
 	// }
 
-	auto* pc = Cast<AMR_Controller>(Controller);
+	pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
@@ -255,6 +259,19 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 
 void APlayerCharacter::setContent(const FString& strContent)
 {
-	if (IsLocallyControlled() && MemoWidget)
-		MemoWidget->strMemo = strContent;
+	// if (!MemoWidget)
+	// 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("MemoWidget Is Null"));
+	//
+	// if (IsLocallyControlled() && MemoWidget)
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Before strMemo TEXT"), *MemoWidget->strMemo);
+	// 	MemoWidget->strMemo = strContent;
+	// 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("After strMemo TEXT"), *MemoWidget->strMemo);
+	// }
+
+	auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		gs->gsContent = strContent;
+	}
 }
