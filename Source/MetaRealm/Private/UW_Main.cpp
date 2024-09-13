@@ -30,13 +30,13 @@ void UUW_Main::NativeConstruct()
 
 	if (PlayerList)
 	{
-		PlayerList->SetVisibility(ESlateVisibility::Visible);
+		PlayerList->SetVisibility(ESlateVisibility::Hidden);
 	}
-	if (PlayListScrollBox)
-	{
-		// ScrollBox 초기화 로직 추가
-		//PlayListScrollBox->ClearChildren();
-	}
+	//if (PlayListScrollBox)
+	//{
+	//	// ScrollBox 초기화 로직 추가
+	//	//PlayListScrollBox->ClearChildren();
+	//}
 }
 
 void UUW_Main::VisiblePlayerList()

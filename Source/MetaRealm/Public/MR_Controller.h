@@ -33,6 +33,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite)
+	class UUW_Main* MainUIWidget;
+
 	UFUNCTION()
 	void ViewMainUI();
 
@@ -67,6 +70,12 @@ public:
 	//-----------------------------------------게시??관??
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> MemoUIFactory;
+
 	UPROPERTY(BlueprintReadWrite)
 	class UMemoWidget* MemoUI;
+
+	UPROPERTY(EditAnywhere)
+	bool IsViewMainUI = false;
+
+	
 };
