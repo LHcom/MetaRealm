@@ -163,6 +163,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			}
 			else
 			{
+				bool flag = false;
 				for (int i = 0; i < results.Num(); i++)
 				{
 					FOnlineSessionSearchResult si = results[i];
@@ -173,6 +174,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 					if (strRoomName != MyroomName)
 						continue;
 
+					flag = true;
 					// 세션 정보 ---> String 으로 
 					// 세션의 최대 인원
 					int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
@@ -190,8 +192,12 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 						*strRoomName, currPlayer);
 
 					JoinOtherSession(i);
+					break;
 					//onSearchComplete.ExecuteIfBound(0, sessionInfo);
 				}
+
+				if(!flag)
+					CreateMySession(MyroomName);
 			}
 		}
 	}
