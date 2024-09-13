@@ -29,6 +29,8 @@ public:
 	UPROPERTY()
 	class UStaticMeshComponent* Cylinder;
 
+	FTimerHandle handle;
+
 	// ======================================================== Character Component Save End
 	
 	
@@ -113,6 +115,8 @@ public:
 	UFUNCTION()
 	void ClickedReaction14();
 
+	UFUNCTION()
+	void HideImage();
 	// ======================================================== Reaction Button Binding End
 	// 
 	// ======================================================== State Button Binding Start

@@ -67,8 +67,66 @@ public:
 
 	//----------------------------------------------
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UWidgetComponent* PlayerUI;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionUIComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure1;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure2;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure3;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure4;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure5;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure6;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure7;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure8;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure9;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure10;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure11;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure12;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure13;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* ReactionTexure14;
+
+
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
+	
+	UPROPERTY()
+	class UMaterial* CylinderMaterial1;
 
+	UPROPERTY()
+	class UMaterial* CylinderMaterial2;
+	
+	UPROPERTY()
+	class UMaterial* CylinderMaterial3;
+
+	UFUNCTION()
+	void SetCylinderMaterial(int32 value);
 };
