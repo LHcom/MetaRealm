@@ -2,7 +2,6 @@
 
 
 #include "MR_Controller.h"
-
 #include "MetaRealm/MetaRealm.h"
 #include "Main_HUD.h"
 #include "MetaRealmGM.h"
@@ -12,12 +11,16 @@
 #include "Online/CoreOnline.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineIdentityInterface.h"
 #include "GameFramework/Character.h"
+#include "UW_Main.h"
+#include "Blueprint/UserWidget.h"
+#include "UW_PlayerList.h"
 
 void AMR_Controller::PostInitializeComponents()
 {
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 	Super::PostInitializeComponents();
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+
 }
 
 void AMR_Controller::PostNetInit()
@@ -52,8 +55,14 @@ void AMR_Controller::BeginPlay()
 	{
 		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is null"));
 	}
-
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+
+	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+
+    if (CurrentMapName == "KHH_level") 
+    {
+        ViewMainUI();
+    }
 }
 
 void AMR_Controller::SetupInputComponent()
@@ -62,6 +71,42 @@ void AMR_Controller::SetupInputComponent()
 
 	// �׼� Ű ���ε�.
 	InputComponent->BindAction(TEXT("Chat"), EInputEvent::IE_Pressed, this, &AMR_Controller::FocusChatInputText);
+}
+
+FString AMR_Controller::GetSteamID() const
+{
+	if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
+	{
+		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+		if (Identity.IsValid())
+		{
+			FUniqueNetIdRepl UniqueNetId = GetLocalPlayer()->GetPreferredUniqueNetId();
+			if (UniqueNetId.IsValid())
+			{
+				return UniqueNetId->ToString();
+			}
+		}
+	}
+	return FString("Unknown");
+}
+
+void AMR_Controller::ViewMainUI()
+{
+	// MainUI 생성 및 표시
+	if (UUW_Main* MainUIWidget = CreateWidget<UUW_Main>(this, MainUIWidgetClass))
+	{
+		MainUIWidget->AddToViewport();
+
+		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
+		{
+			FString PlayerName = GetSteamID();
+			PlayerListWidget->SetPlayerName(GetSteamID());
+
+			// PlayerList 위젯을 ScrollBox에 추가
+			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+		}
+	}
+
 }
 
 void AMR_Controller::MoveToMeetingRoomMap()
@@ -155,6 +200,7 @@ void AMR_Controller::FocusChatInputText()
 
 	SetInputMode(InputMode);
 }
+
 
 void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 {

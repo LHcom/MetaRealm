@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Templates/SubclassOf.h"
+#include "UW_Main.h"
 #include "MR_Controller.generated.h"
 
 /**
@@ -20,6 +22,19 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	// Steam ID∏¶ ∞°¡Æø¿¥¬ «‘ºˆ
+	FString GetSteamID() const;
+
+	// MainUI ¿ß¡¨ ∫Ì∑Á«¡∏∞∆Æ ≈¨∑°Ω∫
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUW_Main> MainUIWidgetClass;
+
+    // PlayerList ¿ß¡¨ ∫Ì∑Á«¡∏∞∆Æ ≈¨∑°Ω∫
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
+
+	UFUNCTION()
+	void ViewMainUI();
 
 	UFUNCTION(BlueprintCallable)
 	void MoveToMeetingRoomMap();
@@ -47,8 +62,9 @@ private:
 
 	UPROPERTY()
 	class AMetaRealmGM* gm;
+
 public:
-	//-----------------------------------------Í≤åÏãúÌåê Í¥ÄÎ†®
+	//-----------------------------------------Í≤åÏãú??Í¥Ä??
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> MemoUIFactory;
 	UPROPERTY(BlueprintReadWrite)
