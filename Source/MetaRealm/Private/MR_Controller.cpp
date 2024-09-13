@@ -156,8 +156,6 @@ void AMR_Controller::MoveToMainMap()
 				player->MeetingEndTime = player->GetSystemTime();
 		}
 	}
-
-
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
