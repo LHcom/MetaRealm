@@ -116,9 +116,13 @@ void APlayerCharacter::initMemoUI()
 	if (pc->MemoUI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
-		//MemoWidget = pc->MemoUI;
-		pc->MemoUI->AddToViewport(0);
-		pc->MemoUI->SetVisibility(ESlateVisibility::Hidden);
+		MemoWidget = pc->MemoUI;
+		MemoWidget->AddToViewport(0);
+		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
+		if (IsLocallyControlled())
+		{
+			
+		}
 	}
 	else
 	{
@@ -192,7 +196,7 @@ void APlayerCharacter::BeginPlay()
 
 	initProceedingUI();
 	if (IsLocallyControlled())
-		initMemoUI();
+	initMemoUI();
 }
 
 // Called every frame
@@ -216,29 +220,29 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	auto* pc = Cast<AMR_Controller>(Controller);
-	if (nullptr == pc)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
-		//MemoWidget = nullptr;
-		return;
-	}
+	// auto* pc = Cast<AMR_Controller>(Controller);
+	// if (nullptr == pc)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
+	// 	//MemoWidget = nullptr;
+	// 	return;
+	// }
 
 	// 각 클라이언트에서 MemoWidget이 nullptr인지 확인하고, 필요 시 초기화
-	if (!pc->MemoUI)
+	if (!MemoWidget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
 		initMemoUI(); // MemoWidget 초기화 시도
 	}
 
 	// MemoWidget이 정상적으로 존재하는지 확인 후 동기화
-	if (pc->MemoUI)
+	if (MemoWidget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
 		//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-		pc->MemoUI->strMemo = strContent;
+		MemoWidget->strMemo = strContent;
 		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-		       *pc->MemoUI->strMemo);
+		       *MemoWidget->strMemo);
 		// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
 		// 	   *MemoWidget->EditableText_0->GetText().ToString());
 	}
