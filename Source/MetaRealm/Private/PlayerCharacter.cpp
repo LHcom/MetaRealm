@@ -51,7 +51,8 @@ APlayerCharacter::APlayerCharacter()
 	ReactionUIComponent->SetRelativeLocation(FVector(0, 0, 300));
 
 	ConstructorHelpers::FClassFinder<UUserWidget> ReactionUIClass(TEXT("/Game/KSK/UI/SKWBP_Reaction.SKWBP_Reaction_C"));
-	if (ReactionUIClass.Succeeded()) {
+	if (ReactionUIClass.Succeeded())
+	{
 		ReactionUIComponent->SetWidgetClass(ReactionUIClass.Class);
 		ReactionUIComponent->SetDrawSize(FVector2D(100, 100));
 	}
@@ -59,13 +60,14 @@ APlayerCharacter::APlayerCharacter()
 	Cylinder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cylinder"));
 	Cylinder->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
-	if (tempMesh.Succeeded()) {
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(
+		TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
+	if (tempMesh.Succeeded())
+	{
 		Cylinder->SetStaticMesh(tempMesh.Object);
 		Cylinder->SetRelativeLocation(FVector(0, 0, -90));
 		Cylinder->SetRelativeScale3D(FVector(2.0f, 2.0f, 0.035f));
 	}
-
 }
 
 void APlayerCharacter::initProceedingUI()
@@ -114,9 +116,9 @@ void APlayerCharacter::initMemoUI()
 	if (pc->MemoUI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
-		MemoWidget = pc->MemoUI;
-		MemoWidget->AddToViewport(0);
-		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
+		//MemoWidget = pc->MemoUI;
+		pc->MemoUI->AddToViewport(0);
+		pc->MemoUI->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -214,111 +216,29 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	// if (!WhiteBoard)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("WhiteBoard is nullptr"));
-	//
-	// 	for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
-	// 	{
-	// 		AActor* Actor = *It;
-	// 		if (IsValid(Actor) && Actor->ActorHasTag(FName("WhiteBoard")))
-	// 		{
-	// 			WhiteBoard = Actor;
-	// 			break;
-	// 		}
-	// 	}
-	// }
-	//
-	// if (!WhiteBoard)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("realreal WhiteBoard is nullptr"));
-	// 	return;
-	// }
-	//
-	// auto boardActor = Cast<AWhiteBoardActor>(WhiteBoard);
-	// if (!boardActor)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("boardActor is nullptr"));
-	// 	return;
-	// }
-	//
-	// auto board = boardActor->GetDefaultSubobjectByName(TEXT("WhiteBoardWidget"));
-	// if (!board)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("board is nullptr"));
-	// 	return;
-	// }
-	//
-	// auto boardWidget = Cast<UWidgetComponent>(board);
-	// if (!boardWidget)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("boardWidget is nullptr"));
-	// 	return;
-	// }
-	//
-	// auto memoComp = Cast<UMemoWidget>(boardWidget->GetUserWidgetObject());
-
-	// if (memoComp)
-	// {
-	// 	//memoComp->strMemo = strContent;
-	// 	memoComp->EditableText_0->SetText(FText::FromString(strContent));
-	// 	UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-	// 	       *memoComp->EditableText_0->GetText().ToString());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("memoComp is nullptr"));
-	// }
-
-	// if(IsLocallyControlled())
-	// {
-	// 	
-	// }
-
-	// auto pc = Cast<AMR_Controller>(Controller);
-	// if (pc)
-	// {
-	// 	auto MR_player = Cast<APlayerCharacter>(pc->GetPawn());
-	// 	if (MR_player)
-	// 	{
-	// 		if (MR_player->MemoWidget)
-	// 		{
-	// 			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null"));
-	// 			//memoComp->strMemo = strContent;
-	// 			MR_player->MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-	// 			UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-	// 			       *MR_player->MemoWidget->EditableText_0->GetText().ToString());
-	// 		}
-	// 		else
-	// 		{
-	// 			UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr"));
-	// 		}
-	// 	}
-	// 	else
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MR_player Is Nullptr"));
-	// 	}
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Player Controller Is Nullptr"));
-	// }
+	auto* pc = Cast<AMR_Controller>(Controller);
+	if (nullptr == pc)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
+		//MemoWidget = nullptr;
+		return;
+	}
 
 	// 각 클라이언트에서 MemoWidget이 nullptr인지 확인하고, 필요 시 초기화
-	if (!MemoWidget)
+	if (!pc->MemoUI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
 		initMemoUI(); // MemoWidget 초기화 시도
 	}
 
 	// MemoWidget이 정상적으로 존재하는지 확인 후 동기화
-	if (MemoWidget)
+	if (pc->MemoUI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
 		//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-		MemoWidget->strMemo = strContent;
+		pc->MemoUI->strMemo = strContent;
 		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-		       *MemoWidget->strMemo);
+		       *pc->MemoUI->strMemo);
 		// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
 		// 	   *MemoWidget->EditableText_0->GetText().ToString());
 	}
@@ -326,28 +246,4 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Failed to initialize MemoWidget"));
 	}
-}
-
-void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strContent)
-{
-	if (MemoWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
-		//memoComp->strMemo = strContent;
-		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-		UE_LOG(LogTemp, Warning, TEXT("Client RPC Memo Content: %s"),
-		       *MemoWidget->EditableText_0->GetText().ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
-	}
-	// if(IsLocallyControlled())
-	// {
-	// 	
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("is not local player"));
-	// }
 }
