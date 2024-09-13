@@ -45,6 +45,27 @@ APlayerCharacter::APlayerCharacter()
 	//	HPComp->SetRelativeLocation(FVector(0, 0, 120));
 	//}
 	//FSMComp = CreateDefaultSubobject<UFSMComponent>(TEXT("FSMComp"));
+
+	ReactionUIComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReactionUI"));
+	ReactionUIComponent->SetupAttachment(RootComponent);
+	ReactionUIComponent->SetRelativeLocation(FVector(0, 0, 300));
+
+	ConstructorHelpers::FClassFinder<UUserWidget> ReactionUIClass(TEXT("/Game/KSK/UI/SKWBP_Reaction.SKWBP_Reaction_C"));
+	if (ReactionUIClass.Succeeded()) {
+		ReactionUIComponent->SetWidgetClass(ReactionUIClass.Class);
+		ReactionUIComponent->SetDrawSize(FVector2D(100, 100));
+	}
+
+	Cylinder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cylinder"));
+	Cylinder->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
+	if (tempMesh.Succeeded()) {
+		Cylinder->SetStaticMesh(tempMesh.Object);
+		Cylinder->SetRelativeLocation(FVector(0, 0, -90));
+		Cylinder->SetRelativeScale3D(FVector(2.0f, 2.0f, 0.035f));
+	}
+
 }
 
 void APlayerCharacter::initProceedingUI()

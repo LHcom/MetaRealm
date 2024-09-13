@@ -64,4 +64,11 @@ public:
 	void MulticastRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
+
+	//----------------------------------------------
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UWidgetComponent* ReactionUIComponent;
+	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
+	class UStaticMeshComponent* Cylinder;
+
 };
