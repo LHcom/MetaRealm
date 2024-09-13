@@ -15,6 +15,8 @@
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "Interfaces/OnlineIdentityInterface.h"
+#include "Materials/Material.h"
+#include "ReactionUI.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -22,39 +24,33 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
-
-	//if (TempMesh.Succeeded())
-	//{
-	//	GetMesh()->SetSkeletalMesh(TempMesh.Object);
-	//	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
-	//	GetMesh()->SetRelativeScale3D(FVector(0.85f));
-	//}
-	//// 이동방향으로 회전하도록 처리하고싶다.
-	//GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	//HPComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPComp"));
-	//HPComp->SetupAttachment(RootComponent);
-
-	//ConstructorHelpers::FClassFinder<UEnemyHPWidget> TempHPUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/TPS/UI/WBP_EnemyHp.WBP_EnemyHp_C'"));
-
-	//if (TempHPUI.Succeeded())
-	//{
-	//	HPComp->SetWidgetClass(TempHPUI.Class);
-	//	HPComp->SetDrawSize(FVector2D(100, 20));
-	//	HPComp->SetRelativeLocation(FVector(0, 0, 120));
-	//}
-	//FSMComp = CreateDefaultSubobject<UFSMComponent>(TEXT("FSMComp"));
+	// 플레이어에 Player Widget 붙이기=========================================================================
+	PlayerUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("PlayerUI"));
+	if (PlayerUI){
+		PlayerUI->SetupAttachment(RootComponent);
+		PlayerUI->SetWidgetSpace(EWidgetSpace::Screen);
+	}
+	ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIClass(TEXT("/Game/KHH/UI/UI/WBP_Player.WBP_Player_C"));
+	if (PlayerUIClass.Succeeded()) {
+		PlayerUI->SetWidgetClass(PlayerUIClass.Class);
+		PlayerUI->SetDrawSize(FVector2D(1920, 1080));
+	}
+	// 플레이어 Reaction UI 관련 애들=========================================================================
 
 	ReactionUIComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReactionUI"));
 	ReactionUIComponent->SetupAttachment(RootComponent);
 	ReactionUIComponent->SetRelativeLocation(FVector(0, 0, 300));
-
+	
 	ConstructorHelpers::FClassFinder<UUserWidget> ReactionUIClass(TEXT("/Game/KSK/UI/SKWBP_Reaction.SKWBP_Reaction_C"));
 	if (ReactionUIClass.Succeeded()) {
 		ReactionUIComponent->SetWidgetClass(ReactionUIClass.Class);
-		ReactionUIComponent->SetDrawSize(FVector2D(100, 100));
+		ReactionUIComponent->SetDrawSize(FVector2D(200, 200));
+		UE_LOG(LogTemp, Warning, TEXT("=========================================="));
 	}
+
+
+
+	// 플레이어 상태 색 관련 애들=========================================================================
 
 	Cylinder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cylinder"));
 	Cylinder->SetupAttachment(RootComponent);
@@ -65,7 +61,21 @@ APlayerCharacter::APlayerCharacter()
 		Cylinder->SetRelativeLocation(FVector(0, 0, -90));
 		Cylinder->SetRelativeScale3D(FVector(2.0f, 2.0f, 0.035f));
 	}
+	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
+	if (CylinderMesh1.Succeeded()) {
+		Cylinder->SetMaterial(0, CylinderMesh1.Object);
+		CylinderMaterial1 = CylinderMesh1.Object;
+	}
 
+	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh2(TEXT("/Game/KSK/Material/CylinderMaterial2"));
+	if (CylinderMesh2.Succeeded()) {
+		CylinderMaterial2 = CylinderMesh2.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh3(TEXT("/Game/KSK/Material/CylinderMaterial3"));
+	if (CylinderMesh3.Succeeded()) {
+		CylinderMaterial3 = CylinderMesh3.Object;
+	}
 }
 
 void APlayerCharacter::initProceedingUI()
@@ -350,4 +360,17 @@ void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strCo
 	// {
 	// 	UE_LOG(LogTemp, Warning, TEXT("is not local player"));
 	// }
+}
+
+void APlayerCharacter::SetCylinderMaterial(int32 value)
+{
+	if (value == 1 && CylinderMaterial1) {
+		Cylinder->SetMaterial(0, CylinderMaterial1);
+	}
+	else if (value == 2 && CylinderMaterial2) {
+		Cylinder->SetMaterial(0, CylinderMaterial2);
+	}
+	else if (value == 3 && CylinderMaterial3) {
+		Cylinder->SetMaterial(0, CylinderMaterial3);
+	}
 }

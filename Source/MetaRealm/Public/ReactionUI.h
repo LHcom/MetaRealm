@@ -14,10 +14,11 @@ class METAREALM_API UReactionUI : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
 	UPROPERTY(meta = (BindWidget))
 	class UImage* Image2;
 
-	UFUNCTION(BlueprintCallable, Category = "Reaction")
+	UFUNCTION()
 	void ShowReaction(UTexture2D* ReactionImage);
 
 	UFUNCTION()
