@@ -121,7 +121,6 @@ void APlayerCharacter::initMemoUI()
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
 		if (IsLocallyControlled())
 		{
-			
 		}
 	}
 	else
@@ -129,6 +128,7 @@ void APlayerCharacter::initMemoUI()
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is null"));
 	}
 }
+
 
 void APlayerCharacter::setTextProceedingUI(FString& strMember, FString& strTime, FString& strCondensation)
 {
@@ -196,7 +196,7 @@ void APlayerCharacter::BeginPlay()
 
 	initProceedingUI();
 	if (IsLocallyControlled())
-	initMemoUI();
+		initMemoUI();
 }
 
 // Called every frame
@@ -228,26 +228,33 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	// 	return;
 	// }
 
+	setContent(strContent);
 	// 각 클라이언트에서 MemoWidget이 nullptr인지 확인하고, 필요 시 초기화
-	if (!MemoWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
-		initMemoUI(); // MemoWidget 초기화 시도
-	}
+	// if (!MemoWidget)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
+	// 	initMemoUI(); // MemoWidget 초기화 시도
+	// }
+	//
+	// // MemoWidget이 정상적으로 존재하는지 확인 후 동기화
+	// if (MemoWidget)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
+	// 	//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+	// 	MemoWidget->strMemo = strContent;
+	// 	UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+	// 	       *MemoWidget->strMemo);
+	// 	// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
+	// 	// 	   *MemoWidget->EditableText_0->GetText().ToString());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Failed to initialize MemoWidget"));
+	// }
+}
 
-	// MemoWidget이 정상적으로 존재하는지 확인 후 동기화
-	if (MemoWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
-		//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
+void APlayerCharacter::setContent(const FString& strContent)
+{
+	if (IsLocallyControlled() && MemoWidget)
 		MemoWidget->strMemo = strContent;
-		UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-		       *MemoWidget->strMemo);
-		// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-		// 	   *MemoWidget->EditableText_0->GetText().ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Failed to initialize MemoWidget"));
-	}
 }
