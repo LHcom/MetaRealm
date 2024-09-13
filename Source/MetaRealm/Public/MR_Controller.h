@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Templates/SubclassOf.h"
+#include "UW_Main.h"
 #include "MR_Controller.generated.h"
 
 /**
@@ -20,6 +22,19 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	// Steam ID를 가져오는 함수
+	FString GetSteamID() const;
+
+	// MainUI 위젯 블루프린트 클래스
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUW_Main> MainUIWidgetClass;
+
+    // PlayerList 위젯 블루프린트 클래스
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
+
+	UFUNCTION()
+	void ViewMainUI();
 
 	UFUNCTION(BlueprintCallable)
 	void MoveToMeetingRoomMap();
@@ -47,4 +62,5 @@ private:
 
 	UPROPERTY()
 	class AMetaRealmGM* gm;
+
 };

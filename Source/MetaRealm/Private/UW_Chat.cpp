@@ -14,7 +14,6 @@ void UUW_Chat::NativeConstruct()
 	if (ChatInputBox)
 	{
 		ChatInputBox->OnTextCommitted.AddDynamic(this, &UUW_Chat::OnChatTextCommitted);
-
 	}
 	ChatInputBox->SetIsEnabled(false);
 }
