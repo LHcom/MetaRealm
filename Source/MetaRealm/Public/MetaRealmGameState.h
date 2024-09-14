@@ -13,8 +13,13 @@ UCLASS()
 class METAREALM_API AMetaRealmGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-
+private:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	virtual void HandleBeginPlay() override;
 	virtual void OnRep_ReplicatedHasBegunPlay() override;
+
+	// 게시판 내용을 저장할 변수
+	UPROPERTY(Replicated)
+	FString gsContent;
 };

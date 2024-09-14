@@ -4,6 +4,14 @@
 #include "MetaRealmGameState.h"
 
 #include "MetaRealm/MetaRealm.h"
+#include "Net/UnrealNetwork.h"
+
+void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMetaRealmGameState, gsContent);
+}
 
 void AMetaRealmGameState::HandleBeginPlay()
 {
