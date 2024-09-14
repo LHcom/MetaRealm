@@ -40,4 +40,9 @@ public:
 
 	UFUNCTION()
 	void ButtonSignUpClicked();
+	
+private:
+	//====================Lobby
+	UPROPERTY()
+	class APlayerCharacter* Me;
 };

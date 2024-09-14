@@ -6,6 +6,7 @@
 
 #include "BoardStruct.h"
 #include "EngineUtils.h"
+#include "HttpLib.h"
 #include "InteractionWidget.h"
 #include "MemoWidget.h"
 #include "MetaRealmGameState.h"
@@ -20,6 +21,7 @@
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "Materials/Material.h"
 #include "ReactionUI.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -29,12 +31,14 @@ APlayerCharacter::APlayerCharacter()
 
 	// 플레이어에 Player Widget 붙이기=========================================================================
 	PlayerUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("PlayerUI"));
-	if (PlayerUI){
+	if (PlayerUI)
+	{
 		PlayerUI->SetupAttachment(RootComponent);
 		PlayerUI->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 	ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIClass(TEXT("/Game/KHH/UI/UI/WBP_Player.WBP_Player_C"));
-	if (PlayerUIClass.Succeeded()) {
+	if (PlayerUIClass.Succeeded())
+	{
 		PlayerUI->SetWidgetClass(PlayerUIClass.Class);
 		PlayerUI->SetDrawSize(FVector2D(1920, 1080));
 	}
@@ -53,7 +57,6 @@ APlayerCharacter::APlayerCharacter()
 	}
 
 
-
 	// 플레이어 상태 색 관련 애들=========================================================================
 
 	Cylinder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cylinder"));
@@ -68,18 +71,21 @@ APlayerCharacter::APlayerCharacter()
 		Cylinder->SetRelativeScale3D(FVector(2.0f, 2.0f, 0.035f));
 	}
 	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
-	if (CylinderMesh1.Succeeded()) {
+	if (CylinderMesh1.Succeeded())
+	{
 		Cylinder->SetMaterial(0, CylinderMesh1.Object);
 		CylinderMaterial1 = CylinderMesh1.Object;
 	}
 
 	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh2(TEXT("/Game/KSK/Material/CylinderMaterial2"));
-	if (CylinderMesh2.Succeeded()) {
+	if (CylinderMesh2.Succeeded())
+	{
 		CylinderMaterial2 = CylinderMesh2.Object;
 	}
 
 	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh3(TEXT("/Game/KSK/Material/CylinderMaterial3"));
-	if (CylinderMesh3.Succeeded()) {
+	if (CylinderMesh3.Succeeded())
+	{
 		CylinderMaterial3 = CylinderMesh3.Object;
 	}
 }
@@ -128,7 +134,7 @@ void APlayerCharacter::initMemoUI()
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
 
-		if(auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		if (auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 		{
 			MemoWidget->eTxtBoard->SetText(FText::FromString(gs->gsContent));
 		}
@@ -207,6 +213,18 @@ void APlayerCharacter::BeginPlay()
 	initProceedingUI();
 	if (IsLocallyControlled())
 		initMemoUI();
+
+	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+
+	if (CurrentMapName == "LobyMap")
+	{
+		TArray<AActor*> HttpActorArr;
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("HTTP"), HttpActorArr);
+		if (HttpActorArr.Num() > 0)
+		{
+			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
+		}
+	}
 }
 
 // Called every frame
@@ -227,12 +245,12 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 	// 서버 RPC로 들어온 변수값을
 	// 멀티캐스트 RPC로 뿌려준다.
 	MulticastRPC_ContentSave(strContent);
-	
+
 	// 게시판에 저장된 내용을 DataTable에 저장한다.
 	FBoardStruct newData;
-	newData.ContentString=strContent;
+	newData.ContentString = strContent;
 	auto gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance());
-	if(gi)
+	if (gi)
 		gi->SetBoardData(newData);
 }
 
@@ -249,13 +267,38 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 
 void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
-	if (value == 1 && CylinderMaterial1) {
+	if (value == 1 && CylinderMaterial1)
+	{
 		Cylinder->SetMaterial(0, CylinderMaterial1);
 	}
-	else if (value == 2 && CylinderMaterial2) {
+	else if (value == 2 && CylinderMaterial2)
+	{
 		Cylinder->SetMaterial(0, CylinderMaterial2);
 	}
-	else if (value == 3 && CylinderMaterial3) {
+	else if (value == 3 && CylinderMaterial3)
+	{
 		Cylinder->SetMaterial(0, CylinderMaterial3);
 	}
+}
+
+void APlayerCharacter::SignUp(const FString& JSON)
+{
+	if (!HttpActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HttpActor Is Null"));
+		return;
+	}
+
+	HttpActor->ReqSignUp(JSON);
+}
+
+void APlayerCharacter::Login(const FString& JSON)
+{
+	if (!HttpActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HttpActor Is Null"));
+		return;
+	}
+
+	HttpActor->ReqLogin(JSON);
 }

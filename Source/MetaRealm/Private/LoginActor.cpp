@@ -31,14 +31,6 @@ void ALoginActor::BeginPlay()
 			LoginUI->SignUpUI = SignUpUI;
 		}
 	}
-	// LobbyUI = Cast<ULobyWidget>(CreateWidget(GetWorld(), LobbyUIFactory));
-	// if (LobbyUI) {
-	// 	LobbyUI->AddToViewport();
-	// 	LobbyUI->SetVisibility(ESlateVisibility::Hidden);
-	// 	if (LoginUI) {
-	// 		LoginUI->LobbyUI = LobbyUI;
-	// 	}
-	// }
 }
 
 // Called every frame

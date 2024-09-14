@@ -2,34 +2,73 @@
 
 
 #include "SignUpUI.h"
+
+#include "JsonParseLib.h"
+#include "PlayerCharacter.h"
 #include "Components/Button.h"
+#include "Components/EditableText.h"
 
 void USignUpUI::NativeConstruct()
 {
 	ButtonSignUp->OnClicked.AddDynamic(this, &USignUpUI::SignUpButtonClicked);
 	ButtonExit->OnClicked.AddDynamic(this, &USignUpUI::ExitButtonClicked);
+
+	Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 void USignUpUI::SignUpButtonClicked()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	if (!Me)
+		Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-	// 나중에 사용할 코드
-	/*if (PSEditable->GetText().ToString() != SecPSEditable->GetText().ToString()) {
+	if (!Me)
+	{
 		return;
 	}
+
+	FString id = IDEditable->GetText().ToString();
+	FString pw = PSEditable->GetText().ToString();
+	FString pwChk = SecPSEditable->GetText().ToString();
+	FString nickName = NickNameEditable->GetText().ToString();
+
+	if (id.IsEmpty())
+	{
+		// 아이디 미입력
+		return;
+	}
+	if (pw.IsEmpty())
+	{
+		// 패스워드 미입력
+		return;
+	}
+	if (pwChk.IsEmpty())
+	{
+		// 패스워드 확인 미입력
+		return;
+	}
+	if (nickName.IsEmpty())
+	{
+		// 닉네임 확인 미입력
+		return;
+	}
+
+	if (pw != pwChk)
+	{
+		// 패스워드 확인 불일치
+		return;
+	}
+
 	TMap<FString, FString> SignUpData;
-	SignUpData.Add("userId", IDEditable->GetText().ToString());
-	SignUpData.Add("userPass", PSEditable->GetText().ToString());
-	SignUpData.Add("userName", NameEditable->GetText().ToString());
-	SignUpData.Add("birthday", BirthEditable->GetText().ToString());
+	SignUpData.Add("userId", id);
+	SignUpData.Add("userPass", pw);
+	SignUpData.Add("userName", nickName);
+	SignUpData.Add("userEmail", "");
+	SignUpData.Add("role", "USER");
 
 	FString json = UJsonParseLib::MakeJson(SignUpData);
-	FString SignUpURL = "http://192.168.1.40:8888/signup";
-	LoginActor->ReqSignUpSuccess(SignUpURL, json);
+	Me->SignUp(json);
 
 	SetVisibility(ESlateVisibility::Hidden);
-	LoginUI->SetVisibility(ESlateVisibility::Visible);*/
 }
 
 void USignUpUI::ExitButtonClicked()

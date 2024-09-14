@@ -21,11 +21,13 @@ private:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-	class APlayerCharacter* player;	
+	class APlayerCharacter* player;
+
 private:
-	const FString SignUpURL = ""; // 회원가입
-	const FString LoginURL = ""; // 로그인
-	const FString SoundToTextURL = "http://125.132.216.190:7777/v1/xr/stt"; // STT (회의 요약)
+	const FString ServerURL = "http://125.132.216.190:7777";
+	const FString SignUpURL = ServerURL + "/signup"; // 회원가입
+	const FString LoginURL = ServerURL + "/login"; // 로그인
+	const FString SoundToTextURL = ServerURL + "/v1/xr/stt"; // STT (회의 요약)
 	//const FString SoundToTextURL = "http://218.155.101.24:7777/v1/xr/stt"; // STT (회의 요약)
 	const FString GenerateColorURL = ""; // 캐릭터 머터리얼 색상 변경
 
@@ -49,6 +51,4 @@ public:
 	void ReqGenerateColor(const FString& JSON);
 	void OnResGenerateColor(FHttpRequestPtr Request, FHttpResponsePtr Response,
 	                        bool bConnectedSuccessfully);
-
-	
 };

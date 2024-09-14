@@ -121,5 +121,14 @@ public:
 
 	UFUNCTION()
 	void SetCylinderMaterial(int32 value);
-	
+
+private:
+	//=================================로비
+	UPROPERTY()
+	class AHttpLib* HttpActor;
+public:
+	// 회원가입
+	void SignUp(const FString& JSON);
+	// 로그인
+	void Login(const FString& JSON);
 };

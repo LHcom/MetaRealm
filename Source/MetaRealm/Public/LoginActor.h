@@ -34,10 +34,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> SignUpUIFactory;
-
-	UPROPERTY()
-	class ULobyWidget* LobbyUI;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UUserWidget> LobbyUIFactory;
 };

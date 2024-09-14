@@ -13,9 +13,8 @@ UCLASS()
 class METAREALM_API USignUpUI : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
-	
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta=(BindWidget))
@@ -41,4 +40,8 @@ public:
 
 	UFUNCTION()
 	void ExitButtonClicked();
+
+	//====================·Îºñ
+	UPROPERTY()
+	class APlayerCharacter* Me;
 };

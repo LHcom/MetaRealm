@@ -30,6 +30,7 @@ void AHttpLib::ReqSignUp(const FString& JSON)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
+	req->SetVerb("POST");
 	req->SetURL(SignUpURL);
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
@@ -44,7 +45,8 @@ void AHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, b
 		// 성공
 		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		UJsonParseLib::SignUpJsonParse(Result);
+		//UJsonParseLib::SignUpJsonParse(Result);
+		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
 	}
 	else
 	{
@@ -57,7 +59,8 @@ void AHttpLib::ReqLogin(const FString& JSON)
 {
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
-	req->SetURL(SignUpURL);
+	req->SetVerb("POST");
+	req->SetURL(LoginURL);
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
 	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResLogin);
@@ -72,6 +75,9 @@ void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bo
 		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
 		UJsonParseLib::LoginJsonParse(Result);
+		FString Authorization = Response->GetHeader("Authorization");
+		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
+		UE_LOG(LogTemp, Warning, TEXT("Authorization : %s"), *Authorization);
 	}
 	else
 	{
@@ -145,13 +151,13 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 		{
 			FString strMeetingTime = FString::Printf(TEXT("%s%s%s"), *player->MeetingStartTime, TEXT("~"),
 			                                         *player->MeetingEndTime);
-			FString meetingMember="";
-			if(gm)
+			FString meetingMember = "";
+			if (gm)
 			{
-				meetingMember=gm->MeetingMember;
-				gm->MeetingMember="";				
+				meetingMember = gm->MeetingMember;
+				gm->MeetingMember = "";
 			}
-				
+
 			player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
 		}
 	}
