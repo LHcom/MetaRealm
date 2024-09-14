@@ -104,11 +104,9 @@ void APlayerCharacter::initProceedingUI()
 	}
 }
 
-AMR_Controller* pc;
-
 void APlayerCharacter::initMemoUI()
 {
-	pc = Cast<AMR_Controller>(Controller);
+	auto pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
@@ -129,6 +127,11 @@ void APlayerCharacter::initMemoUI()
 		MemoWidget = pc->MemoUI;
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
+
+		if(auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		{
+			MemoWidget->eTxtBoard->SetText(FText::FromString(gs->gsContent));
+		}
 	}
 	else
 	{
