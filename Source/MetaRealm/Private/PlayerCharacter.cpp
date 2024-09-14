@@ -96,12 +96,6 @@ AMR_Controller* pc;
 
 void APlayerCharacter::initMemoUI()
 {
-	// if (!IsLocallyControlled())
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is not Local"));
-	// 	return;
-	// }
-
 	pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
@@ -123,9 +117,6 @@ void APlayerCharacter::initMemoUI()
 		MemoWidget = pc->MemoUI;
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
-		if (IsLocallyControlled())
-		{
-		}
 	}
 	else
 	{
@@ -217,58 +208,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strContent)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Content : %s"), *strContent);
+	UE_LOG(LogTemp, Warning, TEXT("[ServerRPC_ContentSave] Content : %s"), *strContent);
+	// 서버 RPC로 들어온 변수값을
+	// 멀티캐스트 RPC로 뿌려준다.
 	MulticastRPC_ContentSave(strContent);
-	//ClientRPC_ContentSave(strContent);
 }
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
 {
-	// auto* pc = Cast<AMR_Controller>(Controller);
-	// if (nullptr == pc)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
-	// 	//MemoWidget = nullptr;
-	// 	return;
-	// }
-
-	setContent(strContent);
-	// 각 클라이언트에서 MemoWidget이 nullptr인지 확인하고, 필요 시 초기화
-	// if (!MemoWidget)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is nullptr, trying to initialize..."));
-	// 	initMemoUI(); // MemoWidget 초기화 시도
-	// }
-	//
-	// // MemoWidget이 정상적으로 존재하는지 확인 후 동기화
-	// if (MemoWidget)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] MemoWidget is not null, updating content..."));
-	// 	//MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-	// 	MemoWidget->strMemo = strContent;
-	// 	UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-	// 	       *MemoWidget->strMemo);
-	// 	// UE_LOG(LogTemp, Warning, TEXT("Multicast RPC Memo Content: %s"),
-	// 	// 	   *MemoWidget->EditableText_0->GetText().ToString());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("[MulticastRPC] Failed to initialize MemoWidget"));
-	// }
-}
-
-void APlayerCharacter::setContent(const FString& strContent)
-{
-	// if (!MemoWidget)
-	// 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("MemoWidget Is Null"));
-	//
-	// if (IsLocallyControlled() && MemoWidget)
-	// {
-	// 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Before strMemo TEXT"), *MemoWidget->strMemo);
-	// 	MemoWidget->strMemo = strContent;
-	// 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("After strMemo TEXT"), *MemoWidget->strMemo);
-	// }
-
+	// 게임스테이트에 있는 gsContent에 값을 넣는다.
+	// gsContent는 Replicated 상태이기 때문에 값이 복사된다.
 	auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{

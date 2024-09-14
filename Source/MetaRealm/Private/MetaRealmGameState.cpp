@@ -26,7 +26,3 @@ void AMetaRealmGameState::OnRep_ReplicatedHasBegunPlay()
 	Super::OnRep_ReplicatedHasBegunPlay();
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 }
-
-void AMetaRealmGameState::OnRep_Content()
-{
-}

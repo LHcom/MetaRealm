@@ -43,8 +43,8 @@ void UNetGameInstance::CreateMySession(FString roomName)
 		if (ExistingSession) // 세션이 이미 존재한다면
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Existing session found. Destroying the session..."));
-			sessionInterface->DestroySession(FName(mySessionName)); // 기존에 명명된 세션을 파괴
-			// 실행되면 'DestroySession'이 델리게이트에 정보를 제공한다. 즉, 바로 델리게이트가 호출된다.
+			//sessionInterface->DestroySession(FName(mySessionName)); // 기존에 명명된 세션을 파괴
+			DestroyMySession(true);
 		}
 		else
 		{
@@ -108,15 +108,16 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	}
 }
 
-void UNetGameInstance::DestroyMySession()
+void UNetGameInstance::DestroyMySession(bool bMakeSession)
 {
+	MakeSessionFlag = bMakeSession;
+
 	if (sessionInterface.IsValid())
 	{
 		sessionInterface->DestroySession(FName(mySessionName));
 	}
 	// 세션 관련 데이터 초기화
 	sessionSearch.Reset();
-	//NowSession.Empty();
 }
 
 void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -124,6 +125,8 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 	if (bWasSuccessful)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete Success -- %s"), *SessionName.ToString());
+		if (MakeSessionFlag)
+			CreateMySession(MyroomName);
 	}
 	else
 	{
@@ -131,12 +134,9 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 	}
 }
 
-void UNetGameInstance::SessionDestroyMonitor()
-{
-}
-
 void UNetGameInstance::FindOtherSession()
 {
+	UE_LOG(LogTemp, Warning, TEXT("FindOtherSession Start"));
 	sessionSearch = MakeShared<FOnlineSessionSearch>();
 
 	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
@@ -145,6 +145,7 @@ void UNetGameInstance::FindOtherSession()
 
 	// 세션 검색 요청
 	sessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
+	UE_LOG(LogTemp, Warning, TEXT("FindOtherSession End"));
 }
 
 void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
@@ -175,28 +176,11 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 						continue;
 
 					flag = true;
-					// 세션 정보 ---> String 으로 
-					// 세션의 최대 인원
-					int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
-					// 세션의 참여 인원 (최대 인원 - 남은 인원)
-
-					int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
-
-					//NowSession = si.Session.GetSessionIdStr();
-					//UE_LOG(LogTemp, Warning, TEXT("NowRoomName : %s"), *si.Session.GetSessionIdStr());
-					//UE_LOG(LogTemp, Warning, TEXT("NowSession : %s"), *si.Session.GetSessionIdStr());
-					strRoomName = StringBase64Decode(strRoomName);
-					// 방이름 ( 5 / 10 )
-					FString sessionInfo = FString::Printf(
-						TEXT("%s ( %d )"),
-						*strRoomName, currPlayer);
-
 					JoinOtherSession(i);
 					break;
-					//onSearchComplete.ExecuteIfBound(0, sessionInfo);
 				}
 
-				if(!flag)
+				if (!flag)
 					CreateMySession(MyroomName);
 			}
 		}

@@ -16,18 +16,22 @@ class METAREALM_API UMemoWidget : public UUserWidget
 
 private:
 	virtual void NativeConstruct() override;
-
-	UFUNCTION(BlueprintCallable)
-	void setContent(const FString strContent);
-
+	//===========================Visible 속성 변경 이벤트에 바인딩할 함수
 	UFUNCTION()
 	void OnMyVisibilityChanged(ESlateVisibility newVisibility);
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FString strMemo;
-
-	UPROPERTY(meta=(BindWidget), BlueprintReadWrite, EditDefaultsOnly)
-	class UEditableText* EditableText_0;
-
-	void setMemo(const FString& strContent);
+	//===========================컴포넌트 바인딩
+	UPROPERTY(meta=(BindWidget))
+	class UEditableText* eTxtBoard;	
+	UPROPERTY(meta=(BindWidget))
+	class UButton* btnSave;
+	UPROPERTY(meta=(BindWidget))
+	class UButton* btnCancel;
+	//===========================이벤트 바인딩 함수
+	UFUNCTION()
+	void OnMyClickSave();
+	UFUNCTION()
+	void OnMyClickCancel();
+	//===========================저장 버튼 클릭시 호출될 함수
+	UFUNCTION(BlueprintCallable)
+	void setContent(const FString strContent);
 };
