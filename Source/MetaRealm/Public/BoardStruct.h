@@ -17,5 +17,8 @@ public:
 	// 게시자
 	//FString PublisherName;
 	// 게시 내용
+	UPROPERTY(EditAnywhere)
 	FString ContentString;
+
+	void PrintStruct();
 };

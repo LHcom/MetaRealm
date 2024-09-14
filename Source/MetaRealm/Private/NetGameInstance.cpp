@@ -4,6 +4,7 @@
 #include "NetGameInstance.h"
 #include <string>
 
+#include "BoardStruct.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "GameFramework/PlayerState.h"
@@ -258,4 +259,32 @@ void UNetGameInstance::LogInSession()
 	UE_LOG(LogTemp, Warning, TEXT("LogInSession Start"));
 	FindOtherSession();
 	UE_LOG(LogTemp, Warning, TEXT("LogInSession End"));
+}
+
+void UNetGameInstance::SetBoardData(FBoardStruct newData)
+{
+	if (!DataTable)
+		return;
+
+	// 들어온 데이터 로그 출력
+	newData.PrintStruct();
+	// DT_RowName 이 키로 존재하는 행에 newData 구조체를 저장
+	DataTable->AddRow(FName(DT_RowName), newData);
+}
+
+FBoardStruct UNetGameInstance::GetBoardData()
+{
+	// 데이터 테이블이 nullPtr이면 빈 구조체 리턴
+	if (!DataTable)
+		return FBoardStruct();
+
+	// DT_RowName 으로 탐색을 하고, 만약 값이 없으면 ""을 저장해서 리턴
+	FBoardStruct *retData = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
+	if(retData)
+	{
+		retData->PrintStruct();
+		return *retData;		
+	}
+	else
+		return FBoardStruct();
 }

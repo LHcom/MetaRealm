@@ -66,4 +66,11 @@ public:
 	void LogInSession();
 
 	bool MakeSessionFlag = false;
+
+	// -------------게시판 관련
+	UPROPERTY(EditDefaultsOnly, Category = "Data")
+	class UDataTable* DataTable;
+	void SetBoardData(struct FBoardStruct newData);
+	struct FBoardStruct GetBoardData();
+	FString DT_RowName = "Board";
 };

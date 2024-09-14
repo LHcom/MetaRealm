@@ -2,9 +2,13 @@
 
 
 #include "MR_Controller.h"
+
+#include "BoardStruct.h"
 #include "MetaRealm/MetaRealm.h"
 #include "Main_HUD.h"
+#include "MetaRealmGameState.h"
 #include "MetaRealmGM.h"
+#include "NetGameInstance.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
@@ -63,6 +67,16 @@ void AMR_Controller::BeginPlay()
     {
         ViewMainUI();
     }
+	
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		FBoardStruct currData = gi->GetBoardData();
+		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		{
+			
+			gs->gsContent = currData.ContentString;
+		}
+	}
 }
 
 void AMR_Controller::SetupInputComponent()

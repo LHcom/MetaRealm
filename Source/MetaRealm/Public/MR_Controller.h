@@ -64,7 +64,7 @@ private:
 	class AMetaRealmGM* gm;
 
 public:
-	//-----------------------------------------ê²Œì‹œ??ê´€??
+	//-----------------------------------------°Ô½ÃÆÇ °ü·Ã
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> MemoUIFactory;
 	UPROPERTY(BlueprintReadWrite)

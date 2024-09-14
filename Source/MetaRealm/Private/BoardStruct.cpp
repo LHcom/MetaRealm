@@ -3,3 +3,7 @@
 
 #include "BoardStruct.h"
 
+void FBoardStruct::PrintStruct()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Current Board Data : %s"), *ContentString);
+}

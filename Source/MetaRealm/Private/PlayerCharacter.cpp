@@ -4,11 +4,13 @@
 
 #include <chrono>
 
+#include "BoardStruct.h"
 #include "EngineUtils.h"
 #include "InteractionWidget.h"
 #include "MemoWidget.h"
 #include "MetaRealmGameState.h"
 #include "MR_Controller.h"
+#include "NetGameInstance.h"
 #include "OnlineSubsystem.h"
 #include "ProceedingWidget.h"
 #include "WhiteBoardActor.h"
@@ -222,6 +224,13 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 	// 서버 RPC로 들어온 변수값을
 	// 멀티캐스트 RPC로 뿌려준다.
 	MulticastRPC_ContentSave(strContent);
+	
+	// 게시판에 저장된 내용을 DataTable에 저장한다.
+	FBoardStruct newData;
+	newData.ContentString=strContent;
+	auto gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance());
+	if(gi)
+		gi->SetBoardData(newData);
 }
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
