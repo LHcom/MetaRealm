@@ -129,6 +129,14 @@ private:
 public:
 	// 회원가입
 	void SignUp(const FString& JSON);
+	UFUNCTION()
+	void getResSignUp(const FString& ret);
 	// 로그인
 	void Login(const FString& JSON);
+	UFUNCTION()
+	void getResLogin(const FString& ret);
+	// 메세지 팝업UI
+	UPROPERTY(BlueprintReadWrite)
+	class UMessagePopupWidget* MsgWidget;
+	void initMsgUI();	
 };

@@ -24,7 +24,6 @@ void AMR_Controller::PostInitializeComponents()
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 	Super::PostInitializeComponents();
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
-
 }
 
 void AMR_Controller::PostNetInit()
@@ -63,17 +62,16 @@ void AMR_Controller::BeginPlay()
 
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
-    if (CurrentMapName == "KHH_level") 
-    {
-        ViewMainUI();
-    }
-	
+	if (CurrentMapName == "KHH_level")
+	{
+		ViewMainUI();
+	}
+
 	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		FBoardStruct currData = gi->GetBoardData();
 		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 		{
-			
 			gs->gsContent = currData.ContentString;
 		}
 	}
@@ -83,7 +81,7 @@ void AMR_Controller::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	// �׼� Ű ���ε�.
+	// 액션 키 바인딩.
 	InputComponent->BindAction(TEXT("Chat"), EInputEvent::IE_Pressed, this, &AMR_Controller::FocusChatInputText);
 }
 
@@ -120,7 +118,6 @@ void AMR_Controller::ViewMainUI()
 			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
 		}
 	}
-
 }
 
 void AMR_Controller::MoveToMeetingRoomMap()
@@ -177,22 +174,22 @@ void AMR_Controller::MoveToMainMap()
 
 void AMR_Controller::SendMessage(const FText& Text)
 {
-	// �¶��� ����ý��ۿ��� Identity �������̽��� ������
+	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
 		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
 		if (Identity.IsValid())
 		{
-			// 0��° ���� �÷��̾��� ���� ID�� ������
+			// 0번째 로컬 플레이어의 고유 ID를 가져옴
 			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
 			if (UserId.IsValid())
 			{
-				// ���� �г����� ������
+				// 스팀 닉네임을 가져옴
 				FString UserName = Identity->GetPlayerNickname(*UserId);
 				FString Message = FString::Printf(TEXT("%s : %s"), *UserName, *Text.ToString());
 
-				// ������ �޽����� ���� (CtoS_SendMessage ȣ��)
+				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
 				CtoS_SendMessage(Message);
 			}
 		}
@@ -215,10 +212,19 @@ void AMR_Controller::FocusChatInputText()
 	SetInputMode(InputMode);
 }
 
+void AMR_Controller::SetUserInfo(const FString& tkAdrr, const FString& nickName)
+{
+	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	{
+		gs->TkAdrr = tkAdrr;
+		gs->NickName = nickName;
+	}
+}
+
 
 void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 {
-	// ���������� ��� PlayerController���� �̺�Ʈ�� ������.
+	// 서버에서는 모든 PlayerController에게 이벤트를 보낸다.
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetPawn()->GetWorld(), APlayerController::StaticClass(), OutActors);
 	for (AActor* OutActor : OutActors)
@@ -233,7 +239,7 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 
 void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 {
-	// ������ Ŭ���̾�Ʈ�� �� �̺�Ʈ�� �޾Ƽ� �����Ѵ�.
+	// 서버와 클라이언트는 이 이벤트를 받아서 실행한다.
 	AMain_HUD* HUD = GetHUD<AMain_HUD>();
 	if (HUD == nullptr) return;
 

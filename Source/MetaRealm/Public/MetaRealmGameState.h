@@ -22,4 +22,9 @@ public:
 	// 게시판 내용을 저장할 변수
 	UPROPERTY(Replicated)
 	FString gsContent;
+
+	UPROPERTY()
+	FString TkAdrr;
+	UPROPERTY()
+	FString NickName;
 };

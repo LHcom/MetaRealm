@@ -33,28 +33,28 @@ void USignUpUI::SignUpButtonClicked()
 
 	if (id.IsEmpty())
 	{
-		// ¾ÆÀÌµð ¹ÌÀÔ·Â
+		// ì•„ì´ë”” ë¯¸ìž…ë ¥
 		return;
 	}
 	if (pw.IsEmpty())
 	{
-		// ÆÐ½º¿öµå ¹ÌÀÔ·Â
+		// íŒ¨ìŠ¤ì›Œë“œ ë¯¸ìž…ë ¥
 		return;
 	}
 	if (pwChk.IsEmpty())
 	{
-		// ÆÐ½º¿öµå È®ÀÎ ¹ÌÀÔ·Â
+		// íŒ¨ìŠ¤ì›Œë“œ í™•ì¸ ë¯¸ìž…ë ¥
 		return;
 	}
 	if (nickName.IsEmpty())
 	{
-		// ´Ð³×ÀÓ È®ÀÎ ¹ÌÀÔ·Â
+		// ë‹‰ë„¤ìž„ í™•ì¸ ë¯¸ìž…ë ¥
 		return;
 	}
 
 	if (pw != pwChk)
 	{
-		// ÆÐ½º¿öµå È®ÀÎ ºÒÀÏÄ¡
+		// íŒ¨ìŠ¤ì›Œë“œ í™•ì¸ ë¶ˆì¼ì¹˜
 		return;
 	}
 
@@ -67,11 +67,14 @@ void USignUpUI::SignUpButtonClicked()
 
 	FString json = UJsonParseLib::MakeJson(SignUpData);
 	Me->SignUp(json);
-
-	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USignUpUI::ExitButtonClicked()
 {
+	FString emptyText = "";
+	IDEditable->SetText(FText::FromString(emptyText));
+	PSEditable->SetText(FText::FromString(emptyText));
+	SecPSEditable->SetText(FText::FromString(emptyText));
+	NickNameEditable->SetText(FText::FromString(emptyText));
 	SetVisibility(ESlateVisibility::Hidden);
 }

@@ -6,6 +6,21 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JsonParseLib.generated.h"
 
+USTRUCT()
+struct FUserInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FString MSG;
+	
+	UPROPERTY(EditAnywhere)
+	FString TkAddr;
+
+	UPROPERTY(EditAnywhere)
+	FString NickName;
+};
+
 /**
  * 
  */
@@ -18,7 +33,7 @@ public:
 	static FString MakeJson(const TMap<FString, FString>& source);
 	// Json에서 데이터 추출
 	static FString SignUpJsonParse(const FString& strJson);
-	static FString LoginJsonParse(const FString& strJson);
+	static FUserInfo LoginJsonParse(const FString& strJson);
 	static FString SoundToTextJsonParse(const FString& strJson, FString& outStrMessage);
 	static FString GenerateColorJsonParse(const FString& strJson);
 };

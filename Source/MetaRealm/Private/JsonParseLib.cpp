@@ -3,6 +3,9 @@
 
 #include "JsonParseLib.h"
 
+#include "MetaRealmGameState.h"
+#include "MR_Controller.h"
+
 FString UJsonParseLib::MakeJson(const TMap<FString, FString>& source)
 {
 	// source를 JsonObject 형식으로 만든다.
@@ -30,7 +33,7 @@ FString UJsonParseLib::SignUpJsonParse(const FString& strJson)
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		
+
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
 		// {
@@ -43,28 +46,37 @@ FString UJsonParseLib::SignUpJsonParse(const FString& strJson)
 	return returnValue;
 }
 
-FString UJsonParseLib::LoginJsonParse(const FString& strJson)
+FUserInfo UJsonParseLib::LoginJsonParse(const FString& strJson)
 {
 	// 리더기를 만들고
 	TSharedRef<TJsonReader<TCHAR>> reader = TJsonReaderFactory<TCHAR>::Create(strJson);
 	// 파싱 결과를 담을 변수 선언
 	TSharedPtr<FJsonObject> result = MakeShareable(new FJsonObject());
 	// 해석을 한다.
-	FString returnValue;
+	FUserInfo info;
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
-		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		
-		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
-		// for (auto data : parseDataList)
-		// {
-		// 	FString bk_nm = data->AsObject()->GetStringField("bk_nm");
-		// 	FString aut_nm = data->AsObject()->GetStringField("aut_nm");
-		// 	returnValue.Append(FString::Printf(TEXT("BookName : %s / AuthorName : %s\n"), *bk_nm, *aut_nm));
-		// }
+		if (result->HasField(TEXT("message")))
+		{
+			FString msg = result->GetStringField(TEXT("message"));
+			info.MSG = msg;
+			if (msg == "로그인 성공")
+			{
+				if (result->HasField("userInfo"))
+				{
+					if (auto userinfoObj = result->GetObjectField("userInfo"))
+					{
+						if(userinfoObj->HasField("userName"))
+						{
+							info.NickName = userinfoObj->GetStringField("userName");
+						}
+					}
+				}
+			}
+		}
 	}
 	// 반환을 한다.
-	return returnValue;
+	return info;
 }
 
 FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson, FString& outStrMessage)
@@ -78,9 +90,9 @@ FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson, FString& out
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		if(result->HasField("messages"))
+		if (result->HasField("messages"))
 		{
-			outStrMessage=result->GetStringField("messages");
+			outStrMessage = result->GetStringField("messages");
 		}
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
@@ -105,7 +117,7 @@ FString UJsonParseLib::GenerateColorJsonParse(const FString& strJson)
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		
+
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
 		// {

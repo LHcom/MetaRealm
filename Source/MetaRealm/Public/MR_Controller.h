@@ -22,14 +22,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-	// Steam ID¸¦ °¡Á®¿À´Â ÇÔ¼ö
+	// Steam IDë¥¼ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜
 	FString GetSteamID() const;
 
-	// MainUI À§Á¬ ºí·çÇÁ¸°Æ® Å¬·¡½º
+	// MainUI ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_Main> MainUIWidgetClass;
 
-    // PlayerList À§Á¬ ºí·çÇÁ¸°Æ® Å¬·¡½º
+    // PlayerList ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
 
@@ -64,9 +64,16 @@ private:
 	class AMetaRealmGM* gm;
 
 public:
-	//-----------------------------------------°Ô½ÃÆÇ °ü·Ã
+	//-----------------------------------------ê²Œì‹œíŒ ê´€ë ¨
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> MemoUIFactory;
 	UPROPERTY(BlueprintReadWrite)
 	class UMemoWidget* MemoUI;
+	//------------------------------------------ë©”ì„¸ì§€ íŒì—…
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UMessagePopupWidget> MsgUIFactory;
+	UPROPERTY(BlueprintReadWrite)
+	class UMessagePopupWidget* MsgUI;
+	//------------------------------------------í”Œë ˆì´ì–´ ì •ë³´ ê¸°ë¡
+	void SetUserInfo(const FString& tkAdrr, const FString& nickName);
 };

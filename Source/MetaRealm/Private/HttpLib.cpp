@@ -47,11 +47,16 @@ void AHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, b
 		FString Result = Response->GetContentAsString();
 		//UJsonParseLib::SignUpJsonParse(Result);
 		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
+
+		if (player)
+			player->getResSignUp(Result);
 	}
 	else
 	{
 		// 실패
 		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
+		if (player)
+			player->getResSignUp("Request POST Failed");
 	}
 }
 
@@ -74,15 +79,24 @@ void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bo
 		// 성공
 		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		UJsonParseLib::LoginJsonParse(Result);
-		FString Authorization = Response->GetHeader("Authorization");
 		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
-		UE_LOG(LogTemp, Warning, TEXT("Authorization : %s"), *Authorization);
+		FUserInfo userInfo = UJsonParseLib::LoginJsonParse(Result);
+		if (userInfo.MSG == "로그인 성공")
+		{
+			FString Authorization = Response->GetHeader("Authorization");
+			userInfo.TkAddr = Authorization;
+			UE_LOG(LogTemp, Warning, TEXT("Authorization : %s"), *Authorization);
+		}
+
+		if (player)
+			player->getResLogin(userInfo.MSG);
 	}
 	else
 	{
 		// 실패
 		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
+		if (player)
+			player->getResLogin("Request POST Failed");
 	}
 }
 

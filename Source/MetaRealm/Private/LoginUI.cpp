@@ -23,36 +23,29 @@ void ULoginUI::NativeConstruct()
 
 void ULoginUI::ButtonLoginClicked()
 {
-	// 로그인 정보를 체크하는 API 추가해야됌
-	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
-	if (GI)
+	if(!Me)
+		Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	
+	FString id = IDEditable->GetText().ToString();
+	FString pw = PSEditable->GetText().ToString();
+	
+	if (id.IsEmpty())
 	{
-		GI->LogInSession();
+		// 아이디 미입력
+		return;
 	}
-
-	// if(!Me)
-	// 	Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	//
-	// FString id = IDEditable->GetText().ToString();
-	// FString pw = PSEditable->GetText().ToString();
-	//
-	// if (id.IsEmpty())
-	// {
-	// 	// 아이디 미입력
-	// 	return;
-	// }
-	// if (pw.IsEmpty())
-	// {
-	// 	// 패스워드 미입력
-	// 	return;
-	// }
-	//
-	// TMap<FString, FString> LoginData;
-	// LoginData.Add("id", IDEditable->GetText().ToString());
-	// LoginData.Add("pass", PSEditable->GetText().ToString());
-	//
-	// FString json = UJsonParseLib::MakeJson(LoginData);
-	// Me->Login(json);
+	if (pw.IsEmpty())
+	{
+		// 패스워드 미입력
+		return;
+	}
+	
+	TMap<FString, FString> LoginData;
+	LoginData.Add("id", IDEditable->GetText().ToString());
+	LoginData.Add("pass", PSEditable->GetText().ToString());
+	
+	FString json = UJsonParseLib::MakeJson(LoginData);
+	Me->Login(json);
 }
 
 void ULoginUI::ButtonSignUpClicked()

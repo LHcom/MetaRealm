@@ -9,6 +9,7 @@
 #include "HttpLib.h"
 #include "InteractionWidget.h"
 #include "MemoWidget.h"
+#include "MessagePopupWidget.h"
 #include "MetaRealmGameState.h"
 #include "MR_Controller.h"
 #include "NetGameInstance.h"
@@ -212,7 +213,10 @@ void APlayerCharacter::BeginPlay()
 
 	initProceedingUI();
 	if (IsLocallyControlled())
+	{
 		initMemoUI();
+		initMsgUI();
+	}
 
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
@@ -292,6 +296,26 @@ void APlayerCharacter::SignUp(const FString& JSON)
 	HttpActor->ReqSignUp(JSON);
 }
 
+void APlayerCharacter::getResSignUp(const FString& ret)
+{
+	MsgWidget->txtMessage->SetText(FText::FromString(ret));
+	MsgWidget->SetVisibility(ESlateVisibility::Visible);
+
+	FString msg = "";
+	if (ret.Equals("Successes to register user"))
+	{
+		// 성공
+	}
+	else if (ret.Equals("Request POST Failed"))
+	{
+		// 회원가입 요청 실패
+	}
+	else
+	{
+		// 실패
+	}
+}
+
 void APlayerCharacter::Login(const FString& JSON)
 {
 	if (!HttpActor)
@@ -301,4 +325,51 @@ void APlayerCharacter::Login(const FString& JSON)
 	}
 
 	HttpActor->ReqLogin(JSON);
+}
+
+void APlayerCharacter::getResLogin(const FString& ret)
+{
+	FString strSuccess = "로그인 성공";
+	if (ret != strSuccess)
+	{
+		MsgWidget->txtMessage->SetText(FText::FromString(ret));
+		MsgWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+		if (GI)
+		{
+			GI->LogInSession();
+		}
+	}
+}
+
+void APlayerCharacter::initMsgUI()
+{
+	auto pc = Cast<AMR_Controller>(Controller);
+	if (nullptr == pc)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
+		return;
+	}
+
+	if (!pc->MsgUIFactory)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoFactory is null"));
+		return;
+	}
+
+	pc->MsgUI = CastChecked<UMessagePopupWidget>(CreateWidget(GetWorld(), pc->MsgUIFactory));
+	if (pc->MsgUI)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
+		MsgWidget = pc->MsgUI;
+		MsgWidget->AddToViewport(99);
+		MsgWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is null"));
+	}
 }
