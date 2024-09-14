@@ -235,30 +235,6 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	}
 }
 
-void APlayerCharacter::ClientRPC_ContentSave_Implementation(const FString& strContent)
-{
-	if (MemoWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is not null"));
-		//memoComp->strMemo = strContent;
-		MemoWidget->EditableText_0->SetText(FText::FromString(strContent));
-		UE_LOG(LogTemp, Warning, TEXT("Client RPC Memo Content: %s"),
-		       *MemoWidget->EditableText_0->GetText().ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MemoWidget is nullptr"));
-	}
-	// if(IsLocallyControlled())
-	// {
-	//
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("is not local player"));
-	// }
-}
-
 void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
 	if (value == 1 && CylinderMaterial1) {
