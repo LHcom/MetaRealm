@@ -308,12 +308,15 @@ TArray<FProceedStruct> UNetGameInstance::GetProceedData()
 		return retDataArr;
 
 	TArray<FProceedStruct*> retDataArrPtr;
+	
 	ProceedDataTable->GetAllRows<FProceedStruct>(TEXT("GetAllRows"), retDataArrPtr);
 	for(int i=0;i<retDataArrPtr.Num();i++)
 	{
-		retDataArr[i].StrContent=retDataArrPtr[i]->StrContent;
-		retDataArr[i].StrMeetingTime=retDataArrPtr[i]->StrMeetingTime;
-		retDataArr[i].StrMemberList=retDataArrPtr[i]->StrMemberList;
+		FProceedStruct tmpProceed;
+		tmpProceed.StrContent=retDataArrPtr[i]->StrContent;
+		tmpProceed.StrMeetingTime=retDataArrPtr[i]->StrMeetingTime;
+		tmpProceed.StrMemberList=retDataArrPtr[i]->StrMemberList;
+		retDataArr.Add(tmpProceed);
 	}
 	return retDataArr;
 }
