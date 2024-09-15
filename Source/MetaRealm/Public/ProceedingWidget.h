@@ -56,4 +56,6 @@ public:
 	void OnMyClickPrev();
 	UFUNCTION()
 	void OnMyClickSubs();
+	UFUNCTION()
+	void OnMyPageCommit(const FText& Text, ETextCommit::Type CommitMethod);
 };

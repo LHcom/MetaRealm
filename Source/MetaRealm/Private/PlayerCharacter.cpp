@@ -147,7 +147,7 @@ void APlayerCharacter::initMemoUI()
 }
 
 
-void APlayerCharacter::setTextProceedingUI(FString& strMember, FString& strTime, FString& strCondensation)
+void APlayerCharacter::ShowProceedingUI()
 {
 	if (ProceedingWidget)
 	{

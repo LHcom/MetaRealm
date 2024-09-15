@@ -40,7 +40,7 @@ public:
 	class UProceedingWidget* ProceedingWidget = nullptr;
 
 	void initProceedingUI();
-	void setTextProceedingUI(FString& strMember, FString& strTime, FString& strCondensation);
+	void ShowProceedingUI();
 
 	FString GetSystemTime();
 	FString MeetingStartTime;
