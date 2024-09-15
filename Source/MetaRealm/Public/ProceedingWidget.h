@@ -18,6 +18,18 @@ private:
 
 	UFUNCTION()
 	void OnMyClose();
+
+	UFUNCTION()
+	void OnMyVisibilityChanged(ESlateVisibility InVisibility);
+
+	UPROPERTY()
+	class AMetaRealmGameState* GS;
+
+	TArray<struct FRecordInfo> ArrRecordInfo;
+	int32 totalPageNum;
+	int32 CurrPageNum;
+
+	void SetCurrPage(int32 newPageNum);
 public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* txt_Member;
@@ -30,6 +42,18 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_Close;
+	//--------------------페이징
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Prev;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Subs;
+	UPROPERTY(meta = (BindWidget))
+	class UEditableText* eTxt_PageNum;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* txt_TotalPageNum;
 
-	
+	UFUNCTION()
+	void OnMyClickPrev();
+	UFUNCTION()
+	void OnMyClickSubs();
 };

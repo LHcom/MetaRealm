@@ -152,17 +152,6 @@ void APlayerCharacter::setTextProceedingUI(FString& strMember, FString& strTime,
 	if (ProceedingWidget)
 	{
 		ProceedingWidget->SetVisibility(ESlateVisibility::Visible);
-
-		if (!strMember.IsEmpty())
-			ProceedingWidget->txt_Member->SetText(FText::FromString(strMember));
-		if (!strTime.IsEmpty())
-			ProceedingWidget->txt_Time->SetText(FText::FromString(strTime));
-		if (!strCondensation.IsEmpty())
-			ProceedingWidget->txt_Condensation->SetText(FText::FromString(strCondensation));
-
-		strMember = "";
-		strTime = "";
-		strCondensation = "";
 	}
 }
 
