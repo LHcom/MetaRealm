@@ -329,19 +329,26 @@ void APlayerCharacter::Login(const FString& JSON)
 
 void APlayerCharacter::getResLogin(const FString& ret)
 {
-	FString strSuccess = "로그인 성공";
-	if (ret != strSuccess)
+	// <><><> 로그인 임시 주석처리 - api내용 수정되면 다시 사용
+	// FString strSuccess = "로그인 성공";
+	// if (ret != strSuccess)
+	// {
+	// 	MsgWidget->txtMessage->SetText(FText::FromString(ret));
+	// 	MsgWidget->SetVisibility(ESlateVisibility::Visible);
+	// }
+	// else
+	// {
+	// 	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+	// 	if (GI)
+	// 	{
+	// 		GI->LogInSession();
+	// 	}
+	// }
+
+	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+	if (GI)
 	{
-		MsgWidget->txtMessage->SetText(FText::FromString(ret));
-		MsgWidget->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
-		if (GI)
-		{
-			GI->LogInSession();
-		}
+		GI->LogInSession();
 	}
 }
 
