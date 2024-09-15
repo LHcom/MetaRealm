@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <list>
+
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JsonParseLib.generated.h"
@@ -19,6 +21,20 @@ struct FUserInfo
 
 	UPROPERTY(EditAnywhere)
 	FString NickName;
+};
+
+// 회의록 구조체
+USTRUCT()
+struct FRecordInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FString StrMemberList;
+	UPROPERTY(EditAnywhere)
+	FString StrMeetingTime;
+	UPROPERTY(EditAnywhere)
+	FString StrContent;
 };
 
 /**

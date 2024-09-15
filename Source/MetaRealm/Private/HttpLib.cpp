@@ -5,6 +5,7 @@
 
 #include "HttpModule.h"
 #include "JsonParseLib.h"
+#include "MetaRealmGameState.h"
 #include "MetaRealmGM.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -172,7 +173,21 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 				gm->MeetingMember = "";
 			}
 
-			player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
+			// 회의록을 구조체에 저장
+			FRecordInfo recordInfo;
+			recordInfo.StrMemberList = meetingMember;
+			recordInfo.StrMeetingTime = strMeetingTime;
+			recordInfo.StrContent = outStrMessage.IsEmpty() ? "" : outStrMessage;
+			// 게임스테이트에 존재하는 구조체 배열에 추가 
+			if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+			{
+				gs->ArrRecordInfo.Add(recordInfo);
+
+				// 호스트일 경우에는 한번 호출해줘야함.
+				if (HasAuthority())
+					gs->OnRep_Proceeding();
+			}
+			//player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
 		}
 	}
 	else
