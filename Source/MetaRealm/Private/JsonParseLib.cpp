@@ -62,13 +62,13 @@ FUserInfo UJsonParseLib::LoginJsonParse(const FString& strJson)
 			info.MSG = msg;
 			if (msg == "로그인 성공")
 			{
-				if (result->HasField("userInfo"))
+				if (result->HasField(TEXT("userInfo")))
 				{
 					if (auto userinfoObj = result->GetObjectField("userInfo"))
 					{
-						if(userinfoObj->HasField("userName"))
+						if(userinfoObj->HasField(TEXT("userName")))
 						{
-							info.NickName = userinfoObj->GetStringField("userName");
+							info.NickName = userinfoObj->GetStringField(TEXT("userName"));
 						}
 					}
 				}
@@ -90,9 +90,9 @@ FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson, FString& out
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		if (result->HasField("messages"))
+		if (result->HasField(TEXT("messages")))
 		{
-			outStrMessage = result->GetStringField("messages");
+			outStrMessage = result->GetStringField(TEXT("messages"));
 		}
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
