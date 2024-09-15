@@ -8,12 +8,14 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "ProceedStruct.h"
-#include "GameFramework/PlayerState.h"
 #include "Online/OnlineSessionNames.h"
 
 void UNetGameInstance::Init()
 {
 	Super::Init();
+
+	LoadBoardDT(FBoardStruct::StaticStruct());
+	LoadProceedDT(FProceedStruct::StaticStruct());
 
 	// 온라인 서브 시스템 가져오자
 	IOnlineSubsystem* subsys = IOnlineSubsystem::Get();
@@ -290,6 +292,50 @@ FBoardStruct UNetGameInstance::GetBoardData()
 		return FBoardStruct();
 }
 
+void UNetGameInstance::LoadBoardDT(UScriptStruct* RowStruct)
+{
+	FString CSVData;
+	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/board.csv");
+	if (FFileHelper::LoadFileToString(CSVData, *CSVFilePath))
+	{
+		DataTable->RowStruct = RowStruct;
+
+		// CSV 데이터를 데이터 테이블에 임포트
+		TArray<FString> ImportError = DataTable->CreateTableFromCSVString(CSVData);
+		// if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		// {
+		// 	FBoardStruct* bs = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
+		// 	gs->gsContent = bs->ContentString.TrimStartAndEnd().IsEmpty() ? "" : bs->ContentString.TrimStartAndEnd();
+		// }
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CSVFilePath);
+	}
+}
+
+bool UNetGameInstance::SaveBoardDTToCSV()
+{
+	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/board.csv");
+	if (!DataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DataTable is null."));
+		return false;
+	}
+
+	FString CSVData = DataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
+	if (FFileHelper::SaveStringToFile(CSVData, *CSVFilePath))
+	{
+		UE_LOG(LogTemp, Log, TEXT("DataTable saved to CSV file: %s"), *CSVFilePath);
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save DataTable to CSV file: %s"), *CSVFilePath);
+		return false;
+	}
+}
+
 void UNetGameInstance::SetProceedData(FProceedStruct newData)
 {
 	if (!ProceedDataTable)
@@ -308,15 +354,59 @@ TArray<FProceedStruct> UNetGameInstance::GetProceedData()
 		return retDataArr;
 
 	TArray<FProceedStruct*> retDataArrPtr;
-	
+
 	ProceedDataTable->GetAllRows<FProceedStruct>(TEXT("GetAllRows"), retDataArrPtr);
-	for(int i=0;i<retDataArrPtr.Num();i++)
+	for (int i = 0; i < retDataArrPtr.Num(); i++)
 	{
 		FProceedStruct tmpProceed;
-		tmpProceed.StrContent=retDataArrPtr[i]->StrContent;
-		tmpProceed.StrMeetingTime=retDataArrPtr[i]->StrMeetingTime;
-		tmpProceed.StrMemberList=retDataArrPtr[i]->StrMemberList;
+		tmpProceed.StrContent = retDataArrPtr[i]->StrContent;
+		tmpProceed.StrMeetingTime = retDataArrPtr[i]->StrMeetingTime;
+		tmpProceed.StrMemberList = retDataArrPtr[i]->StrMemberList;
 		retDataArr.Add(tmpProceed);
 	}
 	return retDataArr;
+}
+
+void UNetGameInstance::LoadProceedDT(UScriptStruct* RowStruct)
+{
+	FString CSVData;
+	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/Proceed.csv");
+	if (FFileHelper::LoadFileToString(CSVData, *CSVFilePath))
+	{
+		ProceedDataTable->RowStruct = RowStruct;
+
+		// CSV 데이터를 데이터 테이블에 임포트
+		TArray<FString> ImportError = ProceedDataTable->CreateTableFromCSVString(CSVData);
+		// if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		// {
+		// 	FBoardStruct* bs = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
+		// 	gs->gsContent = bs->ContentString.TrimStartAndEnd().IsEmpty() ? "" : bs->ContentString.TrimStartAndEnd();
+		// }
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CSVFilePath);
+	}
+}
+
+bool UNetGameInstance::SaveProceedDTToCSV()
+{
+	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/Proceed.csv");
+	if (!ProceedDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DataTable is null."));
+		return false;
+	}
+
+	FString CSVData = ProceedDataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
+	if (FFileHelper::SaveStringToFile(CSVData, *CSVFilePath))
+	{
+		UE_LOG(LogTemp, Log, TEXT("DataTable saved to CSV file: %s"), *CSVFilePath);
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save DataTable to CSV file: %s"), *CSVFilePath);
+		return false;
+	}
 }

@@ -244,7 +244,11 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 	newData.ContentString = strContent;
 	auto gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance());
 	if (gi)
+	{
 		gi->SetBoardData(newData);
+		gi->SaveBoardDTToCSV();
+	}
+	
 }
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)

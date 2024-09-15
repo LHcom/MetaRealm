@@ -192,6 +192,7 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 			if(auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 			{
 				gi->SetProceedData(recordInfo);
+				gi->SaveProceedDTToCSV();
 			}
 			//player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
 		}

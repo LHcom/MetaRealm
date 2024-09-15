@@ -73,9 +73,13 @@ public:
 	void SetBoardData(struct FBoardStruct newData);
 	struct FBoardStruct GetBoardData();
 	FString DT_RowName = "Board";
+	void LoadBoardDT(UScriptStruct* RowStruct);
+	bool SaveBoardDTToCSV();
 	//=====================회의록 관련
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
 	class UDataTable* ProceedDataTable;
 	void SetProceedData(struct FProceedStruct newData);
 	TArray<struct FProceedStruct> GetProceedData();
+	void LoadProceedDT(UScriptStruct* RowStruct);
+	bool SaveProceedDTToCSV();
 };
