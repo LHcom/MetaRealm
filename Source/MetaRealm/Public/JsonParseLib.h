@@ -24,18 +24,18 @@ struct FUserInfo
 };
 
 // 회의록 구조체
-USTRUCT()
-struct FRecordInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FString StrMemberList;
-	UPROPERTY(EditAnywhere)
-	FString StrMeetingTime;
-	UPROPERTY(EditAnywhere)
-	FString StrContent;
-};
+// USTRUCT()
+// struct FRecordInfo
+// {
+// 	GENERATED_BODY()
+//
+// 	UPROPERTY(EditAnywhere)
+// 	FString StrMemberList;
+// 	UPROPERTY(EditAnywhere)
+// 	FString StrMeetingTime;
+// 	UPROPERTY(EditAnywhere)
+// 	FString StrContent;
+// };
 
 /**
  * 

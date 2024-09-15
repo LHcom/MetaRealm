@@ -20,17 +20,17 @@ void UUW_Chat::NativeConstruct()
 
 void UUW_Chat::AddChatMessage(const FString& Message)
 {
-	// Text ¿ÀºêÁ§Æ®¸¦ »ı¼ºÇÏ°í, ScrollBox¿¡ Ãß°¡ÇÑ´Ù.
+	// Text ì˜¤ë¸Œì íŠ¸ë¥¼ ìƒì„±í•˜ê³ , ScrollBoxì— ì¶”ê°€í•œë‹¤.
 	UTextBlock* NewTextBlock = NewObject<UTextBlock>(Chat_ScrollBox);
 	NewTextBlock->SetText(FText::FromString(Message));
 
-	// ±Û¾¾ Å©±â¸¦ º¯°æÇÏ±â À§ÇØ ÆùÆ® Á¤º¸¸¦ ¼³Á¤ÇÑ´Ù.
-	FSlateFontInfo FontInfo = NewTextBlock->Font;
+	// ê¸€ì”¨ í¬ê¸°ë¥¼ ë³€ê²½í•˜ê¸° ìœ„í•´ í°íŠ¸ ì •ë³´ë¥¼ ì„¤ì •í•œë‹¤.
+	FSlateFontInfo FontInfo = NewTextBlock->GetFont();
 	FontInfo.Size = 15;  
 	NewTextBlock->SetFont(FontInfo);
 
 	Chat_ScrollBox->AddChild(NewTextBlock);
-	Chat_ScrollBox->ScrollToEnd(); // °¡Àå ÃÖ±Ù Ã¤ÆÃÀ» º¸±â À§ÇØ, ½ºÅ©·ÑÀ» °¡Àå ¾Æ·¡·Î ³»¸°´Ù.
+	Chat_ScrollBox->ScrollToEnd(); // ê°€ì¥ ìµœê·¼ ì±„íŒ…ì„ ë³´ê¸° ìœ„í•´, ìŠ¤í¬ë¡¤ì„ ê°€ì¥ ì•„ë˜ë¡œ ë‚´ë¦°ë‹¤.
 }
 
 void UUW_Chat::SetChatInputTextMessage(const FText& Text)
@@ -53,15 +53,15 @@ void UUW_Chat::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMe
 	case ETextCommit::OnEnter:
 		if (Text.IsEmpty() == false)
 		{
-			MyPC->SendMessage(Text); // ¸Ş½ÃÁö º¸³¿.
-			SetChatInputTextMessage(FText::GetEmpty()); // ¸Ş¼¼Áö Àü¼ÛÇßÀ¸´Ï, ºñ¿öÁÜ.
+			MyPC->SendMessage(Text); // ë©”ì‹œì§€ ë³´ëƒ„.
+			SetChatInputTextMessage(FText::GetEmpty()); // ë©”ì„¸ì§€ ì „ì†¡í–ˆìœ¼ë‹ˆ, ë¹„ì›Œì¤Œ.
 		}
-		//MyPC->FocusGame(); // ´Ù½Ã °ÔÀÓÀ¸·Î 
+		//MyPC->FocusGame(); // ë‹¤ì‹œ ê²Œì„ìœ¼ë¡œ 
 		//break;
-		MyPC->FocusChatInputText(); // ´Ù½Ã Ã¤ÆÃÃ¢À¸·Î 
+		MyPC->FocusChatInputText(); // ë‹¤ì‹œ ì±„íŒ…ì°½ìœ¼ë¡œ 
 		break;
 	case ETextCommit::OnCleared:
-		MyPC->FocusGame(); // ´Ù½Ã °ÔÀÓÀ¸·Î Æ÷Ä¿½Ì.
+		MyPC->FocusGame(); // ë‹¤ì‹œ ê²Œì„ìœ¼ë¡œ í¬ì»¤ì‹±.
 		break;
 	}
 }

@@ -4,6 +4,7 @@
 #include "MR_Controller.h"
 
 #include "BoardStruct.h"
+#include "ProceedStruct.h"
 #include "MetaRealm/MetaRealm.h"
 #include "Main_HUD.h"
 #include "MetaRealmGameState.h"
@@ -70,9 +71,11 @@ void AMR_Controller::BeginPlay()
 	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		FBoardStruct currData = gi->GetBoardData();
+		TArray<FProceedStruct> proceedData = gi->GetProceedData();
 		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 		{
 			gs->gsContent = currData.ContentString;
+			gs->ArrRecordInfo = proceedData;
 		}
 	}
 }

@@ -30,7 +30,7 @@ public:
 
 	// 회의실 내용을 리스트에 보관
 	UPROPERTY(ReplicatedUsing=OnRep_Proceeding)
-	TArray<struct FRecordInfo> ArrRecordInfo;
+	TArray<struct FProceedStruct> ArrRecordInfo;
 
 	UFUNCTION()
 	void OnRep_Proceeding();

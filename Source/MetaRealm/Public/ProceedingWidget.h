@@ -25,7 +25,7 @@ private:
 	UPROPERTY()
 	class AMetaRealmGameState* GS;
 
-	TArray<struct FRecordInfo> ArrRecordInfo;
+	TArray<struct FProceedStruct> ArrRecordInfo;
 	int32 totalPageNum;
 	int32 CurrPageNum;
 

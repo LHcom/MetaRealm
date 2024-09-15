@@ -5,6 +5,7 @@
 
 #include "JsonParseLib.h"
 #include "MetaRealmGameState.h"
+#include "ProceedStruct.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"

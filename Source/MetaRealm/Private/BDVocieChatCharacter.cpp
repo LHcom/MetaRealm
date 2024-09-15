@@ -2,7 +2,7 @@
 
 
 #include "BDVocieChatCharacter.h"
-#include "Net/VoiceConfig.h" //VOIPTalker Çì´õ
+#include "Net/VoiceConfig.h" //VOIPTalker í—¤ë”
 #include "GameFramework/PlayerState.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/VoiceInterface.h"
@@ -13,7 +13,7 @@ ABDVocieChatCharacter::ABDVocieChatCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// VOIP Talker ÄÄÆ÷³ÍÆ®¸¦ »ı¼ºÇÏ°í, VOIPTalkerComponent Æ÷ÀÎÅÍ¿¡ ÇÒ´çÇÕ´Ï´Ù.
+	// VOIP Talker ì»´í¬ë„ŒíŠ¸ë¥¼ ìƒì„±í•˜ê³ , VOIPTalkerComponent í¬ì¸í„°ì— í• ë‹¹í•©ë‹ˆë‹¤.
 	VOIPTalkerComponent = CreateDefaultSubobject<UVOIPTalker>(TEXT("VOIPTalker"));
 
 }
@@ -23,7 +23,7 @@ void ABDVocieChatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// VOIP ÃÊ±âÈ­ ÀÛ¾÷À» È£ÃâÇÕ´Ï´Ù.
+	// VOIP ì´ˆê¸°í™” ì‘ì—…ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
 	InitializeVOIP();
 }
 
@@ -41,24 +41,24 @@ void ABDVocieChatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 }
 
-// VOIP ÃÊ±âÈ­ ÀÛ¾÷À» ¼öÇàÇÕ´Ï´Ù.
+// VOIP ì´ˆê¸°í™” ì‘ì—…ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 void ABDVocieChatCharacter::InitializeVOIP()
 {
 	if (VOIPTalkerComponent)
 	{
-		// VOIPTalkerComponent°¡ À¯È¿ÇÑÁö È®ÀÎÇÕ´Ï´Ù.
+		// VOIPTalkerComponentê°€ ìœ íš¨í•œì§€ í™•ì¸í•©ë‹ˆë‹¤.
 		if (IsValid(VOIPTalkerComponent))
 		{
-			// ÇÃ·¹ÀÌ¾î »óÅÂ¿¡ VOIPTalker¸¦ µî·ÏÇÕ´Ï´Ù.
+			// í”Œë ˆì´ì–´ ìƒíƒœì— VOIPTalkerë¥¼ ë“±ë¡í•©ë‹ˆë‹¤.
 			RegisterWithPlayerState();
 
-			// ¸¶ÀÌÅ© ÀÓ°è°ªÀ» ¼³Á¤ÇÕ´Ï´Ù.
+			// ë§ˆì´í¬ ì„ê³„ê°’ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 			SetMicThreshold(-1.0f);
 
-			// ·ÎÄÃ ÇÃ·¹ÀÌ¾î°¡ Á¦¾î ÁßÀÏ ¶§¸¸ VOIP °ü·Ã ¼³Á¤À» ÁøÇàÇÕ´Ï´Ù.
+			// ë¡œì»¬ í”Œë ˆì´ì–´ê°€ ì œì–´ ì¤‘ì¼ ë•Œë§Œ VOIP ê´€ë ¨ ì„¤ì •ì„ ì§„í–‰í•©ë‹ˆë‹¤.
 			if (IsLocallyControlled())
 			{
-				// ÄÜ¼Ö ¸í·ÉÀ» ½ÇÇàÇÏ¿© VOIP¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
+				// ì½˜ì†” ëª…ë ¹ì„ ì‹¤í–‰í•˜ì—¬ VOIPë¥¼ í™œì„±í™”í•©ë‹ˆë‹¤.
 				APlayerController* PlayerController = Cast<APlayerController>(GetController());
 				if (PlayerController)
 				{
@@ -66,7 +66,7 @@ void ABDVocieChatCharacter::InitializeVOIP()
 				}
 			}
 
-			// ¿ø°İ Talker µî·Ï
+			// ì›ê²© Talker ë“±ë¡
 			RegisterRemoteTalker();
 		}
 	}
@@ -85,7 +85,7 @@ void ABDVocieChatCharacter::SetUpNetworkVoice()
 				IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
 				if (VoiceInterface.IsValid())
 				{
-					// ÇÃ·¹ÀÌ¾î¿¡ Voice Channel ÇÒ´ç
+					// í”Œë ˆì´ì–´ì— Voice Channel í• ë‹¹
 					VoiceInterface->StartNetworkedVoice(PlayerController->GetLocalPlayer()->GetControllerId());
 				}
 			}
@@ -113,7 +113,7 @@ void ABDVocieChatCharacter::StopVoice()
 	}
 }
 
-// ¸¶ÀÌÅ© ÀÓ°è°ªÀ» ¼³Á¤ÇÕ´Ï´Ù.
+// ë§ˆì´í¬ ì„ê³„ê°’ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 void ABDVocieChatCharacter::SetMicThreshold(float Threshold)
 {
 	if (VOIPTalkerComponent)
@@ -122,7 +122,7 @@ void ABDVocieChatCharacter::SetMicThreshold(float Threshold)
 	}
 }
 
-// ÇÃ·¹ÀÌ¾î »óÅÂ¿¡ µî·ÏÇÕ´Ï´Ù.
+// í”Œë ˆì´ì–´ ìƒíƒœì— ë“±ë¡í•©ë‹ˆë‹¤.
 void ABDVocieChatCharacter::RegisterWithPlayerState()
 {
 	if (VOIPTalkerComponent && GetPlayerState())
@@ -131,14 +131,14 @@ void ABDVocieChatCharacter::RegisterWithPlayerState()
 	}
 }
 
-// ·ÎÄÃ ÇÃ·¹ÀÌ¾î°¡ Á¦¾î ÁßÀÎÁö È®ÀÎÇÕ´Ï´Ù.
+// ë¡œì»¬ í”Œë ˆì´ì–´ê°€ ì œì–´ ì¤‘ì¸ì§€ í™•ì¸í•©ë‹ˆë‹¤.
 bool ABDVocieChatCharacter::IsLocallyControlled() const
 {
 	return IsPlayerControlled();
 }
 
 
-// ¿ø°İ Talker µî·Ï ÇÔ¼ö
+// ì›ê²© Talker ë“±ë¡ í•¨ìˆ˜
 void ABDVocieChatCharacter::RegisterRemoteTalker()
 {
 	APlayerController* PlayerController = GetController<APlayerController>();
@@ -150,12 +150,12 @@ void ABDVocieChatCharacter::RegisterRemoteTalker()
 			IOnlineVoicePtr VoiceInterface = OnlineSub->GetVoiceInterface();
 			if (VoiceInterface.IsValid())
 			{
-				// ÇÃ·¹ÀÌ¾îÀÇ °íÀ¯ ³×Æ®¿öÅ© ID¸¦ °¡Á®¿É´Ï´Ù.
-				TSharedPtr<const FUniqueNetId> UniqueNetId = PlayerController->PlayerState->UniqueId.GetUniqueNetId();
+				// í”Œë ˆì´ì–´ì˜ ê³ ìœ  ë„¤íŠ¸ì›Œí¬ IDë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+				TSharedPtr<const FUniqueNetId> UniqueNetId = PlayerController->PlayerState->GetUniqueId().GetUniqueNetId();
 
 				if (UniqueNetId.IsValid())
 				{
-					// °íÀ¯ ³×Æ®¿öÅ© ID¸¦ »ç¿ëÇÏ¿© ¿ø°İ Talker¸¦ µî·ÏÇÕ´Ï´Ù.
+					// ê³ ìœ  ë„¤íŠ¸ì›Œí¬ IDë¥¼ ì‚¬ìš©í•˜ì—¬ ì›ê²© Talkerë¥¼ ë“±ë¡í•©ë‹ˆë‹¤.
 					VoiceInterface->RegisterRemoteTalker(*UniqueNetId);
 				}
 			}

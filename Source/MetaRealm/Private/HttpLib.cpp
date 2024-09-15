@@ -7,7 +7,9 @@
 #include "JsonParseLib.h"
 #include "MetaRealmGameState.h"
 #include "MetaRealmGM.h"
+#include "NetGameInstance.h"
 #include "PlayerCharacter.h"
+#include "ProceedStruct.h"
 #include "Kismet/GameplayStatics.h"
 #include "MetaRealm/MetaRealm.h"
 
@@ -174,7 +176,7 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 			}
 
 			// 회의록을 구조체에 저장
-			FRecordInfo recordInfo;
+			FProceedStruct recordInfo;
 			recordInfo.StrMemberList = meetingMember;
 			recordInfo.StrMeetingTime = strMeetingTime;
 			recordInfo.StrContent = outStrMessage.IsEmpty() ? "" : outStrMessage;
@@ -182,10 +184,14 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Respon
 			if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 			{
 				gs->ArrRecordInfo.Add(recordInfo);
-
+				
 				// 호스트일 경우에는 한번 호출해줘야함.
 				if (HasAuthority())
 					gs->OnRep_Proceeding();
+			}
+			if(auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+			{
+				gi->SetProceedData(recordInfo);
 			}
 			//player->setTextProceedingUI(meetingMember, strMeetingTime, outStrMessage);
 		}

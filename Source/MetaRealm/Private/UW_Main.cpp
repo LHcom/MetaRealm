@@ -43,7 +43,7 @@ void UUW_Main::VisiblePlayerList()
 {
 	if (PlayerList)
 	{
-		if (PlayerList->Visibility == ESlateVisibility::Visible)
+		if (PlayerList->GetVisibility() == ESlateVisibility::Visible)
 		{
 			PlayerList->SetVisibility(ESlateVisibility::Hidden);
 		}

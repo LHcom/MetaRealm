@@ -7,6 +7,7 @@
 #include "BoardStruct.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "ProceedStruct.h"
 #include "GameFramework/PlayerState.h"
 #include "Online/OnlineSessionNames.h"
 
@@ -279,12 +280,40 @@ FBoardStruct UNetGameInstance::GetBoardData()
 		return FBoardStruct();
 
 	// DT_RowName 으로 탐색을 하고, 만약 값이 없으면 ""을 저장해서 리턴
-	FBoardStruct *retData = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
-	if(retData)
+	FBoardStruct* retData = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
+	if (retData)
 	{
 		retData->PrintStruct();
-		return *retData;		
+		return *retData;
 	}
 	else
 		return FBoardStruct();
+}
+
+void UNetGameInstance::SetProceedData(FProceedStruct newData)
+{
+	if (!ProceedDataTable)
+		return;
+
+	int32 rowCnt = ProceedDataTable->GetRowNames().Num();
+	// DT_RowName 이 키로 존재하는 행에 newData 구조체를 저장
+	ProceedDataTable->AddRow(FName(FString::FromInt(rowCnt)), newData);
+}
+
+TArray<FProceedStruct> UNetGameInstance::GetProceedData()
+{
+	TArray<FProceedStruct> retDataArr;
+	// 데이터 테이블이 nullPtr이면 빈 구조체 리턴
+	if (!ProceedDataTable)
+		return retDataArr;
+
+	TArray<FProceedStruct*> retDataArrPtr;
+	ProceedDataTable->GetAllRows<FProceedStruct>(TEXT("GetAllRows"), retDataArrPtr);
+	for(int i=0;i<retDataArrPtr.Num();i++)
+	{
+		retDataArr[i].StrContent=retDataArrPtr[i]->StrContent;
+		retDataArr[i].StrMeetingTime=retDataArrPtr[i]->StrMeetingTime;
+		retDataArr[i].StrMemberList=retDataArrPtr[i]->StrMemberList;
+	}
+	return retDataArr;
 }
