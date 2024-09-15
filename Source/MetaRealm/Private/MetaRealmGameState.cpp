@@ -11,6 +11,7 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMetaRealmGameState, gsContent);
+	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
