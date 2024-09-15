@@ -26,8 +26,8 @@ void ULoginUI::ButtonLoginClicked()
 	if(!Me)
 		Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	
-	FString id = IDEditable->GetText().ToString();
-	FString pw = PSEditable->GetText().ToString();
+	FString id = IDEditable->GetText().ToString().TrimStartAndEnd();
+	FString pw = PSEditable->GetText().ToString().TrimStartAndEnd();
 	
 	if (id.IsEmpty())
 	{

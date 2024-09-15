@@ -26,10 +26,10 @@ void USignUpUI::SignUpButtonClicked()
 		return;
 	}
 
-	FString id = IDEditable->GetText().ToString();
-	FString pw = PSEditable->GetText().ToString();
-	FString pwChk = SecPSEditable->GetText().ToString();
-	FString nickName = NickNameEditable->GetText().ToString();
+	FString id = IDEditable->GetText().ToString().TrimStartAndEnd();
+	FString pw = PSEditable->GetText().ToString().TrimStartAndEnd();
+	FString pwChk = SecPSEditable->GetText().ToString().TrimStartAndEnd();
+	FString nickName = NickNameEditable->GetText().ToString().TrimStartAndEnd();
 
 	if (id.IsEmpty())
 	{
