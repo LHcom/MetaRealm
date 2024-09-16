@@ -7,7 +7,6 @@
 #include "JsonParseLib.h"
 #include "MetaRealmGameState.h"
 #include "MetaRealmGM.h"
-#include "MR_Controller.h"
 #include "NetGameInstance.h"
 #include "PlayerCharacter.h"
 #include "ProceedStruct.h"
@@ -18,15 +17,15 @@ void AHttpLib::BeginPlay()
 {
 	Super::BeginPlay();
 
-	player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld() , 0));
+	player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	gm = Cast<AMetaRealmGM>(GetWorld()->GetAuthGameMode());
 	if (gm)
 	{
-		AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("gm is not null"));
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is not null"));
 	}
 	else
 	{
-		AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("gm is null"));
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is null"));
 	}
 }
 
@@ -36,21 +35,21 @@ void AHttpLib::ReqSignUp(const FString& JSON)
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetVerb("POST");
 	req->SetURL(SignUpURL);
-	req->SetHeader(TEXT("Content-Type") , TEXT("application/json"));
+	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this , &AHttpLib::OnResSignUp);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSignUp);
 	req->ProcessRequest();
 }
 
-void AHttpLib::OnResSignUp(FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully)
+void AHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
 		// 성공
-		UE_LOG(LogTemp , Warning , TEXT("Request Success"));
+		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		FString retMSG = UJsonParseLib::SignUpJsonParse(Result);
-		UE_LOG(LogTemp , Warning , TEXT("Request Result : %s") , *Result);
+		FString retMSG =UJsonParseLib::SignUpJsonParse(Result);
+		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
 
 		if (player)
 			player->getResSignUp(retMSG);
@@ -58,7 +57,7 @@ void AHttpLib::OnResSignUp(FHttpRequestPtr Request , FHttpResponsePtr Response ,
 	else
 	{
 		// 실패
-		UE_LOG(LogTemp , Warning , TEXT("Request POST Failed"));
+		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
 		FString retMsg = FString::Printf(TEXT("회원가입 요청을 실패하였습니다."));
 		if (player)
 			player->getResSignUp(retMsg);
@@ -71,38 +70,29 @@ void AHttpLib::ReqLogin(const FString& JSON)
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetVerb("POST");
 	req->SetURL(LoginURL);
-	req->SetHeader(TEXT("Content-Type") , TEXT("application/json"));
+	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this , &AHttpLib::OnResLogin);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResLogin);
 	req->ProcessRequest();
 }
 
-void AHttpLib::OnResLogin(FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully)
+void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
 		// 성공
-		UE_LOG(LogTemp , Warning , TEXT("Request Success"));
+		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		UE_LOG(LogTemp , Warning , TEXT("Request Result : %s") , *Result);
+		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
 		FUserInfo userInfo = UJsonParseLib::LoginJsonParse(Result);
 
 		if (player)
 			player->getResLogin(userInfo.MSG);
-
-		FString successMSG = FString::Printf(TEXT("로그인 성공!!!"));
-		if (userInfo.MSG.Equals(successMSG))
-		{
-			if (auto mrCtrl = Cast<AMR_Controller>(GetWorld()->GetFirstPlayerController()))
-			{
-				mrCtrl->SetUserInfo(userInfo.TkAddr , userInfo.NickName);
-			}
-		}
 	}
 	else
 	{
 		// 실패
-		UE_LOG(LogTemp , Warning , TEXT("Request POST Failed"));
+		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
 		FString retMsg = FString::Printf(TEXT("로그인 요청을 실패하였습니다."));
 		if (player)
 			player->getResLogin(retMsg);
@@ -116,18 +106,12 @@ void AHttpLib::ReqSoundToText(const FString& FilePath)
 	req->SetURL(SoundToTextURL);
 	req->SetVerb("POST");
 	FString Boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
-	req->SetHeader(TEXT("Content-Type") , TEXT("multipart/form-data; boundary=") + Boundary);
-	FString AuthorizationToken = "";
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	{
-		AuthorizationToken = gi->TkAdrr;
-	}
-	req->SetHeader(TEXT("Authorization") , TEXT("BEARER ") + AuthorizationToken);
+	req->SetHeader(TEXT("Content-Type"), TEXT("multipart/form-data; boundary=") + Boundary);
 
 	TArray<uint8> FileData;
-	if (!FFileHelper::LoadFileToArray(FileData , *FilePath))
+	if (!FFileHelper::LoadFileToArray(FileData, *FilePath))
 	{
-		UE_LOG(LogTemp , Error , TEXT("Failed to read file: %s") , *FilePath);
+		UE_LOG(LogTemp, Error, TEXT("Failed to read file: %s"), *FilePath);
 		return;
 	}
 
@@ -143,30 +127,42 @@ void AHttpLib::ReqSoundToText(const FString& FilePath)
 	// 전체 페이로드 구성
 	FString PayloadString = BeginBoundary + FileHeader;
 	TArray<uint8> Payload;
-	Payload.Append((uint8*)TCHAR_TO_UTF8(*PayloadString) , PayloadString.Len());
+	Payload.Append((uint8*)TCHAR_TO_UTF8(*PayloadString), PayloadString.Len());
 	Payload.Append(FileData);
 	FString EndPayloadString = "\r\n" + EndBoundary;
-	Payload.Append((uint8*)TCHAR_TO_UTF8(*EndPayloadString) , EndPayloadString.Len());
+	Payload.Append((uint8*)TCHAR_TO_UTF8(*EndPayloadString), EndPayloadString.Len());
 
 	// 요청 바디 설정
 	req->SetContent(Payload);
 
-	req->OnProcessRequestComplete().BindUObject(this , &AHttpLib::OnResSoundToText);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSoundToText);
 	req->ProcessRequest();
+
+
+	/*req->SetHeader(TEXT("Content-Type"), TEXT("audio/wav"));
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResSoundToText);
+	TArray<uint8> FileContent;
+	if (FFileHelper::LoadFileToArray(FileContent, *FilePath)) {
+		req->SetContent(FileContent);
+		req->ProcessRequest();
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load file: %s"), *FilePath);
+	}*/
 }
 
-void AHttpLib::OnResSoundToText(FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully)
+void AHttpLib::OnResSoundToText(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
 		// 성공
-		UE_LOG(LogTemp , Warning , TEXT("Request Success"));
+		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
 		FString outStrMessage;
-		UJsonParseLib::SoundToTextJsonParse(Result , outStrMessage);
+		UJsonParseLib::SoundToTextJsonParse(Result, outStrMessage);
 		if (player)
 		{
-			FString strMeetingTime = FString::Printf(TEXT("%s%s%s") , *player->MeetingStartTime , TEXT("~") ,
+			FString strMeetingTime = FString::Printf(TEXT("%s%s%s"), *player->MeetingStartTime, TEXT("~"),
 			                                         *player->MeetingEndTime);
 			FString meetingMember = "";
 			if (gm)
@@ -184,12 +180,12 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request , FHttpResponsePtr Respo
 			if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 			{
 				gs->ArrRecordInfo.Add(recordInfo);
-
+				
 				// 호스트일 경우에는 한번 호출해줘야함.
 				if (HasAuthority())
 					gs->OnRep_Proceeding();
 			}
-			if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+			if(auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 			{
 				gi->SetProceedData(recordInfo);
 				gi->SaveProceedDTToCSV();
@@ -200,7 +196,7 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request , FHttpResponsePtr Respo
 	else
 	{
 		// 실패
-		UE_LOG(LogTemp , Warning , TEXT("Request POST Failed"));
+		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
 	}
 }
 
@@ -209,24 +205,24 @@ void AHttpLib::ReqGenerateColor(const FString& JSON)
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetURL(SignUpURL);
-	req->SetHeader(TEXT("Content-Type") , TEXT("application/json"));
+	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	req->SetContentAsString(JSON);
-	req->OnProcessRequestComplete().BindUObject(this , &AHttpLib::OnResGenerateColor);
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpLib::OnResGenerateColor);
 	req->ProcessRequest();
 }
 
-void AHttpLib::OnResGenerateColor(FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully)
+void AHttpLib::OnResGenerateColor(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
 		// 성공
-		UE_LOG(LogTemp , Warning , TEXT("Request Success"));
+		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
 		UJsonParseLib::GenerateColorJsonParse(Result);
 	}
 	else
 	{
 		// 실패
-		UE_LOG(LogTemp , Warning , TEXT("Request POST Failed"));
+		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
 	}
 }

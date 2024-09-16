@@ -22,7 +22,12 @@ public:
 	// 게시판 내용을 저장할 변수
 	UPROPERTY(Replicated)
 	FString gsContent;
-	
+
+	UPROPERTY()
+	FString TkAdrr;
+	UPROPERTY()
+	FString NickName;
+
 	// 회의실 내용을 리스트에 보관
 	UPROPERTY(ReplicatedUsing=OnRep_Proceeding)
 	TArray<struct FProceedStruct> ArrRecordInfo;

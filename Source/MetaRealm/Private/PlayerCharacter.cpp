@@ -42,20 +42,20 @@ APlayerCharacter::APlayerCharacter()
 	if (PlayerUIClass.Succeeded())
 	{
 		PlayerUI->SetWidgetClass(PlayerUIClass.Class);
-		PlayerUI->SetDrawSize(FVector2D(1920 , 1080));
+		PlayerUI->SetDrawSize(FVector2D(1920, 1080));
 	}
 	// 플레이어 Reaction UI 관련 애들=========================================================================
 
 	ReactionUIComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReactionUI"));
 	ReactionUIComponent->SetupAttachment(RootComponent);
-	ReactionUIComponent->SetRelativeLocation(FVector(0 , 0 , 300));
+	ReactionUIComponent->SetRelativeLocation(FVector(0, 0, 300));
 
 	ConstructorHelpers::FClassFinder<UUserWidget> ReactionUIClass(TEXT("/Game/KSK/UI/SKWBP_Reaction.SKWBP_Reaction_C"));
 	if (ReactionUIClass.Succeeded())
 	{
 		ReactionUIComponent->SetWidgetClass(ReactionUIClass.Class);
-		ReactionUIComponent->SetDrawSize(FVector2D(200 , 200));
-		UE_LOG(LogTemp , Warning , TEXT("=========================================="));
+		ReactionUIComponent->SetDrawSize(FVector2D(200, 200));
+		UE_LOG(LogTemp, Warning, TEXT("=========================================="));
 	}
 
 
@@ -69,13 +69,13 @@ APlayerCharacter::APlayerCharacter()
 	if (tempMesh.Succeeded())
 	{
 		Cylinder->SetStaticMesh(tempMesh.Object);
-		Cylinder->SetRelativeLocation(FVector(0 , 0 , -90));
-		Cylinder->SetRelativeScale3D(FVector(2.0f , 2.0f , 0.035f));
+		Cylinder->SetRelativeLocation(FVector(0, 0, -90));
+		Cylinder->SetRelativeScale3D(FVector(2.0f, 2.0f, 0.035f));
 	}
 	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
 	if (CylinderMesh1.Succeeded())
 	{
-		Cylinder->SetMaterial(0 , CylinderMesh1.Object);
+		Cylinder->SetMaterial(0, CylinderMesh1.Object);
 		CylinderMaterial1 = CylinderMesh1.Object;
 	}
 
@@ -104,7 +104,7 @@ void APlayerCharacter::initProceedingUI()
 	if (!ProceedingFactory)
 		return;
 
-	ProceedingWidget = CastChecked<UProceedingWidget>(CreateWidget(GetWorld() , ProceedingFactory));
+	ProceedingWidget = CastChecked<UProceedingWidget>(CreateWidget(GetWorld(), ProceedingFactory));
 	if (ProceedingWidget)
 	{
 		ProceedingWidget->AddToViewport(0);
@@ -117,21 +117,21 @@ void APlayerCharacter::initMemoUI()
 	auto pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] Player Controller is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
 		//MemoWidget = nullptr;
 		return;
 	}
 
 	if (!pc->MemoUIFactory)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoFactory is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoFactory is null"));
 		return;
 	}
 
-	pc->MemoUI = CastChecked<UMemoWidget>(CreateWidget(GetWorld() , pc->MemoUIFactory));
+	pc->MemoUI = CastChecked<UMemoWidget>(CreateWidget(GetWorld(), pc->MemoUIFactory));
 	if (pc->MemoUI)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is not null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
 		MemoWidget = pc->MemoUI;
 		MemoWidget->AddToViewport(0);
 		MemoWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -143,7 +143,7 @@ void APlayerCharacter::initMemoUI()
 	}
 	else
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is null"));
 	}
 }
 
@@ -164,11 +164,11 @@ FString APlayerCharacter::GetSystemTime()
 
 	// tm 구조체로 변환 (로컬 시간)
 	std::tm localTime;
-	localtime_s(&localTime , &currentTime);
+	localtime_s(&localTime, &currentTime);
 
 	// 시간 포맷 설정 (yyyy-MM-dd HH:mm:ss)
 	char buffer[100];
-	std::strftime(buffer , sizeof(buffer) , "%Y-%m-%d %H:%M:%S" , &localTime);
+	std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &localTime);
 
 	// FString로 변환하여 Unreal에서 출력
 	FString TimeString = FString(buffer);
@@ -213,16 +213,11 @@ void APlayerCharacter::BeginPlay()
 	if (CurrentMapName == "LobyMap")
 	{
 		TArray<AActor*> HttpActorArr;
-		UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("HTTP") , HttpActorArr);
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("HTTP"), HttpActorArr);
 		if (HttpActorArr.Num() > 0)
 		{
 			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
 		}
-	}
-
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	{
-		UE_LOG(LogTemp , Warning , TEXT("Token Address : %s") , *(gi->TkAdrr.IsEmpty()?"":gi->TkAdrr));
 	}
 }
 
@@ -240,7 +235,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strContent)
 {
-	UE_LOG(LogTemp , Warning , TEXT("[ServerRPC_ContentSave] Content : %s") , *strContent);
+	UE_LOG(LogTemp, Warning, TEXT("[ServerRPC_ContentSave] Content : %s"), *strContent);
 	// 서버 RPC로 들어온 변수값을
 	// 멀티캐스트 RPC로 뿌려준다.
 	MulticastRPC_ContentSave(strContent);
@@ -271,15 +266,15 @@ void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
 	if (value == 1 && CylinderMaterial1)
 	{
-		Cylinder->SetMaterial(0 , CylinderMaterial1);
+		Cylinder->SetMaterial(0, CylinderMaterial1);
 	}
 	else if (value == 2 && CylinderMaterial2)
 	{
-		Cylinder->SetMaterial(0 , CylinderMaterial2);
+		Cylinder->SetMaterial(0, CylinderMaterial2);
 	}
 	else if (value == 3 && CylinderMaterial3)
 	{
-		Cylinder->SetMaterial(0 , CylinderMaterial3);
+		Cylinder->SetMaterial(0, CylinderMaterial3);
 	}
 }
 
@@ -287,7 +282,7 @@ void APlayerCharacter::SignUp(const FString& JSON)
 {
 	if (!HttpActor)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("HttpActor Is Null"));
+		UE_LOG(LogTemp, Warning, TEXT("HttpActor Is Null"));
 		return;
 	}
 
@@ -301,8 +296,8 @@ void APlayerCharacter::getResSignUp(FString& ret)
 	{
 		// 성공
 		// 회원가입 UI를 닫고
-		if (ALoginActor* loginActor = Cast<ALoginActor>(
-			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())))
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
 		{
 			loginActor->HideSignUpUI();
 		}
@@ -314,8 +309,8 @@ void APlayerCharacter::getResSignUp(FString& ret)
 	else
 	{
 		// 실패
-		if (ALoginActor* loginActor = Cast<ALoginActor>(
-			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())))
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
 		{
 			loginActor->ShowErrMsg(true , ret);
 		}
@@ -326,7 +321,7 @@ void APlayerCharacter::Login(const FString& JSON)
 {
 	if (!HttpActor)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("HttpActor Is Null"));
+		UE_LOG(LogTemp, Warning, TEXT("HttpActor Is Null"));
 		return;
 	}
 
@@ -338,15 +333,15 @@ void APlayerCharacter::getResLogin(FString& ret)
 	if (ret != "Successes to login")
 	{
 		if (ALoginActor* loginActor = Cast<ALoginActor>(
-			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())))
+			UGameplayStatics::GetActorOfClass(GetWorld(), ALoginActor::StaticClass())))
 		{
-			loginActor->ShowErrMsg(false , ret);
+			loginActor->ShowErrMsg(false, ret);
 		}
 	}
 	else
 	{
-		if (ALoginActor* loginActor = Cast<ALoginActor>(
-			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())))
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
 		{
 			loginActor->ShowErrMsg(false , ret);
 		}
@@ -364,26 +359,26 @@ void APlayerCharacter::initMsgUI()
 	auto pc = Cast<AMR_Controller>(Controller);
 	if (nullptr == pc)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] Player Controller is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] Player Controller is null"));
 		return;
 	}
 
 	if (!pc->MsgUIFactory)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoFactory is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoFactory is null"));
 		return;
 	}
 
-	pc->MsgUI = CastChecked<UMessagePopupWidget>(CreateWidget(GetWorld() , pc->MsgUIFactory));
+	pc->MsgUI = CastChecked<UMessagePopupWidget>(CreateWidget(GetWorld(), pc->MsgUIFactory));
 	if (pc->MsgUI)
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is not null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is not null"));
 		MsgWidget = pc->MsgUI;
 		MsgWidget->AddToViewport(99);
 		MsgWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
-		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[initMemoUI] MemoWidget is null"));
 	}
 }

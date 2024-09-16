@@ -54,8 +54,8 @@ FUserInfo UJsonParseLib::LoginJsonParse(const FString& strJson)
 	{
 		if (result->HasField(TEXT("message")))
 			info.MSG = result->GetStringField(TEXT("message"));
-		// else if (result->HasField(TEXT("failType")))
-		// 	info.MSG = result->GetStringField(TEXT("failType"));
+		else if (result->HasField(TEXT("failType")))
+			info.MSG = result->GetStringField(TEXT("failType"));
 		
 		if (result->HasField(TEXT("token")))
 			info.TkAddr = result->GetStringField(TEXT("token"));
