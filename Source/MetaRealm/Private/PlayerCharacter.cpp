@@ -37,6 +37,7 @@ APlayerCharacter::APlayerCharacter()
 	{
 		PlayerUI->SetupAttachment(RootComponent);
 		PlayerUI->SetWidgetSpace(EWidgetSpace::Screen);
+		PlayerUI->SetOnlyOwnerSee(true);
 	}
 	ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIClass(TEXT("/Game/KHH/UI/UI/WBP_Player.WBP_Player_C"));
 	if (PlayerUIClass.Succeeded())
@@ -44,6 +45,7 @@ APlayerCharacter::APlayerCharacter()
 		PlayerUI->SetWidgetClass(PlayerUIClass.Class);
 		PlayerUI->SetDrawSize(FVector2D(1920 , 1080));
 	}
+
 	// 플레이어 Reaction UI 관련 애들=========================================================================
 
 	ReactionUIComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReactionUI"));
@@ -208,6 +210,15 @@ void APlayerCharacter::BeginPlay()
 		initMsgUI();
 	}
 
+	if (PlayerUI){
+		if ( IsLocallyControlled() ) {
+			PlayerUI->SetVisibility(true);
+		}
+		else {
+			PlayerUI->SetVisibility(false);
+		}
+	}
+
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
 	if (CurrentMapName == "LobyMap")
@@ -281,6 +292,16 @@ void APlayerCharacter::SetCylinderMaterial(int32 value)
 	{
 		Cylinder->SetMaterial(0 , CylinderMaterial3);
 	}
+}
+
+void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
+{
+	MulticastSetCylinderMaterial(value);
+}
+
+void APlayerCharacter::MulticastSetCylinderMaterial_Implementation(int32 value)
+{
+	SetCylinderMaterial(value);
 }
 
 void APlayerCharacter::SignUp(const FString& JSON)

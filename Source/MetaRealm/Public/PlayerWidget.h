@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -33,7 +33,7 @@ public:
 
 	// ======================================================== Character Component Save End
 	
-	
+	void HideReaction();
 
 	// ======================================================== Reaction Button Binding Start
 	
@@ -44,7 +44,7 @@ public:
 	class UButton* OpenReactionUI;
 	UFUNCTION()
 	void ClickedOpenReactionUI();
-
+	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ClickReaction1;
 	UFUNCTION()

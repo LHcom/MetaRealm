@@ -106,7 +106,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UTexture2D* ReactionTexure14;
 
-
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
 
@@ -121,6 +120,12 @@ public:
 
 	UFUNCTION()
 	void SetCylinderMaterial(int32 value);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetCylinderMaterial(int32 value);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSetCylinderMaterial(int32 value);
 
 private:
 	//=================================로비

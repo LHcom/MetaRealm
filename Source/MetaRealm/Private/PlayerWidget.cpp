@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PlayerWidget.h"
@@ -44,6 +44,11 @@ void UPlayerWidget::NativeConstruct()
 	ClickState3->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState3);
 }
 
+void UPlayerWidget::HideReaction()
+{
+	GetWorld()->GetTimerManager().SetTimer(handle , this , &UPlayerWidget::HideImage , 3.0f , true);
+}
+
 void UPlayerWidget::ClickedOpenReactionUI()
 {
 	if (ReactionBar->IsVisible()) {
@@ -59,7 +64,7 @@ void UPlayerWidget::ClickedReaction1()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure1){
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure1);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 	// ReactionComp->ShowReaction(me->ReactionTexure1);
 }
@@ -69,7 +74,7 @@ void UPlayerWidget::ClickedReaction2()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure2) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure2);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -78,7 +83,7 @@ void UPlayerWidget::ClickedReaction3()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure3){
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure3);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -87,7 +92,7 @@ void UPlayerWidget::ClickedReaction4()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure4) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure4);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -96,7 +101,7 @@ void UPlayerWidget::ClickedReaction5()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure5) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure5);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -105,7 +110,7 @@ void UPlayerWidget::ClickedReaction6()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure6) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure6);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -114,7 +119,7 @@ void UPlayerWidget::ClickedReaction7()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure7) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure7);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -123,7 +128,7 @@ void UPlayerWidget::ClickedReaction8()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure8) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure8);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -132,7 +137,7 @@ void UPlayerWidget::ClickedReaction9()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure9) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure9);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -141,7 +146,7 @@ void UPlayerWidget::ClickedReaction10()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure10) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure10);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -150,7 +155,7 @@ void UPlayerWidget::ClickedReaction11()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure11) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure11);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -159,7 +164,7 @@ void UPlayerWidget::ClickedReaction12()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure12) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure12);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -168,7 +173,7 @@ void UPlayerWidget::ClickedReaction13()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure13) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure13);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -177,7 +182,7 @@ void UPlayerWidget::ClickedReaction14()
 	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure14) {
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure14);
-		GetWorld()->GetTimerManager().SetTimer(handle, this, &UPlayerWidget::HideImage, 3.0f, true);
+		HideReaction();
 	}
 }
 
@@ -198,15 +203,18 @@ void UPlayerWidget::ClickedOpenStateUI()
 
 void UPlayerWidget::ClickedState1()
 {
-	me->SetCylinderMaterial(1);
+	me->ServerSetCylinderMaterial(1);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerWidget::ClickedState2()
 {
-	me->SetCylinderMaterial(2);
+	me->ServerSetCylinderMaterial(2);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerWidget::ClickedState3()
 {
-	me->SetCylinderMaterial(3);
+	me->ServerSetCylinderMaterial(3);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }
