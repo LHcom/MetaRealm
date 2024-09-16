@@ -10,6 +10,7 @@
 #include "Components/WidgetComponent.h"
 #include "ReactionUI.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 void UPlayerWidget::NativeConstruct()
 {
@@ -66,7 +67,6 @@ void UPlayerWidget::ClickedReaction1()
 		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure1);
 		HideReaction();
 	}
-	// ReactionComp->ShowReaction(me->ReactionTexure1);
 }
 
 void UPlayerWidget::ClickedReaction2()
@@ -204,17 +204,26 @@ void UPlayerWidget::ClickedOpenStateUI()
 void UPlayerWidget::ClickedState1()
 {
 	me->ServerSetCylinderMaterial(1);
+	FString tempStr = FString::Printf(TEXT("접속중"));
+	StateText->SetText(FText::FromString(tempStr));
+	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
 	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerWidget::ClickedState2()
 {
 	me->ServerSetCylinderMaterial(2);
+	FString tempStr = FString::Printf(TEXT("집중모드"));
+	StateText->SetText(FText::FromString(tempStr));
+	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
 	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerWidget::ClickedState3()
 {
 	me->ServerSetCylinderMaterial(3);
+	FString tempStr = FString::Printf(TEXT("자리비움"));
+	StateText->SetText(FText::FromString(tempStr));
+	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
 	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 }

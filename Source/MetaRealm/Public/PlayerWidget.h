@@ -125,6 +125,9 @@ public:
 	class UCanvasPanel* PlayerStateBar;
 
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	class UTextBlock* StateText;
+
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	class UButton* OpenStateUI;
 	UFUNCTION()
 	void ClickedOpenStateUI();
