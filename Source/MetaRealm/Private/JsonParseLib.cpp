@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "JsonParseLib.h"
@@ -29,19 +29,15 @@ FString UJsonParseLib::SignUpJsonParse(const FString& strJson)
 	// 파싱 결과를 담을 변수 선언
 	TSharedPtr<FJsonObject> result = MakeShareable(new FJsonObject());
 	// 해석을 한다.
-	FString returnValue;
+	FString returnValue = "SignUp Failed";
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
-		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-
-		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
-		// for (auto data : parseDataList)
-		// {
-		// 	FString bk_nm = data->AsObject()->GetStringField("bk_nm");
-		// 	FString aut_nm = data->AsObject()->GetStringField("aut_nm");
-		// 	returnValue.Append(FString::Printf(TEXT("BookName : %s / AuthorName : %s\n"), *bk_nm, *aut_nm));
-		// }
+		if (result->HasField(TEXT("message")))
+		{
+			returnValue = result->GetStringField(TEXT("message"));
+		}
 	}
+
 	// 반환을 한다.
 	return returnValue;
 }
@@ -57,23 +53,14 @@ FUserInfo UJsonParseLib::LoginJsonParse(const FString& strJson)
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
 		if (result->HasField(TEXT("message")))
-		{
-			FString msg = result->GetStringField(TEXT("message"));
-			info.MSG = msg;
-			if (msg == "로그인 성공")
-			{
-				if (result->HasField(TEXT("userInfo")))
-				{
-					if (auto userinfoObj = result->GetObjectField("userInfo"))
-					{
-						if(userinfoObj->HasField(TEXT("userName")))
-						{
-							info.NickName = userinfoObj->GetStringField(TEXT("userName"));
-						}
-					}
-				}
-			}
-		}
+			info.MSG = result->GetStringField(TEXT("message"));
+		// else if (result->HasField(TEXT("failType")))
+		// 	info.MSG = result->GetStringField(TEXT("failType"));
+		
+		if (result->HasField(TEXT("token")))
+			info.TkAddr = result->GetStringField(TEXT("token"));
+		if (result->HasField(TEXT("userName")))
+			info.NickName = result->GetStringField(TEXT("userName"));
 	}
 	// 반환을 한다.
 	return info;

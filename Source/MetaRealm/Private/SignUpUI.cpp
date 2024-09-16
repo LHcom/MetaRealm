@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SignUpUI.h"
@@ -7,6 +7,7 @@
 #include "PlayerCharacter.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
+#include "Components/TextBlock.h"
 
 void USignUpUI::NativeConstruct()
 {
@@ -14,6 +15,7 @@ void USignUpUI::NativeConstruct()
 	ButtonExit->OnClicked.AddDynamic(this, &USignUpUI::ExitButtonClicked);
 
 	Me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	txtErrMsg->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USignUpUI::SignUpButtonClicked()
@@ -34,27 +36,37 @@ void USignUpUI::SignUpButtonClicked()
 	if (id.IsEmpty())
 	{
 		// 아이디 미입력
+		FString ErrMsg = FString::Printf(TEXT("아이디를 입력해주시기 바랍니다."));
+		ShowErrMsg(ErrMsg);
 		return;
 	}
 	if (pw.IsEmpty())
 	{
 		// 패스워드 미입력
+		FString ErrMsg = FString::Printf(TEXT("패스워드를 입력해주시기 바랍니다."));
+		ShowErrMsg(ErrMsg);
 		return;
 	}
 	if (pwChk.IsEmpty())
 	{
 		// 패스워드 확인 미입력
+		FString ErrMsg = FString::Printf(TEXT("패스워드 확인을 입력해주시기 바랍니다."));
+		ShowErrMsg(ErrMsg);
 		return;
 	}
 	if (nickName.IsEmpty())
 	{
-		// 닉네임 확인 미입력
+		// 닉네임 미입력
+		FString ErrMsg = FString::Printf(TEXT("닉네임을 입력해주시기 바랍니다."));
+		ShowErrMsg(ErrMsg);
 		return;
 	}
 
 	if (pw != pwChk)
 	{
 		// 패스워드 확인 불일치
+		FString ErrMsg = FString::Printf(TEXT("패스워드가 일지하지 않습니다."));
+		ShowErrMsg(ErrMsg);
 		return;
 	}
 
@@ -76,5 +88,12 @@ void USignUpUI::ExitButtonClicked()
 	PSEditable->SetText(FText::FromString(emptyText));
 	SecPSEditable->SetText(FText::FromString(emptyText));
 	NickNameEditable->SetText(FText::FromString(emptyText));
+	txtErrMsg->SetText(FText::FromString(emptyText));
 	SetVisibility(ESlateVisibility::Hidden);
+}
+
+void USignUpUI::ShowErrMsg(const FString& MSG)
+{
+	txtErrMsg->SetText(FText::FromString(MSG));
+	txtErrMsg->SetVisibility(ESlateVisibility::Visible);
 }

@@ -35,13 +35,18 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	class UButton* ButtonExit;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* txtErrMsg;
+
 	UFUNCTION()
 	void SignUpButtonClicked();
 
 	UFUNCTION()
 	void ExitButtonClicked();
 
-	//====================·Îºñ
+	void ShowErrMsg(const FString& MSG);
+
+	//====================ë¡œë¹„
 	UPROPERTY()
 	class APlayerCharacter* Me;
 };
