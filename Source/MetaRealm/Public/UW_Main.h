@@ -7,7 +7,6 @@
 #include "Components/Button.h"
 #include "Components/BackgroundBlur.h"
 #include "UW_PlayerList.h"
-#include "Components/Border.h"
 #include "UW_Main.generated.h"
 
 /**
@@ -32,13 +31,14 @@ public:
 	class UButton* PlayerList_btn;
 
 	UPROPERTY(Meta = (BindWidget))
-	class UBorder* PlayerList;
+	class UBackgroundBlur* PlayerList;
 
 	UPROPERTY(Meta = (BindWidget))
 	class UScrollBox* PlayListScrollBox;
 
 	UFUNCTION()
 	void VisiblePlayerList();
+
 
 	void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);
 
