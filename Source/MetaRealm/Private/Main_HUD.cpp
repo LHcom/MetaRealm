@@ -18,42 +18,48 @@ void AMain_HUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CheckUIObject(); // 시작하면 UI를 생성한다.
+	//auto* pc = Cast<AMR_Controller>(GetOwningPlayerController());
+	//CheckUIObject(); // 시작하면 UI를 생성한다.
+	
 }
 
 TSharedPtr<SWidget> AMain_HUD::GetChatInputTextObject()
 {
-	return MainUIObject->GetChatInputTextObject();
+	auto* pc = Cast<AMR_Controller>(GetOwningPlayerController());
+	return pc->MainUIWidget->GetChatInputTextObject();
 }
 
 void AMain_HUD::AddChatMessage(const FString& Message)
 {
 	// BeginPlay()가 실행되기 전에 이 함수가 먼저 실행 될 수도 있다.
 	// UI가 생기기 전에 UI에 접근하면 오류가 나기 때문에 검사한다.
-	if (!CheckUIObject()) return;
+	//if (!CheckUIObject()) return;
 
-	MainUIObject->AddChatMessage(Message);
+	auto* pc = Cast<AMR_Controller>(GetOwningPlayerController());
+	pc->MainUIWidget->AddChatMessage(Message);
 }
 
-bool AMain_HUD::CheckUIObject()
-{
-	if (MainUIObject == nullptr) // UI가 없다면 생성.
-	{
-		return CreateUIObject();
-	}
-	return true; // 있다면 True.
-}
-
-bool AMain_HUD::CreateUIObject()
-{
-	if (MainUIClass)
-	{
-		MainUIObject = CreateWidget<UUW_Main>(GetOwningPlayerController(), MainUIClass);
-		if (MainUIObject)
-		{
-			MainUIObject->AddToViewport();
-			return true; // 만들었다면 true.
-		}
-	}
-	return false; // 못 만들었다면 false.
-}
+//bool AMain_HUD::CheckUIObject()
+//{
+//	UE_LOG(LogTemp,Warning,TEXT("here"));
+//	auto* pc = Cast<AMR_Controller>(GetOwningPlayerController());
+//	if (pc->IsViewMainUI == false) // UI가 없다면 생성.
+//	{
+//		return CreateUIObject();
+//	}
+//	return true; // 있다면 True.
+//}
+//
+//bool AMain_HUD::CreateUIObject()
+//{
+//	if (MainUIClass)
+//	{
+//		MainUIObject = CreateWidget<UUW_Main>(GetOwningPlayerController(), MainUIClass);
+//		if (MainUIObject)
+//		{
+//			MainUIObject->AddToViewport();
+//			return true; // 만들었다면 true.
+//		}
+//	}
+//	return false; // 못 만들었다면 false.
+//}
