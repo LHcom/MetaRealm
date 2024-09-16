@@ -296,7 +296,6 @@ void APlayerCharacter::SignUp(const FString& JSON)
 
 void APlayerCharacter::getResSignUp(FString& ret)
 {
-	FString msg = "";
 	if (ret.Equals("Successes to register user"))
 	{
 		// 성공
