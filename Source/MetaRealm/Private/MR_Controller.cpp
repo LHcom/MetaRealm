@@ -53,6 +53,7 @@ void AMR_Controller::BeginPlay()
 	gm = Cast<AMetaRealmGM>(GetWorld()->GetAuthGameMode());
 	if (gm)
 	{
+		
 		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("gm is not null"));
 	}
 	else
@@ -108,10 +109,11 @@ FString AMR_Controller::GetSteamID() const
 void AMR_Controller::ViewMainUI()
 {
 	// MainUI 생성 및 표시
-	if (UUW_Main* MainUIWidget = CreateWidget<UUW_Main>(this, MainUIWidgetClass))
+	MainUIWidget = CreateWidget<UUW_Main>(this, MainUIWidgetClass);
+	if (MainUIWidget)
 	{
 		MainUIWidget->AddToViewport();
-
+		IsViewMainUI = true;
 		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
 		{
 			FString PlayerName = GetSteamID();
@@ -170,8 +172,6 @@ void AMR_Controller::MoveToMainMap()
 				player->MeetingEndTime = player->GetSystemTime();
 		}
 	}
-
-
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
