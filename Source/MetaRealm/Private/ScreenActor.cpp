@@ -24,6 +24,9 @@
 #include "CanvasTypes.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "../../../../Plugins/Media/PixelStreaming/Source/PixelStreaming/Public/IPixelStreamingStreamer.h"
+#include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AScreenActor::AScreenActor()
@@ -31,13 +34,67 @@ AScreenActor::AScreenActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	LogActiveWindowTitles();
+
+	sceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("sceneComp"));
+	SetRootComponent(sceneComp);
+
+	//Plane Mesh 초기화
+	WindowScreenPlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WindowScreenPlaneMesh"));
+	//PlaneMesh->SetupAttachment(RootComponent);
+	WindowScreenPlaneMesh->SetupAttachment(sceneComp);
+	WindowScreenPlaneMesh->SetRelativeLocation(FVector(0, 0, 0));
+	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3.00000, 10000, 1.000000));
+	// 기본 Plane Mesh 설정
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMeshAsset(TEXT("/Engine/BasicShapes/Plane.Plane"));
+	if (PlaneMeshAsset.Succeeded())
+	{
+		WindowScreenPlaneMesh->SetStaticMesh(PlaneMeshAsset.Object);
+	}
+	// 기본 머티리얼 설정
+	static ConstructorHelpers::FObjectFinder<UMaterial> DefaultMaterial(TEXT("/Script/Engine.Material'/Game/XR_LSJ/WindowViewer/BasicShapeMaterial.BasicShapeMaterial'"));
+	if (DefaultMaterial.Succeeded())
+	{
+		WindowScreenPlaneMesh->SetMaterial(0, DefaultMaterial.Object);
+	}
+	WindowScreenPlaneMesh->SetVisibility(false);
+
+
+	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("RenderTarget"));
+	RenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
+	RenderTarget->SRGB = false;
+	RenderTarget->bAutoGenerateMips = false;
+	RenderTarget->bForceLinearGamma = true;
+	RenderTarget->TargetGamma = 2.2f;
+	RenderTarget->AddressX = TextureAddress::TA_Clamp;
+	RenderTarget->AddressY = TextureAddress::TA_Clamp;
+	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
+	SceneCapture->SetupAttachment(RootComponent);
+	SceneCapture->CaptureSource = SCS_FinalColorLDR;
+	SceneCapture->TextureTarget = RenderTarget;
 }
 
 // Called when the game starts or when spawned
 void AScreenActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	UCameraComponent* playerCamera = playerPawn->GetComponentByClass<UCameraComponent>();
+	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3, 2, 1));
+	sceneComp->AttachToComponent(playerCamera, FAttachmentTransformRules::SnapToTargetIncludingScale); //카메라 붙이기
+
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation(), playerCamera->GetComponentLocation());
+
+	// Z 축이 카메라를 향하도록 회전
+	DynamicMaterial = UMaterialInstanceDynamic::Create(WindowScreenPlaneMesh->GetMaterial(0), this);
+	WindowScreenPlaneMesh->SetMaterial(0, DynamicMaterial);
+	WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld(), WindowListFactory));
+	if (WindowList)
+	{
+		WindowList->AddToViewport(-1);
+		WindowList->SetScreenActor(this);
+	}
 	
 }
 
@@ -46,27 +103,15 @@ void AScreenActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FindTargetWindow();
+	//FindTargetWindow();
 
-	if (TargetWindowHandle != nullptr)
-	{
-		//특정 앱만 찾아서 화면 공유
-		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
-		imageTexture = MatToTexture2D(windowImage);
-		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
-		//ReadFrame(); 
-	}
-
+	UpdateTexture();
 }
 
 void AScreenActor::ReadFrame()
 {
-	//cv::Mat desktopImage = GetScreenToCVMat();
-	//imageTexture = MatToTexture2D(desktopImage);
+	cv::Mat desktopImage = GetScreenToCVMat();
+	imageTexture = MatToTexture2D(desktopImage);
 }
 
 UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
@@ -147,6 +192,7 @@ cv::Mat AScreenActor::GetWindowToCVMat(HWND hwnd)
 	return windowImage;
 }
 
+//타이틀을 목록으로 출력
 void AScreenActor::LogActiveWindowTitles()
 {
 	WindowTitles.Empty();
@@ -208,6 +254,104 @@ void AScreenActor::FindTargetWindow()
 	else
 	{
 		//UE_LOG(LogTemp, Log, TEXT("Target window found: "));
+	}
+}
+
+void AScreenActor::UpdateTexture()
+{
+	if (TargetWindowHandle != nullptr)
+	{
+		//특정 앱만 찾아서 화면 공유
+		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
+		imageTexture = MatToTexture2D(windowImage);
+		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
+		//ReadFrame(); 
+	}
+}
+
+void AScreenActor::SetViewSharingUserID(FString ID)
+{
+	UserID = ID;
+	ChangeLookSharingScreen();
+}
+
+void AScreenActor::StopLookSharingScreen()
+{
+	// 블루프린트 함수 이름
+	FName FunctionName(TEXT("StopLookPixelStreaming")); // 블루프린트에서 정의한 함수명
+
+	// 블루프린트 함수 가져오기
+	UFunction* Function = FindFunction(FunctionName);
+
+	if (Function)
+	{
+		// 블루프린트 함수 호출 (매개변수가 없는 경우)
+		ProcessEvent(Function, nullptr);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+	}
+}
+
+void AScreenActor::BeginStreaming()
+{
+	// 블루프린트 함수 이름
+	FName FunctionName(TEXT("BeginStreaming")); // 블루프린트에서 정의한 함수명
+
+	// 블루프린트 함수 가져오기
+	UFunction* Function = FindFunction(FunctionName);
+
+	if (Function)
+	{
+		// 블루프린트 함수 호출 (매개변수가 없는 경우)
+		ProcessEvent(Function, nullptr);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+	}
+}
+
+void AScreenActor::BeginLookSharingScreen()
+{
+	// 블루프린트 함수 이름
+	FName FunctionName(TEXT("BeginLookPixelStreaming")); // 블루프린트에서 정의한 함수명
+
+	// 블루프린트 함수 가져오기
+	UFunction* Function = FindFunction(FunctionName);
+
+	if (Function)
+	{
+		// 블루프린트 함수 호출 (매개변수가 없는 경우)
+		ProcessEvent(Function, nullptr);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+	}
+}
+
+void AScreenActor::ChangeLookSharingScreen()
+{
+	// 블루프린트 함수 이름
+	FName FunctionName(TEXT("ChangeLookPixelStreaming")); // 블루프린트에서 정의한 함수명
+
+	// 블루프린트 함수 가져오기
+	UFunction* Function = FindFunction(FunctionName);
+
+	if (Function)
+	{
+		// 블루프린트 함수 호출 (매개변수가 없는 경우)
+		ProcessEvent(Function, nullptr);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
 	}
 }
 
