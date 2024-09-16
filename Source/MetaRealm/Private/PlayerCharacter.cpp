@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
 
@@ -8,6 +8,7 @@
 #include "EngineUtils.h"
 #include "HttpLib.h"
 #include "InteractionWidget.h"
+#include "LoginActor.h"
 #include "MemoWidget.h"
 #include "MessagePopupWidget.h"
 #include "MetaRealmGameState.h"
@@ -248,7 +249,6 @@ void APlayerCharacter::ServerRPC_ContentSave_Implementation(const FString& strCo
 		gi->SetBoardData(newData);
 		gi->SaveBoardDTToCSV();
 	}
-	
 }
 
 void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& strContent)
@@ -289,23 +289,31 @@ void APlayerCharacter::SignUp(const FString& JSON)
 	HttpActor->ReqSignUp(JSON);
 }
 
-void APlayerCharacter::getResSignUp(const FString& ret)
+void APlayerCharacter::getResSignUp(FString& ret)
 {
-	MsgWidget->txtMessage->SetText(FText::FromString(ret));
-	MsgWidget->SetVisibility(ESlateVisibility::Visible);
-
 	FString msg = "";
 	if (ret.Equals("Successes to register user"))
 	{
 		// 성공
-	}
-	else if (ret.Equals("Request POST Failed"))
-	{
-		// 회원가입 요청 실패
+		// 회원가입 UI를 닫고
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
+		{
+			loginActor->HideSignUpUI();
+		}
+		// 회원가입 성공 메세지박스를 출력한다.
+		FString successMSG = FString::Printf(TEXT("회원가입을 성공하였습니다!!!"));
+		MsgWidget->txtMessage->SetText(FText::FromString(successMSG));
+		MsgWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
 		// 실패
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
+		{
+			loginActor->ShowErrMsg(true , ret);
+		}
 	}
 }
 
@@ -320,28 +328,29 @@ void APlayerCharacter::Login(const FString& JSON)
 	HttpActor->ReqLogin(JSON);
 }
 
-void APlayerCharacter::getResLogin(const FString& ret)
+void APlayerCharacter::getResLogin(FString& ret)
 {
-	// <><><> 로그인 임시 주석처리 - api내용 수정되면 다시 사용
-	// FString strSuccess = "로그인 성공";
-	// if (ret != strSuccess)
-	// {
-	// 	MsgWidget->txtMessage->SetText(FText::FromString(ret));
-	// 	MsgWidget->SetVisibility(ESlateVisibility::Visible);
-	// }
-	// else
-	// {
-	// 	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
-	// 	if (GI)
-	// 	{
-	// 		GI->LogInSession();
-	// 	}
-	// }
-
-	auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
-	if (GI)
+	if (ret != "Successes to login")
 	{
-		GI->LogInSession();
+		if (ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld(), ALoginActor::StaticClass())))
+		{
+			loginActor->ShowErrMsg(false, ret);
+		}
+	}
+	else
+	{
+		if ( ALoginActor* loginActor = Cast<ALoginActor>(
+			UGameplayStatics::GetActorOfClass(GetWorld() , ALoginActor::StaticClass())) )
+		{
+			loginActor->ShowErrMsg(false , ret);
+		}
+
+		auto GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+		if (GI)
+		{
+			GI->LogInSession();
+		}
 	}
 }
 

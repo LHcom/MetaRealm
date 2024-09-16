@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HttpLib.h"
@@ -48,18 +48,19 @@ void AHttpLib::OnResSignUp(FHttpRequestPtr Request, FHttpResponsePtr Response, b
 		// 성공
 		UE_LOG(LogTemp, Warning, TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
-		//UJsonParseLib::SignUpJsonParse(Result);
+		FString retMSG =UJsonParseLib::SignUpJsonParse(Result);
 		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
 
 		if (player)
-			player->getResSignUp(Result);
+			player->getResSignUp(retMSG);
 	}
 	else
 	{
 		// 실패
 		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
+		FString retMsg = FString::Printf(TEXT("회원가입 요청을 실패하였습니다."));
 		if (player)
-			player->getResSignUp("Request POST Failed");
+			player->getResSignUp(retMsg);
 	}
 }
 
@@ -84,12 +85,6 @@ void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bo
 		FString Result = Response->GetContentAsString();
 		UE_LOG(LogTemp, Warning, TEXT("Request Result : %s"), *Result);
 		FUserInfo userInfo = UJsonParseLib::LoginJsonParse(Result);
-		if (userInfo.MSG == "로그인 성공")
-		{
-			FString Authorization = Response->GetHeader("Authorization");
-			userInfo.TkAddr = Authorization;
-			UE_LOG(LogTemp, Warning, TEXT("Authorization : %s"), *Authorization);
-		}
 
 		if (player)
 			player->getResLogin(userInfo.MSG);
@@ -98,8 +93,9 @@ void AHttpLib::OnResLogin(FHttpRequestPtr Request, FHttpResponsePtr Response, bo
 	{
 		// 실패
 		UE_LOG(LogTemp, Warning, TEXT("Request POST Failed"));
+		FString retMsg = FString::Printf(TEXT("로그인 요청을 실패하였습니다."));
 		if (player)
-			player->getResLogin("Request POST Failed");
+			player->getResLogin(retMsg);
 	}
 }
 

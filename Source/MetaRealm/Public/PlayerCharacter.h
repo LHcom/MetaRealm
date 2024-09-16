@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -130,11 +130,11 @@ public:
 	// 회원가입
 	void SignUp(const FString& JSON);
 	UFUNCTION()
-	void getResSignUp(const FString& ret);
+	void getResSignUp(FString& ret);
 	// 로그인
 	void Login(const FString& JSON);
 	UFUNCTION()
-	void getResLogin(const FString& ret);
+	void getResLogin(FString& ret);
 	// 메세지 팝업UI
 	UPROPERTY(BlueprintReadWrite)
 	class UMessagePopupWidget* MsgWidget;

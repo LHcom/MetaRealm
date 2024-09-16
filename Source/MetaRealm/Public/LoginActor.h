@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,8 +10,8 @@ UCLASS()
 class METAREALM_API ALoginActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ALoginActor();
 
@@ -19,7 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -34,4 +34,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> SignUpUIFactory;
+
+	void ShowErrMsg(bool bUiType, FString& MSG);
+
+	void HideSignUpUI();
 };
