@@ -217,10 +217,10 @@ void AMR_Controller::FocusChatInputText()
 
 void AMR_Controller::SetUserInfo(const FString& tkAdrr, const FString& nickName)
 {
-	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
-		gs->TkAdrr = tkAdrr;
-		gs->NickName = nickName;
+		gi->TkAdrr = tkAdrr;
+		gi->NickName = nickName;
 	}
 }
 

@@ -82,4 +82,9 @@ public:
 	TArray<struct FProceedStruct> GetProceedData();
 	void LoadProceedDT(UScriptStruct* RowStruct);
 	bool SaveProceedDTToCSV();
+	//=======================로그인
+	UPROPERTY()
+	FString TkAdrr;
+	UPROPERTY()
+	FString NickName;
 };
