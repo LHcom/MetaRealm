@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "WindowList.h"
@@ -15,6 +15,7 @@
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
+#include "SharingUserSlot.h"
 
 
 void UWindowList::NativeConstruct()
@@ -51,39 +52,48 @@ void UWindowList::OnButtonWindowScreen()
 	FString streamID = "Editor";
 	if (bStreaming)
 	{
-		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //°øÀ¯Áß
+		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //ê³µìœ ì¤‘
 
-		ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
+		if ( ScreenActor )
+		{
+			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
+		}
+		else
+		{
+			UE_LOG(LogTemp , Error , TEXT("ScreenActor nullptr"));
+		}
+
+
 		//ScreenActor->BeginStreaming();
-		// 1. PixelStreaming ¸ğµâÀ» °¡Á®¿É´Ï´Ù.
+		// 1. PixelStreaming ëª¨ë“ˆì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>("PixelStreaming");
 		//FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
 
 		if (PixelStreamingModule)
 		{
-			// ÇöÀç ¼¼¼ÇÀÇ ¾ÆÀÌµğ¸¦ °¡Á®¿Í¼­ Streamer¸¦ »ı¼ºÇÑ´Ù.
+			// í˜„ì¬ ì„¸ì…˜ì˜ ì•„ì´ë””ë¥¼ ê°€ì ¸ì™€ì„œ Streamerë¥¼ ìƒì„±í•œë‹¤.
 			CurrentStreamer = PixelStreamingModule->FindStreamer(streamID);//GetCurrentSessionID());
 			if (CurrentStreamer.IsValid())
 			{
 				{
 					ScreenActor->UpdateTexture();
 
-					//Back Buffer¸¦ ºñµğ¿À ÀÔ·ÂÀ¸·Î ¼³Á¤ÇÕ´Ï´Ù.
+					//Back Bufferë¥¼ ë¹„ë””ì˜¤ ì…ë ¥ìœ¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
 					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
 
 					UGameViewportClient* GameViewport = GEngine->GameViewport;
 					ScreenActor->SceneCapture->Activate();
 
 
-					// 2. Pixel Streaming ºñµğ¿À ÀÔ·ÂÀ¸·Î ¼³Á¤
+					// 2. Pixel Streaming ë¹„ë””ì˜¤ ì…ë ¥ìœ¼ë¡œ ì„¤ì •
 					VideoInput = FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
 
-					CurrentStreamer->SetVideoInput(VideoInput); // ½ºÆ®¸®¹Ö¿¡ »ç¿ë
+					CurrentStreamer->SetVideoInput(VideoInput); // ìŠ¤íŠ¸ë¦¬ë°ì— ì‚¬ìš©
 
 					//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
 					CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
 
-					//½ºÆ®¸®¹ÖÀ» ½ÃÀÛÇÕ´Ï´Ù.
+					//ìŠ¤íŠ¸ë¦¬ë°ì„ ì‹œì‘í•©ë‹ˆë‹¤.
 					CurrentStreamer->StartStreaming();
 				}
 
@@ -100,20 +110,20 @@ void UWindowList::OnButtonWindowScreen()
 	}
 	else
 	{
-		TextWindowScreen->SetText(FText::FromString(TEXT("È­¸é°øÀ¯")));
+		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //í™”ë©´ ê³µìœ 
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 
-		// 1. PixelStreaming ¸ğµâÀ» °¡Á®¿É´Ï´Ù.
+		// 1. PixelStreaming ëª¨ë“ˆì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
 
 		if (PixelStreamingModule)
 		{
-			// 2. ½ºÆ®¸®¸Ó¸¦ °¡Á®¿É´Ï´Ù.
+			// 2. ìŠ¤íŠ¸ë¦¬ë¨¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 			TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
 
 			if (Streamer.IsValid())
 			{
-				// 4. ½ºÆ®¸®¹ÖÀ» ½ÃÀÛÇÕ´Ï´Ù.
+				// 4. ìŠ¤íŠ¸ë¦¬ë°ì„ ì‹œì‘í•©ë‹ˆë‹¤.
 				Streamer->StopStreaming();
 			}
 			else
@@ -133,17 +143,17 @@ void UWindowList::OnButtonLookSharingScreen()
 	bLookStreaming = !bLookStreaming;
 	if (bLookStreaming)
 	{
-		TextLookSharingScreen->SetText(FText::FromString(TEXT("See"))); //º¸´ÂÁß
+		TextLookSharingScreen->SetText(FText::FromString(TEXT("Watching"))); //ë³´ëŠ”ì¤‘
 		ImageSharingScreen->SetVisibility(ESlateVisibility::Visible);
-		//ºí·çÇÁ¸°Æ® subs
+		//ë¸”ë£¨í”„ë¦°íŠ¸ subs
 		ScreenActor->BeginLookSharingScreen();
 		//ImageCoveringScreen->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
-		TextLookSharingScreen->SetText(FText::FromString(TEXT("Screen Look"))); //È­¸é º¸±â
+		TextLookSharingScreen->SetText(FText::FromString(TEXT("Screen Look"))); //í™”ë©´ ë³´ê¸°
 		ImageSharingScreen->SetVisibility(ESlateVisibility::Hidden);
-		//ºí·çÇÁ¸°Æ® subs
+		//ë¸”ë£¨í”„ë¦°íŠ¸ subs
 		ScreenActor->StopLookSharingScreen();
 		WindowList->ClearChildren();
 		ImageCoveringScreen->SetVisibility(ESlateVisibility::Hidden);
@@ -163,52 +173,52 @@ FString UWindowList::GetCurrentSessionID()
 		IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			// "GameSession"Àº ±âº» ¼¼¼Ç ÀÌ¸§ÀÌ¸ç, ÇÊ¿ä¿¡ µû¶ó ´Ù¸¥ ¼¼¼Ç ÀÌ¸§À» »ç¿ëÇÒ ¼ö ÀÖÀ½
+			// "GameSession"ì€ ê¸°ë³¸ ì„¸ì…˜ ì´ë¦„ì´ë©°, í•„ìš”ì— ë”°ë¼ ë‹¤ë¥¸ ì„¸ì…˜ ì´ë¦„ì„ ì‚¬ìš©í•  ìˆ˜ ìˆìŒ
 			FNamedOnlineSession* NamedSession = SessionInterface->GetNamedSession(NAME_GameSession);
 			if (NamedSession)
 			{
-				// ¼¼¼Ç ID °¡Á®¿À±â
+				// ì„¸ì…˜ ID ê°€ì ¸ì˜¤ê¸°
 				return NamedSession->GetSessionIdStr();
 			}
 		}
 	}
 
-	// ¼¼¼ÇÀÌ ¾ø°Å³ª °¡Á®¿ÀÁö ¸øÇßÀ» ¶§
+	// ì„¸ì…˜ì´ ì—†ê±°ë‚˜ ê°€ì ¸ì˜¤ì§€ ëª»í–ˆì„ ë•Œ
 	return FString("No Session Found");
 }
 
 void UWindowList::InitSlot(TArray<FString> Items)
 {
-	// ±âÁ¸ ½½·Ô Á¦°Å
-	//SharingUserPanel->ClearChildren();
-	//int32 Row = 0;
-	//int32 Column = 0;
+	// ê¸°ì¡´ ìŠ¬ë¡¯ ì œê±°
+	WindowList->ClearChildren();
+	int32 Row = 0;
+	int32 Column = 0;
 
 
-	//// ¾ÆÀÌÅÛ µ¥ÀÌÅÍ ¹ÙÅÁÀ¸·Î ½½·Ô »ı¼º ¹× Ãß°¡
-	//for (FString UserID : Items)
-	//{
-	//	SharingUserSlot = CastChecked<USharingUserSlot>(CreateWidget(GetWorld(), SharingUserSlotFactory));
-	//	if (SharingUserSlot)
-	//	{
-	//		// ½½·Ô °¡½Ã¼º ¹× ·¹ÀÌ¾Æ¿ô È®ÀÎ
-	//		SharingUserSlot->SetVisibility(ESlateVisibility::Visible);
-	//		SharingUserSlot->SetUserID(UserID);
-	//		//SharingUserSlot->FUserIDButtonDelegate_OneParam.BindUFunction(this, FName("SetUserID"));
-	//		// Grid¿¡ ½½·Ô Ãß°¡
-	//		SharingUserPanel->AddChildToUniformGrid(SharingUserSlot, Row, Column);
+	// ì•„ì´í…œ ë°ì´í„° ë°”íƒ•ìœ¼ë¡œ ìŠ¬ë¡¯ ìƒì„± ë° ì¶”ê°€
+	for (FString UserID : Items)
+	{
+		SharingUserSlot = CastChecked<USharingUserSlot>(CreateWidget(GetWorld(), SharingUserSlotFactory));
+		if (SharingUserSlot)
+		{
+			// ìŠ¬ë¡¯ ê°€ì‹œì„± ë° ë ˆì´ì•„ì›ƒ í™•ì¸
+			SharingUserSlot->SetVisibility(ESlateVisibility::Visible);
+			SharingUserSlot->SetUserID(UserID);
+			//SharingUserSlot->FUserIDButtonDelegate_OneParam.BindUFunction(this, FName("SetUserID"));
+			// Gridì— ìŠ¬ë¡¯ ì¶”ê°€
+			WindowList->AddChildToUniformGrid(SharingUserSlot, Row, Column);
 
-	//		// Row °ª Áõ°¡
-	//		Row++;
+			// Row ê°’ ì¦ê°€
+			Row++;
 
-	//		if (!SharingUserPanel)
-	//		{
-	//			UE_LOG(LogTemp, Error, TEXT("PartsPanel is not valid."));
-	//			return;
-	//		}
+			if (!WindowList )
+			{
+				UE_LOG(LogTemp, Error, TEXT("PartsPanel is not valid."));
+				return;
+			}
 
-	//		//SharingUserSlot->clickcnt = P_clickcnt; // Å¬¸¯ °ª Àü´Ş (°è¼Ó InvSlot °»½ÅµÅ¼­ clickcnt°ª ¾÷µ¥ÀÌÆ® ¾È µÇ´Â ¹®Á¦ ¶§¹®)
-	//	}
-	//}
+			//SharingUserSlot->clickcnt = P_clickcnt; // í´ë¦­ ê°’ ì „ë‹¬ (ê³„ì† InvSlot ê°±ì‹ ë¼ì„œ clickcntê°’ ì—…ë°ì´íŠ¸ ì•ˆ ë˜ëŠ” ë¬¸ì œ ë•Œë¬¸)
+		}
+	}
 }
 

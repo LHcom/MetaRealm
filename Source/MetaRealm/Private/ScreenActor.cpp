@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ScreenActor.h"
@@ -38,20 +38,20 @@ AScreenActor::AScreenActor()
 	sceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("sceneComp"));
 	SetRootComponent(sceneComp);
 
-	//Plane Mesh ÃÊ±âÈ­
+	//Plane Mesh ì´ˆê¸°í™”
 	WindowScreenPlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WindowScreenPlaneMesh"));
 	//PlaneMesh->SetupAttachment(RootComponent);
 	WindowScreenPlaneMesh->SetupAttachment(sceneComp);
 	WindowScreenPlaneMesh->SetRelativeLocation(FVector(0, 0, 0));
-	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3.00000, 10000, 1.000000));
-	// ±âº» Plane Mesh ¼³Á¤
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMeshAsset(TEXT("/Engine/BasicShapes/Plane.Plane"));
+	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(10.00000, 10.0000, 1.000000));
+	// ê¸°ë³¸ Plane Mesh ì„¤ì •
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMeshAsset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (PlaneMeshAsset.Succeeded())
 	{
 		WindowScreenPlaneMesh->SetStaticMesh(PlaneMeshAsset.Object);
 	}
-	// ±âº» ¸ÓÆ¼¸®¾ó ¼³Á¤
-	static ConstructorHelpers::FObjectFinder<UMaterial> DefaultMaterial(TEXT("/Script/Engine.Material'/Game/XR_LSJ/WindowViewer/BasicShapeMaterial.BasicShapeMaterial'"));
+	// ê¸°ë³¸ ë¨¸í‹°ë¦¬ì–¼ ì„¤ì •
+	static ConstructorHelpers::FObjectFinder<UMaterial> DefaultMaterial(TEXT("/Script/Engine.Material'/Game/VoiceChat_BD/Blueprint/BDPixelStreamingMediaTexture_Mat.BDPixelStreamingMediaTexture_Mat'"));
 	if (DefaultMaterial.Succeeded())
 	{
 		WindowScreenPlaneMesh->SetMaterial(0, DefaultMaterial.Object);
@@ -60,6 +60,13 @@ AScreenActor::AScreenActor()
 
 
 	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("RenderTarget"));
+	// RenderTargetì„ ê²½ë¡œì—ì„œ ë¡œë“œí•˜ê³  í• ë‹¹
+	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAsset(TEXT("/Script/Engine.TextureRenderTarget2D'/Game/VoiceChat_BD/Blueprint/TextureRenderTarget2D.TextureRenderTarget2D'"));
+	if ( RenderTargetAsset.Succeeded() )
+	{
+		RenderTarget = RenderTargetAsset.Object;
+	}
+
 	RenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
 	RenderTarget->SRGB = false;
 	RenderTarget->bAutoGenerateMips = false;
@@ -70,6 +77,7 @@ AScreenActor::AScreenActor()
 	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->SetupAttachment(RootComponent);
+	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
 	SceneCapture->CaptureSource = SCS_FinalColorLDR;
 	SceneCapture->TextureTarget = RenderTarget;
 }
@@ -82,11 +90,11 @@ void AScreenActor::BeginPlay()
 	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	UCameraComponent* playerCamera = playerPawn->GetComponentByClass<UCameraComponent>();
 	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3, 2, 1));
-	sceneComp->AttachToComponent(playerCamera, FAttachmentTransformRules::SnapToTargetIncludingScale); //Ä«¸Ş¶ó ºÙÀÌ±â
+	sceneComp->AttachToComponent(playerCamera, FAttachmentTransformRules::SnapToTargetIncludingScale); //ì¹´ë©”ë¼ ë¶™ì´ê¸°
 
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation(), playerCamera->GetComponentLocation());
 
-	// Z ÃàÀÌ Ä«¸Ş¶ó¸¦ ÇâÇÏµµ·Ï È¸Àü
+	// Z ì¶•ì´ ì¹´ë©”ë¼ë¥¼ í–¥í•˜ë„ë¡ íšŒì „
 	DynamicMaterial = UMaterialInstanceDynamic::Create(WindowScreenPlaneMesh->GetMaterial(0), this);
 	WindowScreenPlaneMesh->SetMaterial(0, DynamicMaterial);
 	WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld(), WindowListFactory));
@@ -105,172 +113,258 @@ void AScreenActor::Tick(float DeltaTime)
 
 	//FindTargetWindow();
 
-	UpdateTexture();
+	//UpdateTexture();
 }
 
-void AScreenActor::ReadFrame()
-{
-	cv::Mat desktopImage = GetScreenToCVMat();
-	imageTexture = MatToTexture2D(desktopImage);
-}
+//void AScreenActor::ReadFrame()
+//{
+//	cv::Mat desktopImage = GetScreenToCVMat();
+//	imageTexture = MatToTexture2D(desktopImage);
+//}
 
-UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
-{
-	UTexture2D* Texture = UTexture2D::CreateTransient(InMat.cols, InMat.rows, PF_B8G8R8A8);
-
-	if (InMat.type() == CV_8UC3)
-	{
-		cv::Mat bgraImage;
-		cv::cvtColor(InMat, bgraImage, cv::COLOR_BGR2BGRA);
-
-		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
-		void* Data = Mip.BulkData.Lock(LOCK_READ_WRITE);
-		FMemory::Memcpy(Data, bgraImage.data, bgraImage.total() * bgraImage.elemSize());
-		Mip.BulkData.Unlock();
-		Texture->PostEditChange();
-		Texture->UpdateResource();
-		return Texture;
-	}
-	else if (InMat.type() == CV_8UC4)
-	{
-		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
-		void* Data = Mip.BulkData.Lock(LOCK_READ_WRITE);
-		FMemory::Memcpy(Data, InMat.data, InMat.total() * InMat.elemSize());
-		Mip.BulkData.Unlock();
-		Texture->PostEditChange();
-		Texture->UpdateResource();
-		return Texture;
-	}
-
-	Texture->PostEditChange();
-	Texture->UpdateResource();
-	return Texture;
-}
-
-cv::Mat AScreenActor::GetScreenToCVMat()
-{
-	HDC hScreenDC = GetDC(NULL);
-	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
-	int screenWidth = GetDeviceCaps(hScreenDC, HORZRES);
-	int screenHeight = GetDeviceCaps(hScreenDC, VERTRES);
-
-	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, screenWidth, screenHeight);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
-	BitBlt(hMemoryDC, 0, 0, screenWidth, screenHeight, hScreenDC, 0, 0, SRCCOPY);
-	SelectObject(hMemoryDC, hOldBitmap);
-
-	cv::Mat matImage(screenHeight, screenWidth, CV_8UC4);
-	GetBitmapBits(hBitmap, matImage.total() * matImage.elemSize(), matImage.data);
-
-	return matImage;
-}
-
-cv::Mat AScreenActor::GetWindowToCVMat(HWND hwnd)
-{
-	RECT windowRect;
-	GetWindowRect(hwnd, &windowRect);
-
-	int windowWidth = windowRect.right - windowRect.left;
-	int windowHeight = windowRect.bottom - windowRect.top;
-
-	HDC hWindowDC = GetDC(hwnd);
-	HDC hMemoryDC = CreateCompatibleDC(hWindowDC);
-
-	HBITMAP hBitmap = CreateCompatibleBitmap(hWindowDC, windowWidth, windowHeight);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
-
-	BitBlt(hMemoryDC, 0, 0, windowWidth, windowHeight, hWindowDC, 0, 0, SRCCOPY);
-	SelectObject(hMemoryDC, hOldBitmap);
-
-	cv::Mat windowImage(windowHeight, windowWidth, CV_8UC4);
-	GetBitmapBits(hBitmap, windowImage.total() * windowImage.elemSize(), windowImage.data);
-
-	ReleaseDC(hwnd, hWindowDC);
-	DeleteDC(hMemoryDC);
-	DeleteObject(hBitmap);
-
-	return windowImage;
-}
-
-//Å¸ÀÌÆ²À» ¸ñ·ÏÀ¸·Î Ãâ·Â
-void AScreenActor::LogActiveWindowTitles()
-{
-	WindowTitles.Empty();
-
-	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
-		{
-			int length = GetWindowTextLength(hwnd);
-			if (length == 0)
-				return true; 
-
-			if (!IsWindowVisible(hwnd))
-				return true; 
-
-			WINDOWPLACEMENT placement;
-			placement.length = sizeof(WINDOWPLACEMENT);
-			GetWindowPlacement(hwnd, &placement);
-			if (placement.showCmd == SW_SHOWMINIMIZED)
-				return true; 
-
-			LONG style = GetWindowLong(hwnd, GWL_STYLE);
-			if (!(style & WS_OVERLAPPEDWINDOW))
-				return true; 
-
-			TCHAR windowTitle[256];
-			GetWindowText(hwnd, windowTitle, 256);
-
-			TArray<FString>* WindowList = (TArray<FString>*)lParam;
-			WindowList->Add(FString(windowTitle));
-
-			return true;
-		}, (LPARAM)&WindowTitles);
-
-}
-
-void AScreenActor::FindTargetWindow()
-{
-	TargetWindowHandle = nullptr; 
-
-	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
-		{
-			TCHAR windowTitle[256];
-			GetWindowText(hwnd, windowTitle, 256);
-
-			// ºñÁÖ¾ó ½ºÆ©µğ¿À¸¦ Ã£À½
-			if (FString(windowTitle) == "MetaRealm - Microsoft Visual Studio")
-			{
-				HWND* targetHandle = (HWND*)lParam;
-				*targetHandle = hwnd;
-				return false;
-			}
-
-			return true; 
-		}, (LPARAM)&TargetWindowHandle);
-
-	if (TargetWindowHandle == nullptr)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Log, TEXT("Target window found: "));
-	}
-}
+//UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
+//{
+//	UTexture2D* Texture = UTexture2D::CreateTransient(InMat.cols, InMat.rows, PF_B8G8R8A8);
+//
+//	if (InMat.type() == CV_8UC3)
+//	{
+//		cv::Mat bgraImage;
+//		cv::cvtColor(InMat, bgraImage, cv::COLOR_BGR2BGRA);
+//
+//		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
+//		void* Data = Mip.BulkData.Lock(LOCK_READ_WRITE);
+//		FMemory::Memcpy(Data, bgraImage.data, bgraImage.total() * bgraImage.elemSize());
+//		Mip.BulkData.Unlock();
+//		Texture->PostEditChange();
+//		Texture->UpdateResource();
+//		return Texture;
+//	}
+//	else if (InMat.type() == CV_8UC4)
+//	{
+//		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
+//		void* Data = Mip.BulkData.Lock(LOCK_READ_WRITE);
+//		FMemory::Memcpy(Data, InMat.data, InMat.total() * InMat.elemSize());
+//		Mip.BulkData.Unlock();
+//		Texture->PostEditChange();
+//		Texture->UpdateResource();
+//		return Texture;
+//	}
+//
+//	Texture->PostEditChange();
+//	Texture->UpdateResource();
+//	return Texture;
+//}
+//
+//cv::Mat AScreenActor::GetScreenToCVMat()
+//{
+//	HDC hScreenDC = GetDC(NULL);
+//	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
+//	int screenWidth = GetDeviceCaps(hScreenDC, HORZRES);
+//	int screenHeight = GetDeviceCaps(hScreenDC, VERTRES);
+//
+//	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, screenWidth, screenHeight);
+//	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
+//	BitBlt(hMemoryDC, 0, 0, screenWidth, screenHeight, hScreenDC, 0, 0, SRCCOPY);
+//	SelectObject(hMemoryDC, hOldBitmap);
+//
+//	cv::Mat matImage(screenHeight, screenWidth, CV_8UC4);
+//	GetBitmapBits(hBitmap, matImage.total() * matImage.elemSize(), matImage.data);
+//
+//	return matImage;
+//}
+//
+//cv::Mat AScreenActor::GetWindowToCVMat(HWND hwnd)
+//{
+//	RECT windowRect;
+//	GetWindowRect(hwnd, &windowRect);
+//
+//	int windowWidth = windowRect.right - windowRect.left;
+//	int windowHeight = windowRect.bottom - windowRect.top;
+//
+//	HDC hWindowDC = GetDC(hwnd);
+//	HDC hMemoryDC = CreateCompatibleDC(hWindowDC);
+//
+//	HBITMAP hBitmap = CreateCompatibleBitmap(hWindowDC, windowWidth, windowHeight);
+//	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
+//
+//	BitBlt(hMemoryDC, 0, 0, windowWidth, windowHeight, hWindowDC, 0, 0, SRCCOPY);
+//	SelectObject(hMemoryDC, hOldBitmap);
+//
+//	cv::Mat windowImage(windowHeight, windowWidth, CV_8UC4);
+//	GetBitmapBits(hBitmap, windowImage.total() * windowImage.elemSize(), windowImage.data);
+//
+//	ReleaseDC(hwnd, hWindowDC);
+//	DeleteDC(hMemoryDC);
+//	DeleteObject(hBitmap);
+//
+//	return windowImage;
+//}
+//
+////íƒ€ì´í‹€ì„ ëª©ë¡ìœ¼ë¡œ ì¶œë ¥
+//void AScreenActor::LogActiveWindowTitles()
+//{
+//	WindowTitles.Empty();
+//
+//	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
+//		{
+//			int length = GetWindowTextLength(hwnd);
+//			if (length == 0)
+//				return true; 
+//
+//			if (!IsWindowVisible(hwnd))
+//				return true; 
+//
+//			WINDOWPLACEMENT placement;
+//			placement.length = sizeof(WINDOWPLACEMENT);
+//			GetWindowPlacement(hwnd, &placement);
+//			if (placement.showCmd == SW_SHOWMINIMIZED)
+//				return true; 
+//
+//			LONG style = GetWindowLong(hwnd, GWL_STYLE);
+//			if (!(style & WS_OVERLAPPEDWINDOW))
+//				return true; 
+//
+//			TCHAR windowTitle[256];
+//			GetWindowText(hwnd, windowTitle, 256);
+//
+//			TArray<FString>* WindowList = (TArray<FString>*)lParam;
+//			WindowList->Add(FString(windowTitle));
+//
+//			return true;
+//		}, (LPARAM)&WindowTitles);
+//
+//}
+//
+//void AScreenActor::FindTargetWindow()
+//{
+//	TargetWindowHandle = nullptr; 
+//
+//	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
+//		{
+//			TCHAR windowTitle[256];
+//			GetWindowText(hwnd, windowTitle, 256);
+//
+//			// ë¹„ì£¼ì–¼ ìŠ¤íŠœë””ì˜¤ë¥¼ ì°¾ìŒ
+//			if (FString(windowTitle) == "MetaRealm - Microsoft Visual Studio")
+//			{
+//				HWND* targetHandle = (HWND*)lParam;
+//				*targetHandle = hwnd;
+//				return false;
+//			}
+//
+//			return true; 
+//		}, (LPARAM)&TargetWindowHandle);
+//
+//	if (TargetWindowHandle == nullptr)
+//	{
+//		//UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
+//	}
+//	else
+//	{
+//		//UE_LOG(LogTemp, Log, TEXT("Target window found: "));
+//	}
+//}
 
 void AScreenActor::UpdateTexture()
 {
-	if (TargetWindowHandle != nullptr)
+	//if (TargetWindowHandle != nullptr)
+	//{
+	//	//íŠ¹ì • ì•±ë§Œ ì°¾ì•„ì„œ í™”ë©´ ê³µìœ 
+	//	cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
+	//	imageTexture = MatToTexture2D(windowImage);
+	//	//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
+	//}
+	//else
+	//{
+	//	//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
+	//	ReadFrame(); 
+	//}
+
+	// ì¼ì • ì‹œê°„ ê°„ê²©ìœ¼ë¡œ í™”ë©´ ìº¡ì²˜ ìˆ˜í–‰
+	static float TimeAccumulator = 0.0f;
+	const float CaptureInterval = 0.1f; // 1ì´ˆì— í•œ ë²ˆ ìº¡ì²˜
+	TimeAccumulator += GetWorld()->GetDeltaSeconds();
+
+	if ( TimeAccumulator >= CaptureInterval )
 	{
-		//Æ¯Á¤ ¾Û¸¸ Ã£¾Æ¼­ È­¸é °øÀ¯
-		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
-		imageTexture = MatToTexture2D(windowImage);
-		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
+		TimeAccumulator = 0.0f;
+		FScopeLock Lock(&CriticalSection);
+		if ( CapturedTexture )
+		{
+			CapturedTexture->ConditionalBeginDestroy();
+		}
+		CapturedTexture = CaptureScreenToTexture();
+
+		if ( DynamicMaterial && CapturedTexture && WindowScreenPlaneMesh )
+		{
+			//CapturedTexture->SRGB = true;
+			// BaseTexture íŒŒë¼ë¯¸í„°ì— í…ìŠ¤ì²˜ ì„¤ì •
+			DynamicMaterial->SetTextureParameterValue(TEXT("Base") , CapturedTexture);
+			RenderTarget->UpdateResourceImmediate();
+			// PlaneMeshì— ë¨¸í‹°ë¦¬ì–¼ ì ìš©
+
+		}
 	}
-	else
+}
+
+UTexture2D* AScreenActor::CaptureScreenToTexture()
+{
+	int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	HDC hScreenDC = GetDC(NULL);
+	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC , ScreenWidth , ScreenHeight);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC , hBitmap);
+	BitBlt(hMemoryDC , 0 , 0 , ScreenWidth , ScreenHeight , hScreenDC , 0 , 0 , SRCCOPY);
+	SelectObject(hMemoryDC , hOldBitmap);
+
+	BITMAPINFOHEADER bi;
+	bi.biSize = sizeof(BITMAPINFOHEADER);
+	bi.biWidth = ScreenWidth;
+	bi.biHeight = -ScreenHeight; // ë¹„íŠ¸ë§µì´ ìƒí•˜ ë°˜ì „ë˜ì§€ ì•Šë„ë¡ ìŒìˆ˜ë¡œ ì„¤ì •
+	bi.biPlanes = 1;
+	bi.biBitCount = 32; // 32ë¹„íŠ¸ ë¹„íŠ¸ë§µ (8ë¹„íŠ¸ * 4 ì±„ë„)
+	bi.biCompression = BI_RGB;
+	bi.biSizeImage = 0;
+	bi.biXPelsPerMeter = 0;
+	bi.biYPelsPerMeter = 0;
+	bi.biClrUsed = 0;
+	bi.biClrImportant = 0;
+
+	std::vector<BYTE> Buffer(ScreenWidth * ScreenHeight * 4);
+	GetDIBits(hMemoryDC , hBitmap , 0 , ScreenHeight , Buffer.data() , (BITMAPINFO*)&bi , DIB_RGB_COLORS);
+
+	// ëª…ë„ ê°ì†Œ ë¹„ìœ¨ (ì˜ˆ: 0.8ë¡œ ëª…ë„ë¥¼ 20% ê°ì†Œ)
+	float BrightnessFactor = 0.8f;
+
+	// ê° í”½ì…€ì˜ RGB ê°’ì„ ëª…ë„ ê°ì†Œ ë¹„ìœ¨ë¡œ ì¡°ì •
+	for ( int32 i = 0; i < ScreenWidth * ScreenHeight * 4; i += 4 )
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
-		//ReadFrame(); 
+		// R, G, B ê°’ì„ ê°ì†Œ
+		Buffer[i] = static_cast<BYTE>(Buffer[i] * BrightnessFactor);     // Red
+		Buffer[i + 1] = static_cast<BYTE>(Buffer[i + 1] * BrightnessFactor); // Green
+		Buffer[i + 2] = static_cast<BYTE>(Buffer[i + 2] * BrightnessFactor); // Blue
+		// ì•ŒíŒŒ ê°’(Buffer[i+3])ì€ ë³€ê²½í•˜ì§€ ì•ŠìŒ (íˆ¬ëª…ë„ ìœ ì§€)
 	}
+
+	// UTexture2D ë™ì  ìƒì„±
+	UTexture2D* Texture = UTexture2D::CreateTransient(ScreenWidth , ScreenHeight , PF_B8G8R8A8);
+	if ( !Texture )
+		return nullptr;
+
+	// í…ìŠ¤ì²˜ ë°ì´í„°ë¥¼ ì—…ë°ì´íŠ¸
+	void* TextureData = Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+	FMemory::Memcpy(TextureData , Buffer.data() , Buffer.size());
+	Texture->GetPlatformData()->Mips[0].BulkData.Unlock();
+	Texture->UpdateResource();
+
+	// ë¦¬ì†ŒìŠ¤ ì •ë¦¬
+	DeleteObject(hBitmap);
+	DeleteDC(hMemoryDC);
+	ReleaseDC(NULL , hScreenDC);
+
+	return Texture;
 }
 
 void AScreenActor::SetViewSharingUserID(FString ID)
@@ -281,15 +375,15 @@ void AScreenActor::SetViewSharingUserID(FString ID)
 
 void AScreenActor::StopLookSharingScreen()
 {
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö ÀÌ¸§
-	FName FunctionName(TEXT("StopLookPixelStreaming")); // ºí·çÇÁ¸°Æ®¿¡¼­ Á¤ÀÇÇÑ ÇÔ¼ö¸í
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ì´ë¦„
+	FName FunctionName(TEXT("StopLookPixelStreaming")); // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì •ì˜í•œ í•¨ìˆ˜ëª…
 
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö °¡Á®¿À±â
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ê°€ì ¸ì˜¤ê¸°
 	UFunction* Function = FindFunction(FunctionName);
 
 	if (Function)
 	{
-		// ºí·çÇÁ¸°Æ® ÇÔ¼ö È£Ãâ (¸Å°³º¯¼ö°¡ ¾ø´Â °æ¿ì)
+		// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ í˜¸ì¶œ (ë§¤ê°œë³€ìˆ˜ê°€ ì—†ëŠ” ê²½ìš°)
 		ProcessEvent(Function, nullptr);
 	}
 	else
@@ -300,15 +394,15 @@ void AScreenActor::StopLookSharingScreen()
 
 void AScreenActor::BeginStreaming()
 {
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö ÀÌ¸§
-	FName FunctionName(TEXT("BeginStreaming")); // ºí·çÇÁ¸°Æ®¿¡¼­ Á¤ÀÇÇÑ ÇÔ¼ö¸í
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ì´ë¦„
+	FName FunctionName(TEXT("BeginStreaming")); // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì •ì˜í•œ í•¨ìˆ˜ëª…
 
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö °¡Á®¿À±â
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ê°€ì ¸ì˜¤ê¸°
 	UFunction* Function = FindFunction(FunctionName);
 
 	if (Function)
 	{
-		// ºí·çÇÁ¸°Æ® ÇÔ¼ö È£Ãâ (¸Å°³º¯¼ö°¡ ¾ø´Â °æ¿ì)
+		// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ í˜¸ì¶œ (ë§¤ê°œë³€ìˆ˜ê°€ ì—†ëŠ” ê²½ìš°)
 		ProcessEvent(Function, nullptr);
 	}
 	else
@@ -319,15 +413,15 @@ void AScreenActor::BeginStreaming()
 
 void AScreenActor::BeginLookSharingScreen()
 {
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö ÀÌ¸§
-	FName FunctionName(TEXT("BeginLookPixelStreaming")); // ºí·çÇÁ¸°Æ®¿¡¼­ Á¤ÀÇÇÑ ÇÔ¼ö¸í
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ì´ë¦„
+	FName FunctionName(TEXT("BeginLookPixelStreaming")); // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì •ì˜í•œ í•¨ìˆ˜ëª…
 
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö °¡Á®¿À±â
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ê°€ì ¸ì˜¤ê¸°
 	UFunction* Function = FindFunction(FunctionName);
 
 	if (Function)
 	{
-		// ºí·çÇÁ¸°Æ® ÇÔ¼ö È£Ãâ (¸Å°³º¯¼ö°¡ ¾ø´Â °æ¿ì)
+		// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ í˜¸ì¶œ (ë§¤ê°œë³€ìˆ˜ê°€ ì—†ëŠ” ê²½ìš°)
 		ProcessEvent(Function, nullptr);
 	}
 	else
@@ -338,15 +432,15 @@ void AScreenActor::BeginLookSharingScreen()
 
 void AScreenActor::ChangeLookSharingScreen()
 {
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö ÀÌ¸§
-	FName FunctionName(TEXT("ChangeLookPixelStreaming")); // ºí·çÇÁ¸°Æ®¿¡¼­ Á¤ÀÇÇÑ ÇÔ¼ö¸í
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ì´ë¦„
+	FName FunctionName(TEXT("ChangeLookPixelStreaming")); // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì •ì˜í•œ í•¨ìˆ˜ëª…
 
-	// ºí·çÇÁ¸°Æ® ÇÔ¼ö °¡Á®¿À±â
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ ê°€ì ¸ì˜¤ê¸°
 	UFunction* Function = FindFunction(FunctionName);
 
 	if (Function)
 	{
-		// ºí·çÇÁ¸°Æ® ÇÔ¼ö È£Ãâ (¸Å°³º¯¼ö°¡ ¾ø´Â °æ¿ì)
+		// ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ í˜¸ì¶œ (ë§¤ê°œë³€ìˆ˜ê°€ ì—†ëŠ” ê²½ìš°)
 		ProcessEvent(Function, nullptr);
 	}
 	else

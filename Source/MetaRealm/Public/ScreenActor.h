@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,7 @@ UCLASS()
 class METAREALM_API AScreenActor : public AActor
 {
 	GENERATED_BODY()
-	FCriticalSection CriticalSection; //´ÙÁß ½º·¹µå¿¡¼­ È­¸é Ä¸Ã³¿Í ÅØ½ºÃÄ ¾÷µ¥ÀÌÆ® ÀÛ¾÷À» ÇÒ¶§ µ¥ÀÌÅÍ °æÀïÀ» ¹æÁöÇÏ±â À§ÇÔ
+	FCriticalSection CriticalSection; //ë‹¤ì¤‘ ìŠ¤ë ˆë“œì—ì„œ í™”ë©´ ìº¡ì²˜ì™€ í…ìŠ¤ì³ ì—…ë°ì´íŠ¸ ì‘ì—…ì„ í• ë•Œ ë°ì´í„° ê²½ìŸì„ ë°©ì§€í•˜ê¸° ìœ„í•¨
 	
 public:	
 	// Sets default values for this actor's properties
@@ -35,9 +35,9 @@ public:
 
 public:
 
-	//============È­¸é °øÀ¯===========
+	//============í™”ë©´ ê³µìœ ===========
 
-	cv::VideoCapture capture;
+	/*cv::VideoCapture capture;
 	cv::Mat image;
 
 	UFUNCTION(BlueprintCallable)
@@ -45,50 +45,53 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* imageTexture;
-	UTexture2D* MatToTexture2D(const cv::Mat InMat);
+	UTexture2D* MatToTexture2D(const cv::Mat InMat);*/
 
-	class UMaterialInstanceDynamic* DynamicMaterial; 
+	//cv::Mat GetScreenToCVMat(); //ì „ì²´í™”ë©´
+	//cv::Mat GetWindowToCVMat(HWND hwnd); //íŠ¹ì • í™”ë©´ ê³µìœ 
 
-	cv::Mat GetScreenToCVMat(); //ÀüÃ¼È­¸é
-	cv::Mat GetWindowToCVMat(HWND hwnd); //Æ¯Á¤ È­¸é °øÀ¯
+	//void LogActiveWindowTitles();
 
-	void LogActiveWindowTitles();
+	//// ìº¡ì²˜í•  íŠ¹ì • ì°½ì˜ í•¸ë“¤ì„ ì €ì¥í•˜ëŠ” ë³€ìˆ˜
+	//HWND TargetWindowHandle;
 
-	// Ä¸Ã³ÇÒ Æ¯Á¤ Ã¢ÀÇ ÇÚµéÀ» ÀúÀåÇÏ´Â º¯¼ö
-	HWND TargetWindowHandle;
+	//void FindTargetWindow();
 
-	void FindTargetWindow();
+	//// ì°½ ì œëª©ì„ ì €ì¥í•  ë³€ìˆ˜ ì¶”ê°€
+	//TArray<FString> WindowTitles;
 
-	// Ã¢ Á¦¸ñÀ» ÀúÀåÇÒ º¯¼ö Ãß°¡
-	TArray<FString> WindowTitles;
-
-	//¾×ÅÍÀÇ Àü¹İÀûÀÎ À§Ä¡ °íÁ¤¿ë
+	//ì•¡í„°ì˜ ì „ë°˜ì ì¸ ìœ„ì¹˜ ê³ ì •ìš©
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	class USceneComponent* sceneComp;
 
-	void UpdateTexture(); //½Ç½Ã°£ ÅØ½ºÃÄ ¾÷µ¥ÀÌÆ®
+	void UpdateTexture(); //ì‹¤ì‹œê°„ í…ìŠ¤ì³ ì—…ë°ì´íŠ¸
+
+	class UMaterialInstanceDynamic* DynamicMaterial;
+
+	UTexture2D* CaptureScreenToTexture();
+	UTexture2D* CapturedTexture;
 
 public:
-	//=========ÇÈ¼¿ ½ºÆ®¸®¹Ö ===========
+	//=========í”½ì…€ ìŠ¤íŠ¸ë¦¬ë° ===========
 	UPROPERTY(BlueprintReadWrite)
-	FString UserID; //ÇÈ¼¿ ½ºÆ®¸®¹Ö ¾ÆÀÌµğ
+	FString UserID; //í”½ì…€ ìŠ¤íŠ¸ë¦¬ë° ì•„ì´ë””
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Components")
-	class UStaticMeshComponent* WindowScreenPlaneMesh; //ÇÈ¼¿ ½ºÆ®¸®¹Ö ÇÏ´Â Plane
+	class UStaticMeshComponent* WindowScreenPlaneMesh; //í”½ì…€ ìŠ¤íŠ¸ë¦¬ë° í•˜ëŠ” Plane
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> WindowListFactory;
 	UPROPERTY(BlueprintReadWrite)
-	class UWindowList* WindowList; //ÃÖÁ¾ÀûÀ¸·Î ÇÈ¼¿ ½ºÆ®¸®¹ÖÀ» Ãâ·ÂÇÒ UI
+	class UWindowList* WindowList; //ìµœì¢…ì ìœ¼ë¡œ í”½ì…€ ìŠ¤íŠ¸ë¦¬ë°ì„ ì¶œë ¥í•  UI
 
 	void SetViewSharingUserID(FString ID);
 
-	//ºí·çÇÁ¸°Æ® ÇÔ¼ö È£Ãâ
-	void StopLookSharingScreen(); //½ºÆ®¸®¹Ö ÁßÁö
-	void BeginStreaming(); //½ºÆ®¸®¹Ö ½ÃÀÛ
-	void BeginLookSharingScreen(); //½ºÆ®¸®¹Ö °øÀ¯
+	//ë¸”ë£¨í”„ë¦°íŠ¸ í•¨ìˆ˜ í˜¸ì¶œ
+	void StopLookSharingScreen(); //ìŠ¤íŠ¸ë¦¬ë° ì¤‘ì§€
+	void BeginStreaming(); //ìŠ¤íŠ¸ë¦¬ë° ì‹œì‘
+	void BeginLookSharingScreen(); //ìŠ¤íŠ¸ë¦¬ë° ê³µìœ 
 
-	void ChangeLookSharingScreen(); //½ºÆ®¸®¹ÖÀ» ´Ù¸¥»ç¶÷ ½ÃÁ¡À¸·Î º¯°æ
+	void ChangeLookSharingScreen(); //ìŠ¤íŠ¸ë¦¬ë°ì„ ë‹¤ë¥¸ì‚¬ëŒ ì‹œì ìœ¼ë¡œ ë³€ê²½
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Capture")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Capture")
     class UTextureRenderTarget2D* RenderTarget;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Capture")
 	class USceneCaptureComponent2D* SceneCapture;

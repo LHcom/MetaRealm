@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -8,7 +8,7 @@
 #include "WindowList.generated.h"
 
 /**
- * UWindowList: Ã¢ ¸ñ·ÏÀ» UI¿¡ µ¿ÀûÀ¸·Î Ç¥½ÃÇÏ±â À§ÇÑ Å¬·¡½º
+ * UWindowList: ì°½ ëª©ë¡ì„ UIì— ë™ì ìœ¼ë¡œ í‘œì‹œí•˜ê¸° ìœ„í•œ í´ë˜ìŠ¤
  */
 UCLASS()
 class METAREALM_API UWindowList : public UUserWidget
@@ -16,71 +16,71 @@ class METAREALM_API UWindowList : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// UUserWidgetÀÌ ÃÊ±âÈ­µÉ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
+	// UUserWidgetì´ ì´ˆê¸°í™”ë  ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeOnInitialized();
 
 
 public:
-	// UMG¿¡¼­ °¡Á®¿Ã GridPanel, Ã¢ ¸ñ·Ï ¹öÆ°, ¹× °ü·ÃµÈ À§Á¬
+	// UMGì—ì„œ ê°€ì ¸ì˜¬ GridPanel, ì°½ ëª©ë¡ ë²„íŠ¼, ë° ê´€ë ¨ëœ ìœ„ì ¯
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* WindowList;
 
-	// Ã¢ ¸ñ·ÏÀ» Ç¥½ÃÇÒ ¹öÆ° À§Á¬ ÅÛÇÃ¸´
+	// ì°½ ëª©ë¡ì„ í‘œì‹œí•  ë²„íŠ¼ ìœ„ì ¯ í…œí”Œë¦¿
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> SharingUserSlotFactory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UUserWidget* SharingUserSlot; //»ç¿ëÀÚ Á¤º¸¸¦ Ç¥½ÃÇÏ´Â ½½·Ô
+	class USharingUserSlot* SharingUserSlot; //ì‚¬ìš©ì ì •ë³´ë¥¼ í‘œì‹œí•˜ëŠ” ìŠ¬ë¡¯
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* ButtonWindowScreen; //È­¸é °øÀ¯ ½ÃÀÛÇÏ°Å³ª ÁßÁöÇÏ´Â ¹öÆ°
+	class UButton* ButtonWindowScreen; //í™”ë©´ ê³µìœ  ì‹œì‘í•˜ê±°ë‚˜ ì¤‘ì§€í•˜ëŠ” ë²„íŠ¼
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* ButtonLookSharingScreen; //´Ù¸¥ »ç¿ëÀÚÀÇ °øÀ¯È­¸éÀ» º¼ ¼ö ÀÖµµ·Ï ¼³Á¤
+	class UButton* ButtonLookSharingScreen; //ë‹¤ë¥¸ ì‚¬ìš©ìì˜ ê³µìœ í™”ë©´ì„ ë³¼ ìˆ˜ ìˆë„ë¡ ì„¤ì •
 	UPROPERTY(meta=(BindWidget))
-	class UTextBlock* TextWindowScreen; //ButtonWindowScreenÀÇ »óÅÂ¸¦ Ç¥½Ã. °øÀ¯ Áß¿¡´Â °øÀ¯, ¾Æ´Ò¶§´Â È­¸é°øÀ¯
+	class UTextBlock* TextWindowScreen; //ButtonWindowScreenì˜ ìƒíƒœë¥¼ í‘œì‹œ. ê³µìœ  ì¤‘ì—ëŠ” ê³µìœ , ì•„ë‹ë•ŒëŠ” í™”ë©´ê³µìœ 
 	UPROPERTY(meta=(BindWidget))
-	class UTextBlock* TextLookSharingScreen; //ButtonLookSharingScreenÀÇ »óÅÂ¸¦ Ç¥½Ã. º¸´Â ÁßÀÏ¶§´Â º¸´ÂÁß, ¾Æ´Ò ¶§´Â È­¸éº¸±â
+	class UTextBlock* TextLookSharingScreen; //ButtonLookSharingScreenì˜ ìƒíƒœë¥¼ í‘œì‹œ. ë³´ëŠ” ì¤‘ì¼ë•ŒëŠ” ë³´ëŠ”ì¤‘, ì•„ë‹ ë•ŒëŠ” í™”ë©´ë³´ê¸°
 
 	UPROPERTY(meta = (BindWidget))
-    class UImage* ImageSharingScreen; //°øÀ¯µÈ È­¸éÀ» Ç¥½ÃÇÒ ÀÌ¹ÌÁö
+    class UImage* ImageSharingScreen; //ê³µìœ ëœ í™”ë©´ì„ í‘œì‹œí•  ì´ë¯¸ì§€
 
 	class AScreenActor* ScreenActor;
 
 	UPROPERTY(meta = (BindWidget))
-	class UImage* ImageCoveringScreen; //È­¸éÀ» µ¤´Â ÀÌ¹ÌÁö·Î, °øÀ¯ È­¸éÀ» °¡¸®°Å³ª Æ¯Á¤ »óÅÂ¿¡¼­ º¸¿©ÁÖ´Â ¿ªÇÒ
+	class UImage* ImageCoveringScreen; //í™”ë©´ì„ ë®ëŠ” ì´ë¯¸ì§€ë¡œ, ê³µìœ  í™”ë©´ì„ ê°€ë¦¬ê±°ë‚˜ íŠ¹ì • ìƒíƒœì—ì„œ ë³´ì—¬ì£¼ëŠ” ì—­í• 
 	
-	bool bStreaming; //ÇöÀç È­¸éÀ» °øÀ¯  ÁßÀÎÁö
-	bool bLookStreaming; // ÇöÀçÀÇ È­¸é °øÀ¯ ½ºÆ®¸®¸Ó¸¦ ³ªÅ¸³¿. ÇÈ¼¿ ½ºÆ®¸®¹ÖÀ» ÅëÇØ È­¸éÀ» °øÀ¯ÇÒ ¶§ ÇØ´ç ½ºÆ®¸®¸Ó °´Ã¼°¡ »ç¿ëµÊ
+	bool bStreaming; //í˜„ì¬ í™”ë©´ì„ ê³µìœ   ì¤‘ì¸ì§€
+	bool bLookStreaming; // í˜„ì¬ì˜ í™”ë©´ ê³µìœ  ìŠ¤íŠ¸ë¦¬ë¨¸ë¥¼ ë‚˜íƒ€ëƒ„. í”½ì…€ ìŠ¤íŠ¸ë¦¬ë°ì„ í†µí•´ í™”ë©´ì„ ê³µìœ í•  ë•Œ í•´ë‹¹ ìŠ¤íŠ¸ë¦¬ë¨¸ ê°ì²´ê°€ ì‚¬ìš©ë¨
 
 	TSharedPtr<class IPixelStreamingStreamer> CurrentStreamer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Capture", meta = (AllowPrivateAccess = "true"))
-    class USceneCaptureComponent2D* SceneCapture; //È­¸éÀ» Ä¸ÃÄÇÏ´Â Àå¸é Ä¸ÃÄ ÄÄÆ÷³ÍÆ®
+    class USceneCaptureComponent2D* SceneCapture; //í™”ë©´ì„ ìº¡ì³í•˜ëŠ” ì¥ë©´ ìº¡ì³ ì»´í¬ë„ŒíŠ¸
     // Render target to store captured scene
 
     // Pixel Streaming video input from render target
-	//ÇÈ¼¿ ½ºÆ®¸®¹Ö¿¡ »ç¿ëµÇ´Â ºñµğ¿À ÀÔ·Â ¼Ò½º, ·»´õ Å¸°ÙÀ» »ç¿ëÇØ¼­ È­¸éÀ» ½ºÆ®¸®¹ÖÇÔ
+	//í”½ì…€ ìŠ¤íŠ¸ë¦¬ë°ì— ì‚¬ìš©ë˜ëŠ” ë¹„ë””ì˜¤ ì…ë ¥ ì†ŒìŠ¤, ë Œë” íƒ€ê²Ÿì„ ì‚¬ìš©í•´ì„œ í™”ë©´ì„ ìŠ¤íŠ¸ë¦¬ë°í•¨
     TSharedPtr<class FPixelStreamingVideoInputRenderTarget> VideoInput; 
 	
 public:
 
-	//ÁÖ¾îÁø ID¸¦ »ç¿ëÇÏ¿© ScreenActorÀÇ °øÀ¯ »ç¿ëÀÚ ID ¼³Á¤
+	//ì£¼ì–´ì§„ IDë¥¼ ì‚¬ìš©í•˜ì—¬ ScreenActorì˜ ê³µìœ  ì‚¬ìš©ì ID ì„¤ì •
 	UFUNCTION()
 	void SetUserID(FString ID); 
 
-	// ¹öÆ°À» ´­·¶À» ¶§, È£ÃâµÉ µ¨¸®°ÔÀÌÆ®¿¡ µî·ÏÇÒ ÇÔ¼ö
-	//È­¸é °øÀ¯ ¹öÆ°À» Å¬¸¯ÇÒ ¶§ È£Ãâ, ÇÈ¼¿ ½ºÆ®¸®¹ÖÀ» ½ÃÀÛ
+	// ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ, í˜¸ì¶œë  ë¸ë¦¬ê²Œì´íŠ¸ì— ë“±ë¡í•  í•¨ìˆ˜
+	//í™”ë©´ ê³µìœ  ë²„íŠ¼ì„ í´ë¦­í•  ë•Œ í˜¸ì¶œ, í”½ì…€ ìŠ¤íŠ¸ë¦¬ë°ì„ ì‹œì‘
 	UFUNCTION(BlueprintCallable)
 	void OnButtonWindowScreen();
-	//´Ù¸¥ »ç¿ëÀÚÀÇ °øÀ¯ È­¸éÀ» º¸´Â ±â´É
+	//ë‹¤ë¥¸ ì‚¬ìš©ìì˜ ê³µìœ  í™”ë©´ì„ ë³´ëŠ” ê¸°ëŠ¥
 	UFUNCTION(BlueprintCallable)
 	void OnButtonLookSharingScreen();
 	
 	void SetScreenActor(class AScreenActor* Actor);
-	//ÇöÀç ¿Â¶óÀÎ ¼¼¼ÇÀÇ ID ¹İÈ¯
+	//í˜„ì¬ ì˜¨ë¼ì¸ ì„¸ì…˜ì˜ ID ë°˜í™˜
 	FString GetCurrentSessionID();
 
-	//¿©·¯ »ç¿ëÀÚ ½½·ÔÀ» ÃÊ±âÈ­
+	//ì—¬ëŸ¬ ì‚¬ìš©ì ìŠ¬ë¡¯ì„ ì´ˆê¸°í™”
 	void InitSlot(TArray<FString> Items);
 };
