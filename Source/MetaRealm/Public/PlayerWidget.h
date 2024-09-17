@@ -32,8 +32,6 @@ public:
 	FTimerHandle handle;
 
 	// ======================================================== Character Component Save End
-	
-	void HideReaction();
 
 	// ======================================================== Reaction Button Binding Start
 	
@@ -44,7 +42,7 @@ public:
 	class UButton* OpenReactionUI;
 	UFUNCTION()
 	void ClickedOpenReactionUI();
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ClickReaction1;
 	UFUNCTION()
@@ -115,8 +113,6 @@ public:
 	UFUNCTION()
 	void ClickedReaction14();
 
-	UFUNCTION()
-	void HideImage();
 	// ======================================================== Reaction Button Binding End
 	// 
 	// ======================================================== State Button Binding Start

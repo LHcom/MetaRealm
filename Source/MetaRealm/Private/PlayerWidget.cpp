@@ -17,7 +17,6 @@ void UPlayerWidget::NativeConstruct()
 	Super::NativeConstruct();
 	UE_LOG(LogTemp, Warning, TEXT("2222222=========================================="));
 	me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	ReactionComp = Cast<UReactionUI>(me->ReactionUIComponent->GetWidget());
 
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	
@@ -45,11 +44,6 @@ void UPlayerWidget::NativeConstruct()
 	ClickState3->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState3);
 }
 
-void UPlayerWidget::HideReaction()
-{
-	GetWorld()->GetTimerManager().SetTimer(handle , this , &UPlayerWidget::HideImage , 3.0f , true);
-}
-
 void UPlayerWidget::ClickedOpenReactionUI()
 {
 	if (ReactionBar->IsVisible()) {
@@ -62,133 +56,142 @@ void UPlayerWidget::ClickedOpenReactionUI()
 
 void UPlayerWidget::ClickedReaction1()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure1){
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure1);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(1);
+	}
+	else if (me->ReactionArray[0] ) {
+		me->ServerSetReaction(1);
 	}
 }
 
 void UPlayerWidget::ClickedReaction2()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure2) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure2);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(2);
+	}
+	else if ( me->ReactionArray[1] ) {
+		me->ServerSetReaction(2);
 	}
 }
 
 void UPlayerWidget::ClickedReaction3()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure3){
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure3);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(3);
+	}
+	else if ( me->ReactionArray[2] ) {
+		me->ServerSetReaction(3);
 	}
 }
 
 void UPlayerWidget::ClickedReaction4()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure4) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure4);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(4);
+	}
+	else if ( me->ReactionArray[3] ) {
+		me->ServerSetReaction(4);
 	}
 }
 
 void UPlayerWidget::ClickedReaction5()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure5) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure5);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(5);
+	}
+	else if ( me->ReactionArray[4] ) {
+		me->ServerSetReaction(5);
 	}
 }
 
 void UPlayerWidget::ClickedReaction6()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure6) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure6);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(6);
+	}
+	else if ( me->ReactionArray[5] ) {
+		me->ServerSetReaction(6);
 	}
 }
 
 void UPlayerWidget::ClickedReaction7()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure7) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure7);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(7);
+	}
+	else if ( me->ReactionArray[6] ) {
+		me->ServerSetReaction(7);
 	}
 }
 
 void UPlayerWidget::ClickedReaction8()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure8) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure8);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(8);
+	}
+	else if ( me->ReactionArray[7] ) {
+		me->ServerSetReaction(8);
 	}
 }
 
 void UPlayerWidget::ClickedReaction9()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure9) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure9);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(9);
+	}
+	else if ( me->ReactionArray[8] ) {
+		me->ServerSetReaction(9);
 	}
 }
 
 void UPlayerWidget::ClickedReaction10()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure10) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure10);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(10);
+	}
+	else if ( me->ReactionArray[9] ) {
+		me->ServerSetReaction(10);
 	}
 }
 
 void UPlayerWidget::ClickedReaction11()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure11) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure11);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(11);
+	}
+	else if ( me->ReactionArray[10] ) {
+		me->ServerSetReaction(11);
 	}
 }
 
 void UPlayerWidget::ClickedReaction12()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure12) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure12);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(12);
+	}
+	else if ( me->ReactionArray[11] ) {
+		me->ServerSetReaction(12);
 	}
 }
 
 void UPlayerWidget::ClickedReaction13()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure13) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure13);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(13);
+	}
+	else if ( me->ReactionArray[12] ) {
+		me->ServerSetReaction(13);
 	}
 }
 
 void UPlayerWidget::ClickedReaction14()
 {
-	if (ReactionComp && ReactionComp->Image2 && me->ReactionTexure14) {
-		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
-		ReactionComp->Image2->SetBrushFromTexture(me->ReactionTexure14);
-		HideReaction();
+	if ( me->HasAuthority() ) {
+		me->ShowReaction(14);
 	}
-}
-
-void UPlayerWidget::HideImage()
-{
-	ReactionComp->Image2->SetVisibility(ESlateVisibility::Hidden);
+	else if ( me->ReactionArray[13] ) {
+		me->ServerSetReaction(14);
+	}
 }
 
 void UPlayerWidget::ClickedOpenStateUI()

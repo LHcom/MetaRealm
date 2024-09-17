@@ -24,6 +24,7 @@
 #include "Materials/Material.h"
 #include "ReactionUI.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/Image.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -219,6 +220,8 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	ReactionComp = Cast<UReactionUI>(ReactionUIComponent->GetWidget());
+
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
 	if (CurrentMapName == "LobyMap")
@@ -275,6 +278,54 @@ void APlayerCharacter::MulticastRPC_ContentSave_Implementation(const FString& st
 	if (gs)
 	{
 		gs->gsContent = strContent;
+	}
+}
+
+void APlayerCharacter::ServerSetReaction_Implementation(int32 ReactionIdx)
+{
+	MulticastSetReaction(ReactionIdx);
+}
+
+void APlayerCharacter::MulticastSetReaction_Implementation(int32 ReactionIdx)
+{
+	ShowReaction(ReactionIdx);
+}
+
+void APlayerCharacter::ShowReaction(int32 ReactionIdx)
+{
+	FTimerHandle Handle;
+	UTexture2D* ReactionTexture = GetReactionTextureFromId(ReactionIdx);
+	if ( ReactionTexture && ReactionComp && ReactionComp->Image2) {
+		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
+		ReactionComp->Image2->SetBrushFromTexture(ReactionTexture);
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &APlayerCharacter::HideReaction, 3.0f, false);
+	}
+}
+
+void APlayerCharacter::HideReaction()
+{
+	ReactionComp->Image2->SetVisibility(ESlateVisibility::Hidden);
+}
+
+UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
+{
+	switch ( ReactionIdx )
+	{
+	case 1: return ReactionArray[0];
+	case 2: return ReactionArray[1];
+	case 3: return ReactionArray[2];
+	case 4: return ReactionArray[3];
+	case 5: return ReactionArray[4];
+	case 6: return ReactionArray[5];
+	case 7: return ReactionArray[6];
+	case 8: return ReactionArray[7];
+	case 9: return ReactionArray[8];
+	case 10: return ReactionArray[9];
+	case 11: return ReactionArray[10];
+	case 12: return ReactionArray[11];
+	case 13: return ReactionArray[12];
+	case 14: return ReactionArray[13];
+	default: return nullptr;
 	}
 }
 

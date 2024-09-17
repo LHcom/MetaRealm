@@ -26,9 +26,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// ü��UI�� �����ؼ� �Ӹ����� ��ġ�ϰ�ʹ�.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class UWidgetComponent* ReactionComp;
+	UPROPERTY()
+	class UReactionUI* ReactionComp;
 
 	/*UPROPERTY()
 	class * ReactionWidget;*/
@@ -64,47 +63,23 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionUIComponent;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure1;
+	UFUNCTION(Server , Reliable)
+	void ServerSetReaction(int32 ReactionIdx);
+
+	UFUNCTION(NetMulticast , Reliable)
+	void MulticastSetReaction(int32 ReactionIdx);
+
+	UFUNCTION()
+	void ShowReaction(int32 ReactionIdx);
+
+	UFUNCTION()
+	void HideReaction();
+
+	UFUNCTION()
+	UTexture2D* GetReactionTextureFromId(int32 ReactionIdx);
 
 	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure2;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure3;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure4;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure5;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure6;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure7;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure8;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure9;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure10;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure11;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure12;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure13;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UTexture2D* ReactionTexure14;
+	class UTexture2D* ReactionArray[14];
 
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
