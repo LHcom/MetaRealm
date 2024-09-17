@@ -111,35 +111,41 @@ void AHttpLib::OnResLogin(FHttpRequestPtr Request , FHttpResponsePtr Response , 
 
 void AHttpLib::ReqSoundToText(const FString& FilePath)
 {
+	FString AuthorizationToken = "";
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		AuthorizationToken = gi->TkAdrr;
+		AuthorizationToken.TrimStartAndEndInline();
+	}
+	
 	FHttpModule& HttpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = HttpModule.CreateRequest();
 	req->SetURL(SoundToTextURL);
 	req->SetVerb("POST");
 	FString Boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
+	
+	// Set the Content-Type header
 	req->SetHeader(TEXT("Content-Type") , TEXT("multipart/form-data; boundary=") + Boundary);
-	FString AuthorizationToken = "";
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	{
-		AuthorizationToken = gi->TkAdrr;
-	}
-	req->SetHeader(TEXT("Authorization") , TEXT("BEARER ") + AuthorizationToken);
-
+	// Set the Authorization header
+	req->SetHeader(TEXT("Authorization") , FString::Printf(TEXT("%s"), *AuthorizationToken));
+	
+	
 	TArray<uint8> FileData;
 	if (!FFileHelper::LoadFileToArray(FileData , *FilePath))
 	{
 		UE_LOG(LogTemp , Error , TEXT("Failed to read file: %s") , *FilePath);
 		return;
 	}
-
+	
 	// multipart/form-data 포맷에 맞게 데이터 구성
 	FString BeginBoundary = FString("--") + Boundary + "\r\n";
 	FString EndBoundary = FString("--") + Boundary + "--\r\n";
-
+	
 	// 파일 부분 구성
 	FString FileHeader = "Content-Disposition: form-data; name=\"voice\"; filename=\"" +
 		FPaths::GetCleanFilename(FilePath) + "\"\r\n";
 	FileHeader.Append("Content-Type: audio/wav\r\n\r\n");
-
+	
 	// 전체 페이로드 구성
 	FString PayloadString = BeginBoundary + FileHeader;
 	TArray<uint8> Payload;
@@ -148,9 +154,11 @@ void AHttpLib::ReqSoundToText(const FString& FilePath)
 	FString EndPayloadString = "\r\n" + EndBoundary;
 	Payload.Append((uint8*)TCHAR_TO_UTF8(*EndPayloadString) , EndPayloadString.Len());
 
+	req->SetHeader(TEXT("Content-Length"), FString::FromInt(Payload.Num()));
+	
 	// 요청 바디 설정
 	req->SetContent(Payload);
-
+	
 	req->OnProcessRequestComplete().BindUObject(this , &AHttpLib::OnResSoundToText);
 	req->ProcessRequest();
 }
@@ -162,6 +170,7 @@ void AHttpLib::OnResSoundToText(FHttpRequestPtr Request , FHttpResponsePtr Respo
 		// 성공
 		UE_LOG(LogTemp , Warning , TEXT("Request Success"));
 		FString Result = Response->GetContentAsString();
+		UE_LOG(LogTemp , Warning , TEXT("Request STT Result : %s") , *Result);
 		FString outStrMessage;
 		UJsonParseLib::SoundToTextJsonParse(Result , outStrMessage);
 		if (player)
