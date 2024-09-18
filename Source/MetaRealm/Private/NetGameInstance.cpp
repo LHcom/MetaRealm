@@ -450,7 +450,7 @@ FString UNetGameInstance::GetRowsOfDT(UDataTable* DT)
 		{
 			FProperty* Property = *It;
 			FString Value;
-			Property->ExportTextItem(Value , Property->ContainerPtrToValuePtr<void>(RowData) , nullptr , nullptr ,
+			Property->ExportTextItem_Direct(Value , Property->ContainerPtrToValuePtr<void>(RowData) , nullptr , nullptr ,
 			                         PPF_None);
 			CSVString += Value + TEXT(",");
 		}
