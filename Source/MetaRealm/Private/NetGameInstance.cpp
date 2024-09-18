@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "NetGameInstance.h"
@@ -22,19 +22,20 @@ void UNetGameInstance::Init()
 	if (subsys)
 	{
 		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Blue,
-			FString::Printf(TEXT("Found Subsystem %s"), *subsys->GetSubsystemName().ToString())
+			-1 ,
+			15.f ,
+			FColor::Blue ,
+			FString::Printf(TEXT("Found Subsystem %s") , *subsys->GetSubsystemName().ToString())
 		);
 
 		// 세션 인터페이스 가져오자
 		sessionInterface = subsys->GetSessionInterface();
-		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnCreateSessionComplete);
+		sessionInterface->OnCreateSessionCompleteDelegates.
+		                  AddUObject(this , &UNetGameInstance::OnCreateSessionComplete);
 		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(
-			this, &UNetGameInstance::OnDestroySessionComplete);
-		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UNetGameInstance::OnFindSessionComplete);
-		sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnJoinSessionComplete);
+			this , &UNetGameInstance::OnDestroySessionComplete);
+		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this , &UNetGameInstance::OnFindSessionComplete);
+		sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this , &UNetGameInstance::OnJoinSessionComplete);
 	}
 }
 
@@ -42,17 +43,17 @@ void UNetGameInstance::CreateMySession(FString roomName)
 {
 	if (sessionInterface.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("sessionInterface isValid"));
+		UE_LOG(LogTemp , Warning , TEXT("sessionInterface isValid"));
 		auto ExistingSession = sessionInterface->GetNamedSession(FName(mySessionName)); // 현재 세션 정보 얻기
 		if (ExistingSession) // 세션이 이미 존재한다면
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Existing session found. Destroying the session..."));
+			UE_LOG(LogTemp , Warning , TEXT("Existing session found. Destroying the session..."));
 			//sessionInterface->DestroySession(FName(mySessionName)); // 기존에 명명된 세션을 파괴
 			DestroyMySession(true);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("session is not found."));
+			UE_LOG(LogTemp , Warning , TEXT("session is not found."));
 			FOnlineSessionSettings sessionSettings;
 			if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
 			// OnlineSubsystem 이 NULL 로 세팅되면 (NULL : 로컬 연결 설정)
@@ -82,7 +83,7 @@ void UNetGameInstance::CreateMySession(FString roomName)
 
 			// base64로 Encode
 			//roomName = StringBase64Encode(roomName);
-			sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+			sessionSettings.Set(FName("ROOM_NAME") , roomName , EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 
 			// 세션 생성 요청
@@ -93,22 +94,22 @@ void UNetGameInstance::CreateMySession(FString roomName)
 			// mySessionName += FString::Printf(TEXT("%d"), rand);
 			//NowSession = mySessionName;
 
-			sessionInterface->CreateSession(0, FName(mySessionName), sessionSettings);
+			sessionInterface->CreateSession(0 , FName(mySessionName) , sessionSettings);
 		}
 	}
 }
 
-void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+void UNetGameInstance::OnCreateSessionComplete(FName SessionName , bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("OnCreateSessionComplete Success -- %s") , *SessionName.ToString());
 		// Battle Map 으로 이동하자
 		GetWorld()->ServerTravel(TEXT("/Game/KHH/KHH_TestMap/KHH_level?listen"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Fail"));
+		UE_LOG(LogTemp , Warning , TEXT("OnCreateSessionComplete Fail"));
 	}
 }
 
@@ -124,32 +125,32 @@ void UNetGameInstance::DestroyMySession(bool bMakeSession)
 	sessionSearch.Reset();
 }
 
-void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+void UNetGameInstance::OnDestroySessionComplete(FName SessionName , bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete Success -- %s"), *SessionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("OnDestroySessionComplete Success -- %s") , *SessionName.ToString());
 		if (MakeSessionFlag)
 			CreateMySession(MyroomName);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete Fail"));
+		UE_LOG(LogTemp , Warning , TEXT("OnDestroySessionComplete Fail"));
 	}
 }
 
 void UNetGameInstance::FindOtherSession()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FindOtherSession Start"));
+	UE_LOG(LogTemp , Warning , TEXT("FindOtherSession Start"));
 	sessionSearch = MakeShared<FOnlineSessionSearch>();
 
-	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE , true , EOnlineComparisonOp::Equals);
 
 	sessionSearch->MaxSearchResults = 10;
 
 	// 세션 검색 요청
-	sessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
-	UE_LOG(LogTemp, Warning, TEXT("FindOtherSession End"));
+	sessionInterface->FindSessions(0 , sessionSearch.ToSharedRef());
+	UE_LOG(LogTemp , Warning , TEXT("FindOtherSession End"));
 }
 
 void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
@@ -159,7 +160,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		if (sessionSearch)
 		{
 			auto results = sessionSearch->SearchResults;
-			UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
+			UE_LOG(LogTemp , Warning , TEXT("OnFindSessionComplete Success - count : %d") , results.Num());
 
 			// Create Session
 			if (results.Num() == 0)
@@ -173,8 +174,8 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 				{
 					FOnlineSessionSearchResult si = results[i];
 					FString strRoomName;
-					si.Session.SessionSettings.Get(FName("ROOM_NAME"), strRoomName);
-					UE_LOG(LogTemp, Warning, TEXT("%s"), *si.Session.GetSessionIdStr());
+					si.Session.SessionSettings.Get(FName("ROOM_NAME") , strRoomName);
+					UE_LOG(LogTemp , Warning , TEXT("%s") , *si.Session.GetSessionIdStr());
 
 					if (strRoomName != MyroomName)
 						continue;
@@ -191,7 +192,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Fail"));
+		UE_LOG(LogTemp , Warning , TEXT("OnFindSessionComplete Fail"));
 	}
 }
 
@@ -200,36 +201,36 @@ void UNetGameInstance::JoinOtherSession(int32 idx)
 	auto results = sessionSearch->SearchResults;
 	if (sessionInterface == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("sessionInterface is null"));
+		UE_LOG(LogTemp , Warning , TEXT("sessionInterface is null"));
 	}
 	if (results.Num() <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("results Zero"));
+		UE_LOG(LogTemp , Warning , TEXT("results Zero"));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("results count : %d, idx : %d"), results.Num(), idx);
-	sessionInterface->JoinSession(0, FName(mySessionName), results[idx]);
+	UE_LOG(LogTemp , Warning , TEXT("results count : %d, idx : %d") , results.Num() , idx);
+	sessionInterface->JoinSession(0 , FName(mySessionName) , results[idx]);
 }
 
-void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)
+void UNetGameInstance::OnJoinSessionComplete(FName SessionName , EOnJoinSessionCompleteResult::Type result)
 {
 	if (result == EOnJoinSessionCompleteResult::Success)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete Success : %s"), *SessionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("OnJoinSessionComplete Success : %s") , *SessionName.ToString());
 		FString url;
 		// 참여해야 하는 Listen 서버 URL을 받아 오자
-		sessionInterface->GetResolvedConnectString(SessionName, url);
-		UE_LOG(LogTemp, Warning, TEXT("Join session URL : %s"), *url);
+		sessionInterface->GetResolvedConnectString(SessionName , url);
+		UE_LOG(LogTemp , Warning , TEXT("Join session URL : %s") , *url);
 
 		if (!url.IsEmpty())
 		{
 			// 해당 URL 로 접속하자
 			APlayerController* pc = GetWorld()->GetFirstPlayerController();
-			pc->ClientTravel(url, ETravelType::TRAVEL_Absolute);
+			pc->ClientTravel(url , ETravelType::TRAVEL_Absolute);
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete Fail : %d"), result);
+		UE_LOG(LogTemp , Warning , TEXT("OnJoinSessionComplete Fail : %d") , result);
 	}
 }
 
@@ -237,14 +238,14 @@ void UNetGameInstance::KickPlayer(APlayerController* PlayerToKick)
 {
 	if (PlayerToKick && PlayerToKick->IsLocalController())
 		// 플레이어를 메인 메뉴로 이동시킴
-		PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap", ETravelType::TRAVEL_Absolute);
+		PlayerToKick->ClientTravel("/Game/LHJ/BluePrints/Loby/LobyMap" , ETravelType::TRAVEL_Absolute);
 }
 
 FString UNetGameInstance::StringBase64Encode(FString str)
 {
 	// Set 할 때 : FString -> UTF8 (std::string) -> TArray<uint8> -> base64 로 Encode
 	std::string utf8String = TCHAR_TO_UTF8(*str);
-	TArray<uint8> arrayData = TArray<uint8>((uint8*)(utf8String.c_str()), utf8String.length());
+	TArray<uint8> arrayData = TArray<uint8>((uint8*)(utf8String.c_str()) , utf8String.length());
 	return FBase64::Encode(arrayData);
 }
 
@@ -252,16 +253,16 @@ FString UNetGameInstance::StringBase64Decode(FString str)
 {
 	// Get 할 때 : base64 로 Decode -> TArray<uint8> -> TCHAR
 	TArray<uint8> arrayData;
-	FBase64::Decode(str, arrayData);
-	std::string ut8String((char*)(arrayData.GetData()), arrayData.Num());
+	FBase64::Decode(str , arrayData);
+	std::string ut8String((char*)(arrayData.GetData()) , arrayData.Num());
 	return UTF8_TO_TCHAR(ut8String.c_str());
 }
 
 void UNetGameInstance::LogInSession()
 {
-	UE_LOG(LogTemp, Warning, TEXT("LogInSession Start"));
+	UE_LOG(LogTemp , Warning , TEXT("LogInSession Start"));
 	FindOtherSession();
-	UE_LOG(LogTemp, Warning, TEXT("LogInSession End"));
+	UE_LOG(LogTemp , Warning , TEXT("LogInSession End"));
 }
 
 void UNetGameInstance::SetBoardData(FBoardStruct newData)
@@ -272,7 +273,7 @@ void UNetGameInstance::SetBoardData(FBoardStruct newData)
 	// 들어온 데이터 로그 출력
 	newData.PrintStruct();
 	// DT_RowName 이 키로 존재하는 행에 newData 구조체를 저장
-	DataTable->AddRow(FName(DT_RowName), newData);
+	DataTable->AddRow(FName(DT_RowName) , newData);
 }
 
 FBoardStruct UNetGameInstance::GetBoardData()
@@ -282,7 +283,7 @@ FBoardStruct UNetGameInstance::GetBoardData()
 		return FBoardStruct();
 
 	// DT_RowName 으로 탐색을 하고, 만약 값이 없으면 ""을 저장해서 리턴
-	FBoardStruct* retData = DataTable->FindRow<FBoardStruct>(FName(DT_RowName), TEXT(""));
+	FBoardStruct* retData = DataTable->FindRow<FBoardStruct>(FName(DT_RowName) , TEXT(""));
 	if (retData)
 	{
 		retData->PrintStruct();
@@ -296,7 +297,7 @@ void UNetGameInstance::LoadBoardDT(UScriptStruct* RowStruct)
 {
 	FString CSVData;
 	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/board.csv");
-	if (FFileHelper::LoadFileToString(CSVData, *CSVFilePath))
+	if (FFileHelper::LoadFileToString(CSVData , *CSVFilePath))
 	{
 		DataTable->RowStruct = RowStruct;
 
@@ -310,7 +311,7 @@ void UNetGameInstance::LoadBoardDT(UScriptStruct* RowStruct)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Error , TEXT("Failed to load CSV file: %s") , *CSVFilePath);
 	}
 }
 
@@ -319,19 +320,20 @@ bool UNetGameInstance::SaveBoardDTToCSV()
 	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/board.csv");
 	if (!DataTable)
 	{
-		UE_LOG(LogTemp, Error, TEXT("DataTable is null."));
+		UE_LOG(LogTemp , Error , TEXT("DataTable is null."));
 		return false;
 	}
 
-	FString CSVData = DataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
-	if (FFileHelper::SaveStringToFile(CSVData, *CSVFilePath))
+	//FString CSVData = DataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
+	FString CSVData = GetRowsOfDT(DataTable);
+	if (FFileHelper::SaveStringToFile(CSVData , *CSVFilePath))
 	{
-		UE_LOG(LogTemp, Log, TEXT("DataTable saved to CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Log , TEXT("DataTable saved to CSV file: %s") , *CSVFilePath);
 		return true;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to save DataTable to CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Error , TEXT("Failed to save DataTable to CSV file: %s") , *CSVFilePath);
 		return false;
 	}
 }
@@ -343,7 +345,7 @@ void UNetGameInstance::SetProceedData(FProceedStruct newData)
 
 	int32 rowCnt = ProceedDataTable->GetRowNames().Num();
 	// DT_RowName 이 키로 존재하는 행에 newData 구조체를 저장
-	ProceedDataTable->AddRow(FName(FString::FromInt(rowCnt)), newData);
+	ProceedDataTable->AddRow(FName(FString::FromInt(rowCnt)) , newData);
 }
 
 TArray<FProceedStruct> UNetGameInstance::GetProceedData()
@@ -355,7 +357,7 @@ TArray<FProceedStruct> UNetGameInstance::GetProceedData()
 
 	TArray<FProceedStruct*> retDataArrPtr;
 
-	ProceedDataTable->GetAllRows<FProceedStruct>(TEXT("GetAllRows"), retDataArrPtr);
+	ProceedDataTable->GetAllRows<FProceedStruct>(TEXT("GetAllRows") , retDataArrPtr);
 	for (int i = 0; i < retDataArrPtr.Num(); i++)
 	{
 		FProceedStruct tmpProceed;
@@ -371,7 +373,7 @@ void UNetGameInstance::LoadProceedDT(UScriptStruct* RowStruct)
 {
 	FString CSVData;
 	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/Proceed.csv");
-	if (FFileHelper::LoadFileToString(CSVData, *CSVFilePath))
+	if (FFileHelper::LoadFileToString(CSVData , *CSVFilePath))
 	{
 		ProceedDataTable->RowStruct = RowStruct;
 
@@ -385,7 +387,7 @@ void UNetGameInstance::LoadProceedDT(UScriptStruct* RowStruct)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Error , TEXT("Failed to load CSV file: %s") , *CSVFilePath);
 	}
 }
 
@@ -394,19 +396,67 @@ bool UNetGameInstance::SaveProceedDTToCSV()
 	FString CSVFilePath = FPaths::ProjectContentDir() / TEXT("LHJ/BluePrints/Main/Proceed.csv");
 	if (!ProceedDataTable)
 	{
-		UE_LOG(LogTemp, Error, TEXT("DataTable is null."));
+		UE_LOG(LogTemp , Error , TEXT("DataTable is null."));
 		return false;
 	}
 
-	FString CSVData = ProceedDataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
-	if (FFileHelper::SaveStringToFile(CSVData, *CSVFilePath))
+	//FString CSVData = ProceedDataTable->GetTableAsCSV(EDataTableExportFlags::UseSimpleText);
+	FString CSVData = GetRowsOfDT(ProceedDataTable);
+	if (FFileHelper::SaveStringToFile(CSVData , *CSVFilePath))
 	{
-		UE_LOG(LogTemp, Log, TEXT("DataTable saved to CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Log , TEXT("DataTable saved to CSV file: %s") , *CSVFilePath);
 		return true;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to save DataTable to CSV file: %s"), *CSVFilePath);
+		UE_LOG(LogTemp , Error , TEXT("Failed to save DataTable to CSV file: %s") , *CSVFilePath);
 		return false;
 	}
+}
+
+FString UNetGameInstance::GetRowsOfDT(UDataTable* DT)
+{
+	if (!DT) return FString();
+
+	// CSV 파일의 내용을 담을 FString
+	FString CSVString;
+
+	// 테이블의 행을 구조체로 가져오기
+	const UScriptStruct* RowStruct = DT->GetRowStruct();
+	if (!RowStruct) return FString();
+
+	// Row Name 컬럼
+	CSVString += TEXT("---,");
+
+	// 테이블의 컬럼 이름을 CSV의 헤더로 추가
+	for (TFieldIterator<FProperty> It(RowStruct); It; ++It)
+	{
+		CSVString += It->GetName() + TEXT(",");
+	}
+	CSVString.RemoveFromEnd(TEXT(","));
+	CSVString += TEXT("\n");
+
+	// 모든 행을 순회하며 데이터를 추가
+	TArray<FName> RowNames = DT->GetRowNames();
+	for (const FName& RowName : RowNames)
+	{
+		uint8* RowData = DT->FindRowUnchecked(RowName);
+		if (!RowData) continue;
+
+		CSVString += RowName.ToString() + TEXT(",");
+		
+		// 각 행의 각 열을 CSV로 추가
+		for (TFieldIterator<FProperty> It(RowStruct); It; ++It)
+		{
+			FProperty* Property = *It;
+			FString Value;
+			Property->ExportTextItem(Value , Property->ContainerPtrToValuePtr<void>(RowData) , nullptr , nullptr ,
+			                         PPF_None);
+			CSVString += Value + TEXT(",");
+		}
+		CSVString.RemoveFromEnd(TEXT(","));
+		CSVString += TEXT("\n");
+	}
+
+	return CSVString;
 }
