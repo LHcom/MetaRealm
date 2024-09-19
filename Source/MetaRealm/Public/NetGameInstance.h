@@ -82,6 +82,8 @@ public:
 	TArray<struct FProceedStruct> GetProceedData();
 	void LoadProceedDT(UScriptStruct* RowStruct);
 	bool SaveProceedDTToCSV();
+
+	FString GetRowsOfDT(class UDataTable* DT);
 	//=======================로그인
 	UPROPERTY()
 	FString TkAdrr;
