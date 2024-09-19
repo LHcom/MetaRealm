@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MR_Controller.h"
@@ -19,6 +19,9 @@
 #include "UW_Main.h"
 #include "Blueprint/UserWidget.h"
 #include "UW_PlayerList.h"
+#include "MainPlayerList.h"
+#include "NetGameInstance.h"
+
 
 void AMR_Controller::PostInitializeComponents()
 {
@@ -88,35 +91,38 @@ void AMR_Controller::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Chat"), EInputEvent::IE_Pressed, this, &AMR_Controller::FocusChatInputText);
 }
 
-FString AMR_Controller::GetSteamID() const
-{
-	if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
-	{
-		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
-		if (Identity.IsValid())
-		{
-			FUniqueNetIdRepl UniqueNetId = GetLocalPlayer()->GetPreferredUniqueNetId();
-			if (UniqueNetId.IsValid())
-			{
-				return UniqueNetId->ToString();
-			}
-		}
-	}
-	return FString("Unknown");
-}
+//FString AMR_Controller::GetSteamID() const
+//{
+//	if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
+//	{
+//		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+//		if (Identity.IsValid())
+//		{
+//			FUniqueNetIdRepl UniqueNetId = GetLocalPlayer()->GetPreferredUniqueNetId();
+//			if (UniqueNetId.IsValid())
+//			{
+//				return UniqueNetId->ToString();
+//			}
+//		}
+//	}
+//	return FString("Unknown");
+//}
 
 void AMR_Controller::ViewMainUI()
 {
 	// MainUI 생성 및 표시
-	if (UUW_Main* MainUIWidget = CreateWidget<UUW_Main>(this, MainUIWidgetClass))
+	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this, MainUIWidgetClass))
 	{
 		MainUIWidget->AddToViewport();
 
 		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
 		{
-			FString PlayerName = GetSteamID();
-			PlayerListWidget->SetPlayerName(GetSteamID());
-
+			FString PlayerName;
+			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+			{
+				PlayerName = gi->NickName;
+			}
+			PlayerListWidget->SetPlayerName(PlayerName);
 			// PlayerList 위젯을 ScrollBox에 추가
 			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
 		}
@@ -170,33 +176,44 @@ void AMR_Controller::MoveToMainMap()
 				player->MeetingEndTime = player->GetSystemTime();
 		}
 	}
-
-
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
+//void AMR_Controller::SendMessage(const FText& Text)
+//{
+//	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
+//	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+//	if ( OnlineSub )
+//	{
+//		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+//		if ( Identity.IsValid() )
+//		{
+//			// 0번째 로컬 플레이어의 고유 ID를 가져옴
+//			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
+//			if ( UserId.IsValid() )
+//			{
+//				// 스팀 닉네임을 가져옴
+//				FString UserName = Identity->GetPlayerNickname(*UserId);
+//				FString Message = FString::Printf(TEXT("%s : %s") , *UserName , *Text.ToString());
+//
+//				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+//				CtoS_SendMessage(Message);
+//			}
+//		}
+//	}
+//}
+
 void AMR_Controller::SendMessage(const FText& Text)
 {
-	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
-	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
-		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
-		if (Identity.IsValid())
+		FString PlayerName;
+		if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
 		{
-			// 0번째 로컬 플레이어의 고유 ID를 가져옴
-			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
-			if (UserId.IsValid())
-			{
-				// 스팀 닉네임을 가져옴
-				FString UserName = Identity->GetPlayerNickname(*UserId);
-				FString Message = FString::Printf(TEXT("%s : %s"), *UserName, *Text.ToString());
-
-				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
-				CtoS_SendMessage(Message);
-			}
+			PlayerName = gi->NickName;
 		}
-	}
+		FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
+
+		// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+		CtoS_SendMessage(Message);
 }
 
 void AMR_Controller::FocusGame()
@@ -232,10 +249,10 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 	UGameplayStatics::GetAllActorsOfClass(GetPawn()->GetWorld(), APlayerController::StaticClass(), OutActors);
 	for (AActor* OutActor : OutActors)
 	{
-		AMR_Controller* PC = Cast<AMR_Controller>(OutActor);
-		if (PC)
+		AMR_Controller* pc = Cast<AMR_Controller>(OutActor);
+		if (pc)
 		{
-			PC->StoC_SendMessage(Message);
+			pc->StoC_SendMessage(Message);
 		}
 	}
 }
