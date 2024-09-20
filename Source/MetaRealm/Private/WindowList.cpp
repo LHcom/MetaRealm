@@ -16,11 +16,36 @@
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
 #include "SharingUserSlot.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UWindowList::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	// 레벨에 배치된 ScreenActor를 찾음
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld() , AScreenActor::StaticClass() , FoundActors);
+
+	if ( FoundActors.Num() > 0 )
+	{
+		// ScreenActor를 가져옴
+		ScreenActor = Cast<AScreenActor>(FoundActors[0]);
+
+		if ( ScreenActor )
+		{
+			UE_LOG(LogTemp , Log , TEXT("ScreenActor found successfully."));
+		}
+		else
+		{
+			UE_LOG(LogTemp , Error , TEXT("ScreenActor is null after casting."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp , Error , TEXT("ScreenActor not found in the level."));
+	}
+
 	ButtonLookSharingScreen->OnClicked.AddDynamic(this, &UWindowList::OnButtonLookSharingScreen);
 	ButtonWindowScreen->OnClicked.AddDynamic(this, &UWindowList::OnButtonWindowScreen);
 	ImageSharingScreen->SetVisibility(ESlateVisibility::Hidden);
@@ -162,7 +187,15 @@ void UWindowList::OnButtonLookSharingScreen()
 
 void UWindowList::SetScreenActor(AScreenActor* Actor)
 {
+	if ( !Actor )
+	{
+		UE_LOG(LogTemp , Error , TEXT("Invalid ScreenActor passed to SetScreenActor"));
+		return;
+	}
+
 	ScreenActor = Actor;
+	UE_LOG(LogTemp , Log , TEXT("ScreenActor has been set successfully."));
+
 }
 
 FString UWindowList::GetCurrentSessionID()

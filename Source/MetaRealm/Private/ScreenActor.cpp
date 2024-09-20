@@ -280,6 +280,13 @@ void AScreenActor::UpdateTexture()
 	//	ReadFrame(); 
 	//}
 
+	// 먼저 GetWorld()가 유효한지 확인합니다.
+	if ( !GetWorld() )
+	{
+		UE_LOG(LogTemp , Error , TEXT("GetWorld() is null!"));
+		return;
+	}
+
 	// 일정 시간 간격으로 화면 캡처 수행
 	static float TimeAccumulator = 0.0f;
 	const float CaptureInterval = 0.1f; // 1초에 한 번 캡처
