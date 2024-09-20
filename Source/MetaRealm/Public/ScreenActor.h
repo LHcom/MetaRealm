@@ -73,6 +73,7 @@ public:
 
 public:
 	//=========픽셀 스트리밍 ===========
+	//ViewSharingUserID
 	UPROPERTY(BlueprintReadWrite)
 	FString UserID; //픽셀 스트리밍 아이디
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Components")

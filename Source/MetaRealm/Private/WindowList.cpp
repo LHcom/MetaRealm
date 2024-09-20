@@ -82,6 +82,7 @@ void UWindowList::OnButtonWindowScreen()
 		if ( ScreenActor )
 		{
 			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
+			ScreenActor->WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
 		}
 		else
 		{

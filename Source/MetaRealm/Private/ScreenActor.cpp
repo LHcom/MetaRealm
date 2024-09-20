@@ -440,7 +440,7 @@ void AScreenActor::BeginLookSharingScreen()
 void AScreenActor::ChangeLookSharingScreen()
 {
 	// 블루프린트 함수 이름
-	FName FunctionName(TEXT("ChangeLookPixelStreaming")); // 블루프린트에서 정의한 함수명
+	FName FunctionName(TEXT("ChangePixelStreaming")); // 블루프린트에서 정의한 함수명
 
 	// 블루프린트 함수 가져오기
 	UFunction* Function = FindFunction(FunctionName);
