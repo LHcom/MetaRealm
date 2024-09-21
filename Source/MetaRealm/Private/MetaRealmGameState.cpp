@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MetaRealmGameState.h"
 
 #include "MetaRealm/MetaRealm.h"
 #include "Net/UnrealNetwork.h"
+#include "MR_Controller.h"
+#include "EngineUtils.h"
 
 void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -12,6 +14,7 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME(AMetaRealmGameState, gsContent);
 	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
+	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerNames);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
@@ -35,4 +38,33 @@ void AMetaRealmGameState::OnRep_Proceeding()
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
 	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
+}
+
+void AMetaRealmGameState::AddPlayerName(const FString& PlayerName)
+{
+	if ( !ConnectedPlayerNames.Contains(PlayerName) )
+	{
+		ConnectedPlayerNames.Add(PlayerName);
+	}
+}
+
+void AMetaRealmGameState::BroadcastPlayerList()
+{
+	Multicast_UpdatePlayerList(ConnectedPlayerNames);
+}
+
+TArray<FString> AMetaRealmGameState::GetAllPlayerNames()
+{
+	return ConnectedPlayerNames;
+}
+
+void AMetaRealmGameState::Multicast_UpdatePlayerList_Implementation(const TArray<FString>& PlayerNames)
+{
+	for ( AMR_Controller* Controller : TActorRange<AMR_Controller>(GetWorld()) )
+	{
+		if ( Controller )
+		{
+			Controller->UpdatePlayerList(PlayerNames); // 각 클라이언트의 리스트 업데이트
+		}
+	}
 }

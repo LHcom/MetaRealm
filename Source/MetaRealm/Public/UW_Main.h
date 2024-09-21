@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,26 +22,22 @@ public:
 	void AddChatMessage(const FString& Message);
 
 
-	virtual void NativeConstruct() override;
+	//virtual void NativeConstruct() override;
 
 	UPROPERTY(Meta = (BindWidget))
 	class UUW_Chat* UW_Chat;
 
-	UPROPERTY(Meta = (BindWidget))
-	class UButton* PlayerList_btn;
+	//UPROPERTY(Meta = (BindWidget))
+	//class UButton* PlayerList_btn;
 
-	UPROPERTY(Meta = (BindWidget))
-	class UBackgroundBlur* PlayerList;
+	//UPROPERTY(Meta = (BindWidget))
+	//class UBorder* PlayerList;
 
-	UPROPERTY(Meta = (BindWidget))
-	class UScrollBox* PlayListScrollBox;
+	//UPROPERTY(Meta = (BindWidget))
+	//class UScrollBox* PlayListScrollBox;
 
-	UFUNCTION()
-	void VisiblePlayerList();
+	//UFUNCTION()
+	//void VisiblePlayerList();
 
-
-	void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);
-
- 
-
+	//void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);
 };
