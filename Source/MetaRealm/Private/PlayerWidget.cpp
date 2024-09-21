@@ -26,6 +26,8 @@ void UPlayerWidget::NativeConstruct()
 
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	
+	OnMic->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedOnMic);
+
 	OpenReactionUI->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedOpenReactionUI);
 	ClickReaction1->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedReaction1);
 	ClickReaction2->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedReaction2);
@@ -48,6 +50,18 @@ void UPlayerWidget::NativeConstruct()
 	ClickState1->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState1);
 	ClickState2->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState2);
 	ClickState3->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState3);
+}
+
+void UPlayerWidget::ClickedOnMic()
+{
+	if ( isMicOn ) {
+		OnMic->SetBackgroundColor(FLinearColor(1.f, 0.564706, 0.639216, 1.f));
+		isMicOn = false;
+	}
+	else {
+		OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+		isMicOn = true;
+	}
 }
 
 void UPlayerWidget::ClickedOpenReactionUI()
