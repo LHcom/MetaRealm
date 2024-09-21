@@ -36,6 +36,9 @@ public:
 	// ======================================================== Reaction Button Binding Start
 	
 	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* PlayerName;
+
+	UPROPERTY(meta=(BindWidget))
 	class UBorder* ReactionBar;
 
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
