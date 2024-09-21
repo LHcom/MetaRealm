@@ -79,15 +79,15 @@ void UWindowList::NativeOnInitialized()
 	Super::NativeOnInitialized();
 }
 
-void UWindowList::SetUserID(FString ID)
+void UWindowList::SetUserID(FString ID, const bool& bAddPlayer)
 {
-	ScreenActor->SetViewSharingUserID(ID);
+	ScreenActor->SetViewSharingUserID(ID, bAddPlayer);
 }
 
 void UWindowList::OnButtonWindowScreen()
 {
 	bStreaming = !bStreaming;
-	FString streamID = "Editor";
+	FString streamID = FString::FromInt(GetWorld()->GetFirstPlayerController()->GetUniqueID());
 	if (bStreaming)
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중 
@@ -95,7 +95,7 @@ void UWindowList::OnButtonWindowScreen()
 		if (ScreenActor)
 		{
 			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
-			SetUserID(streamID);
+			SetUserID(streamID, true);
 			//ScreenActor->WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
 		}
 		else
@@ -103,78 +103,79 @@ void UWindowList::OnButtonWindowScreen()
 			UE_LOG(LogTemp , Error , TEXT("ScreenActor nullptr"));
 		}
 		
-		// 1. PixelStreaming 모듈을 가져옵니다.
-		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
-			"PixelStreaming");
-		//FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
-		
-		if (PixelStreamingModule)
-		{
-			// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
-			CurrentStreamer = PixelStreamingModule->FindStreamer(streamID); //GetCurrentSessionID());
-			if (CurrentStreamer.IsValid())
-			{
-				{
-					ScreenActor->UpdateTexture();
-					SetUserID(streamID);
-					//Back Buffer를 비디오 입력으로 설정합니다.
-					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
-		
-					UGameViewportClient* GameViewport = GEngine->GameViewport;
-					ScreenActor->SceneCapture->Activate();
-		
-		
-					// 2. Pixel Streaming 비디오 입력으로 설정
-					VideoInput =
-						FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
-		
-					CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
-		
-					//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
-					CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
-		
-					//스트리밍을 시작합니다.
-					CurrentStreamer->StartStreaming();
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
-		}
+		// // 1. PixelStreaming 모듈을 가져옵니다.
+		// IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
+		// 	"PixelStreaming");
+		// //FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
+		//
+		// if (PixelStreamingModule)
+		// {
+		// 	// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
+		// 	CurrentStreamer = PixelStreamingModule->FindStreamer(streamID); //GetCurrentSessionID());
+		// 	if (CurrentStreamer.IsValid())
+		// 	{
+		// 		{
+		// 			ScreenActor->UpdateTexture();
+		// 			SetUserID(streamID);
+		// 			//Back Buffer를 비디오 입력으로 설정합니다.
+		// 			CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
+		//
+		// 			UGameViewportClient* GameViewport = GEngine->GameViewport;
+		// 			ScreenActor->SceneCapture->Activate();
+		//
+		//
+		// 			// 2. Pixel Streaming 비디오 입력으로 설정
+		// 			VideoInput =
+		// 				FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
+		//
+		// 			CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
+		//
+		// 			//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
+		// 			CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
+		//
+		// 			//스트리밍을 시작합니다.
+		// 			CurrentStreamer->StartStreaming();
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
+		// 	}
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
+		// }
 	}
 	else
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 
-		1. PixelStreaming 모듈을 가져옵니다.
-		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
-			"PixelStreaming");
-		
-		if (PixelStreamingModule)
-		{
-			// 2. 스트리머를 가져옵니다.
-			TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
-		
-			if (Streamer.IsValid())
-			{
-				// 4. 스트리밍을 시작합니다.
-				Streamer->StopStreaming();
-			}
-			else
-			{
-				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
-		}
+		SetUserID(streamID, false);
+		// // 1. PixelStreaming 모듈을 가져옵니다.
+		// IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
+		// 	"PixelStreaming");
+		//
+		// if (PixelStreamingModule)
+		// {
+		// 	// 2. 스트리머를 가져옵니다.
+		// 	TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
+		//
+		// 	if (Streamer.IsValid())
+		// 	{
+		// 		// 4. 스트리밍을 시작합니다.
+		// 		Streamer->StopStreaming();
+		// 	}
+		// 	else
+		// 	{
+		// 		UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
+		// 	}
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
+		// }
 	}
 }
 

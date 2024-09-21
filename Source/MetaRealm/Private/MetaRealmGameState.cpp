@@ -33,9 +33,7 @@ void AMetaRealmGameState::OnRep_ReplicatedHasBegunPlay()
 }
 
 void AMetaRealmGameState::OnRep_Proceeding()
-{
-	// 데이터 테이블에 내용을 추가한다.
-	
+{	
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
 	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());

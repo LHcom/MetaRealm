@@ -118,5 +118,11 @@ public:
 	// 메세지 팝업UI
 	UPROPERTY(BlueprintReadWrite)
 	class UMessagePopupWidget* MsgWidget;
-	void initMsgUI();	
+	void initMsgUI();
+public:
+	//==================================화면공유
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetStreamingPlayer(const FString& PlayerID, const bool& bAddPlayer);
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetStreamingPlayer(const FString& PlayerID, const bool& bAddPlayer);
 };

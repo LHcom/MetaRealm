@@ -67,7 +67,7 @@ public:
 
 	//주어진 ID를 사용하여 ScreenActor의 공유 사용자 ID 설정
 	UFUNCTION()
-	void SetUserID(FString ID); 
+	void SetUserID(FString ID, const bool& bAddPlayer); 
 
 	// 버튼을 눌렀을 때, 호출될 델리게이트에 등록할 함수
 	//화면 공유 버튼을 클릭할 때 호출, 픽셀 스트리밍을 시작
