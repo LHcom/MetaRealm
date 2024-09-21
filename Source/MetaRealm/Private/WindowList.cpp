@@ -152,7 +152,7 @@ void UWindowList::OnButtonWindowScreen()
 		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 
-		1. PixelStreaming 모듈을 가져옵니다.
+		//1. PixelStreaming 모듈을 가져옵니다.
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
 			"PixelStreaming");
 		
