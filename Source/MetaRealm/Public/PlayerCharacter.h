@@ -52,15 +52,15 @@ public:
 	class UMemoWidget* MemoWidget;
 	void initMemoUI();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server , Reliable)
 	void ServerRPC_ContentSave(const FString& strContent); // 서버로 게시한 정보를 보내서 저장시킨다.
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast , Reliable)
 	void MulticastRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
 	//----------------------------------------------
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly , BlueprintReadOnly)
 	class UWidgetComponent* PlayerUI;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly , BlueprintReadOnly)
 	class UWidgetComponent* ReactionUIComponent;
 
 	UFUNCTION(Server , Reliable)
@@ -81,7 +81,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UTexture2D* ReactionArray[14];
 
-	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditdefaultsOnly , BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
 
 	UPROPERTY()
@@ -96,16 +96,17 @@ public:
 	UFUNCTION()
 	void SetCylinderMaterial(int32 value);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server , Reliable)
 	void ServerSetCylinderMaterial(int32 value);
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast , Reliable)
 	void MulticastSetCylinderMaterial(int32 value);
 
 private:
 	//=================================로비
 	UPROPERTY()
 	class AHttpLib* HttpActor;
+
 public:
 	// 회원가입
 	void SignUp(const FString& JSON);
@@ -119,10 +120,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UMessagePopupWidget* MsgWidget;
 	void initMsgUI();
+
 public:
 	//==================================화면공유
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_SetStreamingPlayer(const FString& PlayerID, const bool& bAddPlayer);
-	UFUNCTION(NetMulticast,Reliable)
-	void Multicast_SetStreamingPlayer(const FString& PlayerID, const bool& bAddPlayer);
+	UFUNCTION(Server , Reliable)
+	void ServerRPC_SetStreamingPlayer(const FString& PlayerID , const bool bAddPlayer);
+	UFUNCTION(NetMulticast , Reliable)
+	void Multicast_SetStreamingPlayer();
 };

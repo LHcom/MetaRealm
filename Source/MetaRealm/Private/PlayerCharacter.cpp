@@ -463,12 +463,7 @@ void APlayerCharacter::initMsgUI()
 	}
 }
 
-void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString& PlayerID, const bool& bAddPlayer)
-{
-	Multicast_SetStreamingPlayer(PlayerID , bAddPlayer);
-}
-
-void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation(const FString& PlayerID, const bool& bAddPlayer)
+void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString& PlayerID, const bool bAddPlayer)
 {
 	if (auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 	{
@@ -478,6 +473,8 @@ void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation(const FString
 				return;
 
 			gs->ArrStreamingUserID.Add(PlayerID);
+			if(HasAuthority())
+				gs->OnRep_StreamingID();
 		}
 		else
 		{
@@ -487,7 +484,14 @@ void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation(const FString
 			if (gs->ArrStreamingUserID.Find(PlayerID) < 0)
 				return;
 
-			gs->ArrStreamingUserID.Add(PlayerID);
+			gs->ArrStreamingUserID.Remove(PlayerID);
+			if(HasAuthority())
+				gs->OnRep_StreamingID();
 		}
 	}
+}
+
+void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation()
+{
+	
 }
