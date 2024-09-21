@@ -20,8 +20,8 @@ class METAREALM_API AScreenActor : public AActor
 {
 	GENERATED_BODY()
 	FCriticalSection CriticalSection; //다중 스레드에서 화면 캡처와 텍스쳐 업데이트 작업을 할때 데이터 경쟁을 방지하기 위함
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AScreenActor();
 
@@ -29,12 +29,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 public:
-
 	//============화면 공유===========
 
 	/*cv::VideoCapture capture;
@@ -61,7 +60,7 @@ public:
 	//TArray<FString> WindowTitles;
 
 	//액터의 전반적인 위치 고정용
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditDefaultsOnly , BlueprintReadWrite , Category = "Components")
 	class USceneComponent* sceneComp;
 
 	void UpdateTexture(); //실시간 텍스쳐 업데이트
@@ -73,10 +72,10 @@ public:
 
 public:
 	//=========픽셀 스트리밍 ===========
-	//ViewSharingUserID
-	UPROPERTY(BlueprintReadWrite)
-	FString UserID; //픽셀 스트리밍 아이디
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Components")
+	// UPROPERTY(BlueprintReadWrite)
+	// FString UserID; //픽셀 스트리밍 아이디
+	
+	UPROPERTY(EditDefaultsOnly , BlueprintReadWrite , Category = "Components")
 	class UStaticMeshComponent* WindowScreenPlaneMesh; //픽셀 스트리밍 하는 Plane
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> WindowListFactory;
@@ -92,10 +91,12 @@ public:
 
 	void ChangeLookSharingScreen(); //스트리밍을 다른사람 시점으로 변경
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Capture")
-    class UTextureRenderTarget2D* RenderTarget;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Capture")
+	UPROPERTY(VisibleAnywhere , BlueprintReadWrite , Category = "Capture")
+	class UTextureRenderTarget2D* RenderTarget;
+	UPROPERTY(VisibleAnywhere , BlueprintReadOnly , Category = "Capture")
 	class USceneCaptureComponent2D* SceneCapture;
-	
 
+	//==========화면공유 추가
+	UPROPERTY()
+	class AMetaRealmGameState* gs;
 };

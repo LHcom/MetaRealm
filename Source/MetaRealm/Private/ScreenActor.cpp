@@ -13,7 +13,7 @@
 #include "Engine/Texture2D.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/Texture2DDynamic.h"
-#include <vector> 
+#include <vector>
 #include "Styling/SlateBrush.h"
 #include "Components/Image.h"
 #include "Rendering/Texture2DResource.h"
@@ -22,18 +22,21 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "CanvasItem.h"
 #include "CanvasTypes.h"
+#include "MetaRealmGameState.h"
+#include "NetGameInstance.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "../../../../Plugins/Media/PixelStreaming/Source/PixelStreaming/Public/IPixelStreamingStreamer.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
+#include "MetaRealm/MetaRealm.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AScreenActor::AScreenActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 
 	sceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("sceneComp"));
 	SetRootComponent(sceneComp);
@@ -42,27 +45,31 @@ AScreenActor::AScreenActor()
 	WindowScreenPlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WindowScreenPlaneMesh"));
 	//PlaneMesh->SetupAttachment(RootComponent);
 	WindowScreenPlaneMesh->SetupAttachment(sceneComp);
-	WindowScreenPlaneMesh->SetRelativeLocation(FVector(0, 0, 0));
-	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(10.00000, 10.0000, 1.000000));
+	WindowScreenPlaneMesh->SetRelativeLocation(FVector(0 , 0 , 0));
+	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(10.00000 , 10.0000 , 1.000000));
 	// 기본 Plane Mesh 설정
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMeshAsset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMeshAsset(
+		TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (PlaneMeshAsset.Succeeded())
 	{
 		WindowScreenPlaneMesh->SetStaticMesh(PlaneMeshAsset.Object);
 	}
 	// 기본 머티리얼 설정
-	static ConstructorHelpers::FObjectFinder<UMaterial> DefaultMaterial(TEXT("/Script/Engine.Material'/Game/VoiceChat_BD/Blueprint/BDPixelStreamingMediaTexture_Mat.BDPixelStreamingMediaTexture_Mat'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> DefaultMaterial(TEXT(
+		"/Script/Engine.Material'/Game/VoiceChat_BD/Blueprint/BDPixelStreamingMediaTexture_Mat.BDPixelStreamingMediaTexture_Mat'"));
 	if (DefaultMaterial.Succeeded())
 	{
-		WindowScreenPlaneMesh->SetMaterial(0, DefaultMaterial.Object);
+		WindowScreenPlaneMesh->SetMaterial(0 , DefaultMaterial.Object);
 	}
 	WindowScreenPlaneMesh->SetVisibility(false);
 
 
 	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("RenderTarget"));
 	// RenderTarget을 경로에서 로드하고 할당
-	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAsset(TEXT("/Script/Engine.TextureRenderTarget2D'/Game/VoiceChat_BD/Blueprint/TextureRenderTarget2D.TextureRenderTarget2D'"));
-	if ( RenderTargetAsset.Succeeded() )
+	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAsset(
+		TEXT(
+			"/Script/Engine.TextureRenderTarget2D'/Game/VoiceChat_BD/Blueprint/TextureRenderTarget2D.TextureRenderTarget2D'"));
+	if (RenderTargetAsset.Succeeded())
 	{
 		RenderTarget = RenderTargetAsset.Object;
 	}
@@ -74,7 +81,7 @@ AScreenActor::AScreenActor()
 	RenderTarget->TargetGamma = 2.2f;
 	RenderTarget->AddressX = TextureAddress::TA_Clamp;
 	RenderTarget->AddressY = TextureAddress::TA_Clamp;
-	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN) , GetSystemMetrics(SM_CYSCREEN));
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->SetupAttachment(RootComponent);
 	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
@@ -87,23 +94,32 @@ void AScreenActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld() , 0);
 	UCameraComponent* playerCamera = playerPawn->GetComponentByClass<UCameraComponent>();
-	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3, 2, 1));
-	sceneComp->AttachToComponent(playerCamera, FAttachmentTransformRules::SnapToTargetIncludingScale); //카메라 붙이기
+	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3 , 2 , 1));
+	sceneComp->AttachToComponent(playerCamera , FAttachmentTransformRules::SnapToTargetIncludingScale); //카메라 붙이기
 
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation(), playerCamera->GetComponentLocation());
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation() ,
+	                                                                 playerCamera->GetComponentLocation());
 
 	// Z 축이 카메라를 향하도록 회전
-	DynamicMaterial = UMaterialInstanceDynamic::Create(WindowScreenPlaneMesh->GetMaterial(0), this);
-	WindowScreenPlaneMesh->SetMaterial(0, DynamicMaterial);
-	WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld(), WindowListFactory));
+	DynamicMaterial = UMaterialInstanceDynamic::Create(WindowScreenPlaneMesh->GetMaterial(0) , this);
+	WindowScreenPlaneMesh->SetMaterial(0 , DynamicMaterial);
+	WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
+
+	WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld() , WindowListFactory));
 	if (WindowList)
 	{
 		WindowList->AddToViewport(-1);
 		WindowList->SetScreenActor(this);
 	}
-	
+
+	gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		AB_LOG(LogABNetwork , Log , TEXT("======================================================================"));
+		AB_LOG(LogABNetwork , Log , TEXT("Current Streaming Player Num : %d") , gs->ArrStreamingUserID.Num());
+	}
 }
 
 // Called every frame
@@ -281,7 +297,7 @@ void AScreenActor::UpdateTexture()
 	//}
 
 	// 먼저 GetWorld()가 유효한지 확인합니다.
-	if ( !GetWorld() )
+	if (!GetWorld())
 	{
 		UE_LOG(LogTemp , Error , TEXT("GetWorld() is null!"));
 		return;
@@ -292,24 +308,23 @@ void AScreenActor::UpdateTexture()
 	const float CaptureInterval = 0.1f; // 1초에 한 번 캡처
 	TimeAccumulator += GetWorld()->GetDeltaSeconds();
 
-	if ( TimeAccumulator >= CaptureInterval )
+	if (TimeAccumulator >= CaptureInterval)
 	{
 		TimeAccumulator = 0.0f;
 		FScopeLock Lock(&CriticalSection);
-		if ( CapturedTexture )
+		if (CapturedTexture)
 		{
 			CapturedTexture->ConditionalBeginDestroy();
 		}
 		CapturedTexture = CaptureScreenToTexture();
 
-		if ( DynamicMaterial && CapturedTexture && WindowScreenPlaneMesh )
+		if (DynamicMaterial && CapturedTexture && WindowScreenPlaneMesh)
 		{
 			//CapturedTexture->SRGB = true;
 			// BaseTexture 파라미터에 텍스처 설정
 			DynamicMaterial->SetTextureParameterValue(TEXT("Base") , CapturedTexture);
 			RenderTarget->UpdateResourceImmediate();
 			// PlaneMesh에 머티리얼 적용
-
 		}
 	}
 }
@@ -346,10 +361,10 @@ UTexture2D* AScreenActor::CaptureScreenToTexture()
 	float BrightnessFactor = 0.8f;
 
 	// 각 픽셀의 RGB 값을 명도 감소 비율로 조정
-	for ( int32 i = 0; i < ScreenWidth * ScreenHeight * 4; i += 4 )
+	for (int32 i = 0; i < ScreenWidth * ScreenHeight * 4; i += 4)
 	{
 		// R, G, B 값을 감소
-		Buffer[i] = static_cast<BYTE>(Buffer[i] * BrightnessFactor);     // Red
+		Buffer[i] = static_cast<BYTE>(Buffer[i] * BrightnessFactor); // Red
 		Buffer[i + 1] = static_cast<BYTE>(Buffer[i + 1] * BrightnessFactor); // Green
 		Buffer[i + 2] = static_cast<BYTE>(Buffer[i + 2] * BrightnessFactor); // Blue
 		// 알파 값(Buffer[i+3])은 변경하지 않음 (투명도 유지)
@@ -357,7 +372,7 @@ UTexture2D* AScreenActor::CaptureScreenToTexture()
 
 	// UTexture2D 동적 생성
 	UTexture2D* Texture = UTexture2D::CreateTransient(ScreenWidth , ScreenHeight , PF_B8G8R8A8);
-	if ( !Texture )
+	if (!Texture)
 		return nullptr;
 
 	// 텍스처 데이터를 업데이트
@@ -376,8 +391,9 @@ UTexture2D* AScreenActor::CaptureScreenToTexture()
 
 void AScreenActor::SetViewSharingUserID(FString ID)
 {
-	UserID = ID;
-	ChangeLookSharingScreen();
+	gs->ArrStreamingUserID.Add(ID);
+	AB_LOG(LogABNetwork , Log , TEXT("Set Streaming Player ID : %s") , *ID);
+	//ChangeLookSharingScreen();
 }
 
 void AScreenActor::StopLookSharingScreen()
@@ -391,11 +407,11 @@ void AScreenActor::StopLookSharingScreen()
 	if (Function)
 	{
 		// 블루프린트 함수 호출 (매개변수가 없는 경우)
-		ProcessEvent(Function, nullptr);
+		ProcessEvent(Function , nullptr);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("Function not found: %s") , *FunctionName.ToString());
 	}
 }
 
@@ -410,11 +426,11 @@ void AScreenActor::BeginStreaming()
 	if (Function)
 	{
 		// 블루프린트 함수 호출 (매개변수가 없는 경우)
-		ProcessEvent(Function, nullptr);
+		ProcessEvent(Function , nullptr);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("Function not found: %s") , *FunctionName.ToString());
 	}
 }
 
@@ -429,11 +445,12 @@ void AScreenActor::BeginLookSharingScreen()
 	if (Function)
 	{
 		// 블루프린트 함수 호출 (매개변수가 없는 경우)
-		ProcessEvent(Function, nullptr);
+		FString userID = "Editor";
+		ProcessEvent(Function , &userID);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("Function not found: %s") , *FunctionName.ToString());
 	}
 }
 
@@ -447,12 +464,12 @@ void AScreenActor::ChangeLookSharingScreen()
 
 	if (Function)
 	{
+		FString userID = "Editor";
 		// 블루프린트 함수 호출 (매개변수가 없는 경우)
-		ProcessEvent(Function, nullptr);
+		ProcessEvent(Function , &userID);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Function not found: %s"), *FunctionName.ToString());
+		UE_LOG(LogTemp , Warning , TEXT("Function not found: %s") , *FunctionName.ToString());
 	}
 }
-

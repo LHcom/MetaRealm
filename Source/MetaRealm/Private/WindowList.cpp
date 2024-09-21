@@ -2,6 +2,8 @@
 
 
 #include "WindowList.h"
+
+#include "EngineUtils.h"
 #include "ScreenActor.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
@@ -25,14 +27,25 @@ void UWindowList::NativeConstruct()
 
 	// 레벨에 배치된 ScreenActor를 찾음
 	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld() , AScreenActor::StaticClass() , FoundActors);
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld() , AScreenActor::StaticClass() , FoundActors);
+	if (UWorld* World = GEngine->GetWorldFromContextObject(GetWorld(), EGetWorldErrorMode::LogAndReturnNull))
+	{
+		for (FActorIterator It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			if (Actor->ActorHasTag(FName("Screen")))
+			{
+				FoundActors.Add(Actor);
+			}
+		}
+	}
 
-	if ( FoundActors.Num() > 0 )
+	if (FoundActors.Num() > 0)
 	{
 		// ScreenActor를 가져옴
 		ScreenActor = Cast<AScreenActor>(FoundActors[0]);
 
-		if ( ScreenActor )
+		if (ScreenActor)
 		{
 			UE_LOG(LogTemp , Log , TEXT("ScreenActor found successfully."));
 		}
@@ -46,15 +59,15 @@ void UWindowList::NativeConstruct()
 		UE_LOG(LogTemp , Error , TEXT("ScreenActor not found in the level."));
 	}
 
-	ButtonLookSharingScreen->OnClicked.AddDynamic(this, &UWindowList::OnButtonLookSharingScreen);
-	ButtonWindowScreen->OnClicked.AddDynamic(this, &UWindowList::OnButtonWindowScreen);
+	ButtonLookSharingScreen->OnClicked.AddDynamic(this , &UWindowList::OnButtonLookSharingScreen);
+	ButtonWindowScreen->OnClicked.AddDynamic(this , &UWindowList::OnButtonWindowScreen);
 	ImageSharingScreen->SetVisibility(ESlateVisibility::Hidden);
 	ImageCoveringScreen->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UWindowList::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UWindowList::NativeTick(const FGeometry& MyGeometry , float InDeltaTime)
 {
-	Super::NativeTick(MyGeometry, InDeltaTime);
+	Super::NativeTick(MyGeometry , InDeltaTime);
 	if (bStreaming && nullptr != ScreenActor)
 	{
 		ScreenActor->UpdateTexture();
@@ -77,61 +90,61 @@ void UWindowList::OnButtonWindowScreen()
 	FString streamID = "Editor";
 	if (bStreaming)
 	{
-		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중
+		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중 
 
-		if ( ScreenActor )
+		if (ScreenActor)
 		{
 			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
-			ScreenActor->WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
+			SetUserID(streamID);
+			//ScreenActor->WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
 		}
 		else
 		{
 			UE_LOG(LogTemp , Error , TEXT("ScreenActor nullptr"));
 		}
-
-
-		//ScreenActor->BeginStreaming();
+		
 		// 1. PixelStreaming 모듈을 가져옵니다.
-		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>("PixelStreaming");
+		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
+			"PixelStreaming");
 		//FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
-
+		
 		if (PixelStreamingModule)
 		{
 			// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
-			CurrentStreamer = PixelStreamingModule->FindStreamer(streamID);//GetCurrentSessionID());
+			CurrentStreamer = PixelStreamingModule->FindStreamer(streamID); //GetCurrentSessionID());
 			if (CurrentStreamer.IsValid())
 			{
 				{
 					ScreenActor->UpdateTexture();
-
+					SetUserID(streamID);
 					//Back Buffer를 비디오 입력으로 설정합니다.
 					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
-
+		
 					UGameViewportClient* GameViewport = GEngine->GameViewport;
 					ScreenActor->SceneCapture->Activate();
-
-
+		
+		
 					// 2. Pixel Streaming 비디오 입력으로 설정
-					VideoInput = FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
-
+					VideoInput =
+						FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
+		
 					CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
-
+		
 					//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
 					CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
-
+		
 					//스트리밍을 시작합니다.
 					CurrentStreamer->StartStreaming();
 				}
-
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Could not find a valid streamer with the given ID."));
+				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("PixelStreamingModule is not available."));
+			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
 		}
 	}
 	else
@@ -139,14 +152,15 @@ void UWindowList::OnButtonWindowScreen()
 		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 
-		// 1. PixelStreaming 모듈을 가져옵니다.
-		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
-
+		1. PixelStreaming 모듈을 가져옵니다.
+		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
+			"PixelStreaming");
+		
 		if (PixelStreamingModule)
 		{
 			// 2. 스트리머를 가져옵니다.
 			TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
-
+		
 			if (Streamer.IsValid())
 			{
 				// 4. 스트리밍을 시작합니다.
@@ -154,12 +168,12 @@ void UWindowList::OnButtonWindowScreen()
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Could not find a valid streamer with the given ID."));
+				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("PixelStreamingModule is not available."));
+			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
 		}
 	}
 }
@@ -173,7 +187,6 @@ void UWindowList::OnButtonLookSharingScreen()
 		ImageSharingScreen->SetVisibility(ESlateVisibility::Visible);
 		//블루프린트 subs
 		ScreenActor->BeginLookSharingScreen();
-		//ImageCoveringScreen->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
@@ -188,7 +201,7 @@ void UWindowList::OnButtonLookSharingScreen()
 
 void UWindowList::SetScreenActor(AScreenActor* Actor)
 {
-	if ( !Actor )
+	if (!Actor)
 	{
 		UE_LOG(LogTemp , Error , TEXT("Invalid ScreenActor passed to SetScreenActor"));
 		return;
@@ -196,7 +209,6 @@ void UWindowList::SetScreenActor(AScreenActor* Actor)
 
 	ScreenActor = Actor;
 	UE_LOG(LogTemp , Log , TEXT("ScreenActor has been set successfully."));
-
 }
 
 FString UWindowList::GetCurrentSessionID()
@@ -232,7 +244,7 @@ void UWindowList::InitSlot(TArray<FString> Items)
 	// 아이템 데이터 바탕으로 슬롯 생성 및 추가
 	for (FString UserID : Items)
 	{
-		SharingUserSlot = CastChecked<USharingUserSlot>(CreateWidget(GetWorld(), SharingUserSlotFactory));
+		SharingUserSlot = CastChecked<USharingUserSlot>(CreateWidget(GetWorld() , SharingUserSlotFactory));
 		if (SharingUserSlot)
 		{
 			// 슬롯 가시성 및 레이아웃 확인
@@ -240,14 +252,14 @@ void UWindowList::InitSlot(TArray<FString> Items)
 			SharingUserSlot->SetUserID(UserID);
 			//SharingUserSlot->FUserIDButtonDelegate_OneParam.BindUFunction(this, FName("SetUserID"));
 			// Grid에 슬롯 추가
-			WindowList->AddChildToUniformGrid(SharingUserSlot, Row, Column);
+			WindowList->AddChildToUniformGrid(SharingUserSlot , Row , Column);
 
 			// Row 값 증가
 			Row++;
 
-			if (!WindowList )
+			if (!WindowList)
 			{
-				UE_LOG(LogTemp, Error, TEXT("PartsPanel is not valid."));
+				UE_LOG(LogTemp , Error , TEXT("PartsPanel is not valid."));
 				return;
 			}
 
@@ -255,4 +267,3 @@ void UWindowList::InitSlot(TArray<FString> Items)
 		}
 	}
 }
-

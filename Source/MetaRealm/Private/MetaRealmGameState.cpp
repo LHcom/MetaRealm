@@ -12,6 +12,7 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME(AMetaRealmGameState, gsContent);
 	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
+	DOREPLIFETIME(AMetaRealmGameState, ArrStreamingUserID);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
@@ -35,4 +36,9 @@ void AMetaRealmGameState::OnRep_Proceeding()
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
 	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
+}
+
+void AMetaRealmGameState::OnRep_StreamingID()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("ArrStreamingUserID Num : %d"), ArrStreamingUserID.Num());
 }
