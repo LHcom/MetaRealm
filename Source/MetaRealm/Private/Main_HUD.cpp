@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Main_HUD.h"
@@ -18,7 +18,7 @@ void AMain_HUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CheckUIObject(); // ½ÃÀÛÇÏ¸é UI¸¦ »ı¼ºÇÑ´Ù.
+	CheckUIObject(); // ì‹œì‘í•˜ë©´ UIë¥¼ ìƒì„±í•œë‹¤.
 }
 
 TSharedPtr<SWidget> AMain_HUD::GetChatInputTextObject()
@@ -28,8 +28,6 @@ TSharedPtr<SWidget> AMain_HUD::GetChatInputTextObject()
 
 void AMain_HUD::AddChatMessage(const FString& Message)
 {
-	// BeginPlay()°¡ ½ÇÇàµÇ±â Àü¿¡ ÀÌ ÇÔ¼ö°¡ ¸ÕÀú ½ÇÇà µÉ ¼öµµ ÀÖ´Ù.
-	// UI°¡ »ı±â±â Àü¿¡ UI¿¡ Á¢±ÙÇÏ¸é ¿À·ù°¡ ³ª±â ¶§¹®¿¡ °Ë»çÇÑ´Ù.
 	if (!CheckUIObject()) return;
 
 	MainUIObject->AddChatMessage(Message);
@@ -37,11 +35,11 @@ void AMain_HUD::AddChatMessage(const FString& Message)
 
 bool AMain_HUD::CheckUIObject()
 {
-	if (MainUIObject == nullptr) // UI°¡ ¾ø´Ù¸é »ı¼º.
+	if (MainUIObject == nullptr) // UIê°€ ì—†ë‹¤ë©´ ìƒì„±.
 	{
 		return CreateUIObject();
 	}
-	return true; // ÀÖ´Ù¸é True.
+	return true; // ìˆë‹¤ë©´ True.
 }
 
 bool AMain_HUD::CreateUIObject()
@@ -52,8 +50,8 @@ bool AMain_HUD::CreateUIObject()
 		if (MainUIObject)
 		{
 			MainUIObject->AddToViewport();
-			return true; // ¸¸µé¾ú´Ù¸é true.
+			return true; // ë§Œë“¤ì—ˆë‹¤ë©´ true.
 		}
 	}
-	return false; // ¸ø ¸¸µé¾ú´Ù¸é false.
+	return false; // ëª» ë§Œë“¤ì—ˆë‹¤ë©´ false.
 }

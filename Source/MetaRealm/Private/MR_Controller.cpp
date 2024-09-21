@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MR_Controller.h"
@@ -19,6 +19,9 @@
 #include "UW_Main.h"
 #include "Blueprint/UserWidget.h"
 #include "UW_PlayerList.h"
+#include "MainPlayerList.h"
+#include "NetGameInstance.h"
+
 
 void AMR_Controller::PostInitializeComponents()
 {
@@ -68,16 +71,30 @@ void AMR_Controller::BeginPlay()
 		ViewMainUI();
 	}
 
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	//if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	//{
+	//	FBoardStruct currData = gi->GetBoardData();
+	//	TArray<FProceedStruct> proceedData = gi->GetProceedData();
+	//	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	//	{
+	//		gs->gsContent = currData.ContentString;
+	//		gs->ArrRecordInfo = proceedData;
+	//	}
+	//}
+	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 	{
-		FBoardStruct currData = gi->GetBoardData();
-		TArray<FProceedStruct> proceedData = gi->GetProceedData();
-		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		if ( me )
 		{
-			gs->gsContent = currData.ContentString;
-			gs->ArrRecordInfo = proceedData;
+			FString PlayerName = TEXT("Unknown");
+			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+			{
+				PlayerName = gi->NickName;
+			}
+			gs->AddPlayerName(PlayerName);  // GameState에 플레이어 이름 추가
+			gs->BroadcastPlayerList();  // 모든 클라이언트에 플레이어 리스트 전파
 		}
 	}
+
 }
 
 void AMR_Controller::SetupInputComponent()
@@ -88,37 +105,78 @@ void AMR_Controller::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Chat"), EInputEvent::IE_Pressed, this, &AMR_Controller::FocusChatInputText);
 }
 
-FString AMR_Controller::GetSteamID() const
-{
-	if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
-	{
-		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
-		if (Identity.IsValid())
-		{
-			FUniqueNetIdRepl UniqueNetId = GetLocalPlayer()->GetPreferredUniqueNetId();
-			if (UniqueNetId.IsValid())
-			{
-				return UniqueNetId->ToString();
-			}
-		}
-	}
-	return FString("Unknown");
-}
+//FString AMR_Controller::GetSteamID() const
+//{
+//	if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
+//	{
+//		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+//		if (Identity.IsValid())
+//		{
+//			FUniqueNetIdRepl UniqueNetId = GetLocalPlayer()->GetPreferredUniqueNetId();
+//			if (UniqueNetId.IsValid())
+//			{
+//				return UniqueNetId->ToString();
+//			}
+//		}
+//	}
+//	return FString("Unknown");
+//}
+
+//void AMR_Controller::ViewMainUI()
+//{
+//	// MainUI 생성 및 표시
+//	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this, MainUIWidgetClass))
+//	{
+//		MainUIWidget->AddToViewport();
+//
+//		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
+//		{
+//			FString PlayerName;
+//			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+//			{
+//				PlayerName = gi->NickName;
+//			}
+//			PlayerListWidget->SetPlayerName(PlayerName);
+//			// PlayerList 위젯을 ScrollBox에 추가
+//			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+//		}
+//	}
+//}
 
 void AMR_Controller::ViewMainUI()
 {
-	// MainUI 생성 및 표시
-	if (UUW_Main* MainUIWidget = CreateWidget<UUW_Main>(this, MainUIWidgetClass))
+	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
 	{
 		MainUIWidget->AddToViewport();
 
-		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
+		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 		{
-			FString PlayerName = GetSteamID();
-			PlayerListWidget->SetPlayerName(GetSteamID());
+			TArray<FString> PlayerNames = gs->GetAllPlayerNames();
+			for ( const FString& PlayerName : PlayerNames )
+			{
+				if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+				{
+					PlayerListWidget->SetPlayerName(PlayerName);
+					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+				}
+			}
+		}
+	}
+}
 
-			// PlayerList 위젯을 ScrollBox에 추가
-			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
+{
+	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	{
+		MainUIWidget->AddToViewport();
+
+		for ( const FString& PlayerName : PlayerNames )
+		{
+			if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+			{
+				PlayerListWidget->SetPlayerName(PlayerName);
+				MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+			}
 		}
 	}
 }
@@ -170,33 +228,44 @@ void AMR_Controller::MoveToMainMap()
 				player->MeetingEndTime = player->GetSystemTime();
 		}
 	}
-
-
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
+//void AMR_Controller::SendMessage(const FText& Text)
+//{
+//	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
+//	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+//	if ( OnlineSub )
+//	{
+//		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+//		if ( Identity.IsValid() )
+//		{
+//			// 0번째 로컬 플레이어의 고유 ID를 가져옴
+//			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
+//			if ( UserId.IsValid() )
+//			{
+//				// 스팀 닉네임을 가져옴
+//				FString UserName = Identity->GetPlayerNickname(*UserId);
+//				FString Message = FString::Printf(TEXT("%s : %s") , *UserName , *Text.ToString());
+//
+//				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+//				CtoS_SendMessage(Message);
+//			}
+//		}
+//	}
+//}
+
 void AMR_Controller::SendMessage(const FText& Text)
 {
-	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
-	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
+	FString PlayerName;
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
 	{
-		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
-		if (Identity.IsValid())
-		{
-			// 0번째 로컬 플레이어의 고유 ID를 가져옴
-			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
-			if (UserId.IsValid())
-			{
-				// 스팀 닉네임을 가져옴
-				FString UserName = Identity->GetPlayerNickname(*UserId);
-				FString Message = FString::Printf(TEXT("%s : %s"), *UserName, *Text.ToString());
-
-				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
-				CtoS_SendMessage(Message);
-			}
-		}
+		PlayerName = gi->NickName;
 	}
+	FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
+
+	// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+	CtoS_SendMessage(Message);
 }
 
 void AMR_Controller::FocusGame()
@@ -232,10 +301,10 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 	UGameplayStatics::GetAllActorsOfClass(GetPawn()->GetWorld(), APlayerController::StaticClass(), OutActors);
 	for (AActor* OutActor : OutActors)
 	{
-		AMR_Controller* PC = Cast<AMR_Controller>(OutActor);
-		if (PC)
+		AMR_Controller* pc = Cast<AMR_Controller>(OutActor);
+		if (pc)
 		{
-			PC->StoC_SendMessage(Message);
+			pc->StoC_SendMessage(Message);
 		}
 	}
 }

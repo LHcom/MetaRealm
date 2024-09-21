@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,12 +22,12 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-	// Steam ID를 가져오는 함수
-	FString GetSteamID() const;
+	//// Steam ID를 가져오는 함수
+	//FString GetSteamID() const;
 
 	// MainUI 위젯 블루프린트 클래스
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-    TSubclassOf<class UUW_Main> MainUIWidgetClass;
+    TSubclassOf<class UMainPlayerList> MainUIWidgetClass;
 
     // PlayerList 위젯 블루프린트 클래스
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -35,6 +35,11 @@ public:
 
 	UFUNCTION()
 	void ViewMainUI();
+
+	 // UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
+    UFUNCTION(BlueprintCallable, Category = "Player Management")
+    void UpdatePlayerList(const TArray<FString>& PlayerNames);
+
 
 	UFUNCTION(BlueprintCallable)
 	void MoveToMeetingRoomMap();
@@ -62,6 +67,7 @@ private:
 
 	UPROPERTY()
 	class AMetaRealmGM* gm;
+
 
 public:
 	//-----------------------------------------게시판 관련
