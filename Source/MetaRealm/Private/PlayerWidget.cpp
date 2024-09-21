@@ -12,6 +12,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "MR_Controller.h"
+#include "NetGameInstance.h"
 
 void UPlayerWidget::NativeConstruct()
 {
@@ -19,8 +20,8 @@ void UPlayerWidget::NativeConstruct()
 	UE_LOG(LogTemp, Warning, TEXT("2222222=========================================="));
 	me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 
-	auto* gi = Cast<AMR_Controller>(GetWorld()->GetFirstPlayerController());
-	FString name = gi->GetSteamID();
+	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
+	FString name = gi->NickName;
 	PlayerName->SetText(FText::FromString(name));
 
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
