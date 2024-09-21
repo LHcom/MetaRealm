@@ -71,16 +71,30 @@ void AMR_Controller::BeginPlay()
 		ViewMainUI();
 	}
 
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	//if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	//{
+	//	FBoardStruct currData = gi->GetBoardData();
+	//	TArray<FProceedStruct> proceedData = gi->GetProceedData();
+	//	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	//	{
+	//		gs->gsContent = currData.ContentString;
+	//		gs->ArrRecordInfo = proceedData;
+	//	}
+	//}
+	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 	{
-		FBoardStruct currData = gi->GetBoardData();
-		TArray<FProceedStruct> proceedData = gi->GetProceedData();
-		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		if ( me )
 		{
-			gs->gsContent = currData.ContentString;
-			gs->ArrRecordInfo = proceedData;
+			FString PlayerName = TEXT("Unknown");
+			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+			{
+				PlayerName = gi->NickName;
+			}
+			gs->AddPlayerName(PlayerName);  // GameState에 플레이어 이름 추가
+			gs->BroadcastPlayerList();  // 모든 클라이언트에 플레이어 리스트 전파
 		}
 	}
+
 }
 
 void AMR_Controller::SetupInputComponent()
@@ -108,23 +122,61 @@ void AMR_Controller::SetupInputComponent()
 //	return FString("Unknown");
 //}
 
+//void AMR_Controller::ViewMainUI()
+//{
+//	// MainUI 생성 및 표시
+//	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this, MainUIWidgetClass))
+//	{
+//		MainUIWidget->AddToViewport();
+//
+//		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
+//		{
+//			FString PlayerName;
+//			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+//			{
+//				PlayerName = gi->NickName;
+//			}
+//			PlayerListWidget->SetPlayerName(PlayerName);
+//			// PlayerList 위젯을 ScrollBox에 추가
+//			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+//		}
+//	}
+//}
+
 void AMR_Controller::ViewMainUI()
 {
-	// MainUI 생성 및 표시
-	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this, MainUIWidgetClass))
+	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
 	{
 		MainUIWidget->AddToViewport();
 
-		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this, PlayerListWidgetClass))
+		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 		{
-			FString PlayerName;
-			if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+			TArray<FString> PlayerNames = gs->GetAllPlayerNames();
+			for ( const FString& PlayerName : PlayerNames )
 			{
-				PlayerName = gi->NickName;
+				if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+				{
+					PlayerListWidget->SetPlayerName(PlayerName);
+					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+				}
 			}
-			PlayerListWidget->SetPlayerName(PlayerName);
-			// PlayerList 위젯을 ScrollBox에 추가
-			MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+		}
+	}
+}
+
+void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
+{
+	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	{
+		MainUIWidget->AddToViewport();
+
+		for ( const FString& PlayerName : PlayerNames )
+		{
+			if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+			{
+				PlayerListWidget->SetPlayerName(PlayerName);
+				MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+			}
 		}
 	}
 }
@@ -205,15 +257,15 @@ void AMR_Controller::MoveToMainMap()
 
 void AMR_Controller::SendMessage(const FText& Text)
 {
-		FString PlayerName;
-		if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
-		{
-			PlayerName = gi->NickName;
-		}
-		FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
+	FString PlayerName;
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	{
+		PlayerName = gi->NickName;
+	}
+	FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
 
-		// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
-		CtoS_SendMessage(Message);
+	// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+	CtoS_SendMessage(Message);
 }
 
 void AMR_Controller::FocusGame()
