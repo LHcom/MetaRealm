@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnterMeetingRoomUI.h"
@@ -17,7 +17,7 @@ void UEnterMeetingRoomUI::ButtonEnterClicked()
 	if (APlayerController* pc = GetOwningPlayer()) {
 		AMR_Controller* mc = Cast<AMR_Controller>(pc);
 		if (mc) {
-			mc->MoveToMeetingRoomMap();
+			mc->ServerMoveToMeetingRoomMap();
 			SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
