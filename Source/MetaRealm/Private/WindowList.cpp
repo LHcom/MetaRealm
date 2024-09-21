@@ -90,7 +90,7 @@ void UWindowList::OnButtonWindowScreen()
 	FString streamID = FString::FromInt(GetWorld()->GetFirstPlayerController()->GetUniqueID());
 	if (bStreaming)
 	{
-		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중 
+		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중
 
 		if (ScreenActor)
 		{
@@ -102,7 +102,7 @@ void UWindowList::OnButtonWindowScreen()
 		{
 			UE_LOG(LogTemp , Error , TEXT("ScreenActor nullptr"));
 		}
-		
+
 		// // 1. PixelStreaming 모듈을 가져옵니다.
 		// IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
 		// 	"PixelStreaming");
@@ -151,31 +151,31 @@ void UWindowList::OnButtonWindowScreen()
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
-
 		SetUserID(streamID, false);
-		// // 1. PixelStreaming 모듈을 가져옵니다.
-		// IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
-		// 	"PixelStreaming");
-		//
-		// if (PixelStreamingModule)
-		// {
-		// 	// 2. 스트리머를 가져옵니다.
-		// 	TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
-		//
-		// 	if (Streamer.IsValid())
-		// 	{
-		// 		// 4. 스트리밍을 시작합니다.
-		// 		Streamer->StopStreaming();
-		// 	}
-		// 	else
-		// 	{
-		// 		UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
-		// 	}
-		// }
-		// else
-		// {
-		// 	UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
-		// }
+		
+		//1. PixelStreaming 모듈을 가져옵니다.
+		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
+			"PixelStreaming");
+
+		if (PixelStreamingModule)
+		{
+			// 2. 스트리머를 가져옵니다.
+			TSharedPtr<IPixelStreamingStreamer> Streamer = PixelStreamingModule->FindStreamer(streamID);
+
+			if (Streamer.IsValid())
+			{
+				// 4. 스트리밍을 시작합니다.
+				Streamer->StopStreaming();
+			}
+			else
+			{
+				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
+		}
 	}
 }
 

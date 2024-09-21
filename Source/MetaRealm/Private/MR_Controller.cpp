@@ -69,7 +69,15 @@ void AMR_Controller::BeginPlay()
 	if (CurrentMapName == "KHH_level")
 	{
 		ViewMainUI();
+
 	}
+
+	/*auto player = CastChecked<APlayerCharacter>(me);
+	if ( player ) {
+		player->initWindowListUI();
+		player->ShowWindowListUI();
+	}*/
+
 
 	//if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	//{
@@ -196,6 +204,7 @@ void AMR_Controller::MoveToMeetingRoomMap()
 			if (player)
 			{
 				player->MeetingStartTime = player->GetSystemTime();
+				//player->ShowWindowListUI();
 
 				if (gm)
 				{

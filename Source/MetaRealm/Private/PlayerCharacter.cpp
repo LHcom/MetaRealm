@@ -25,6 +25,7 @@
 #include "ReactionUI.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Image.h"
+#include "WindowList.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -150,6 +151,42 @@ void APlayerCharacter::initMemoUI()
 	}
 }
 
+void APlayerCharacter::initWindowListUI()
+{
+	auto pc = Cast<AMR_Controller>(Controller);
+	if ( nullptr == pc )
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] Player Controller is null"));
+		return;
+	}
+
+	if ( !pc->MemoUIFactory )
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoFactory is null"));
+		return;
+	}
+
+	pc->WindowListUI = CastChecked<UWindowList>(CreateWidget(GetWorld() , pc->WindowListFactory));
+	if ( pc->WindowListUI )
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoWidget is not null"));
+		WindowListWidget = pc->WindowListUI;
+		WindowListWidget->AddToViewport(0);
+		WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is null"));
+	}
+}
+
+void APlayerCharacter::ShowWindowListUI()
+{
+	if ( WindowListWidget ) {
+		WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
 
 void APlayerCharacter::ShowProceedingUI()
 {
@@ -235,6 +272,9 @@ void APlayerCharacter::BeginPlay()
 		{
 			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
 		}
+	}
+	else {
+		initWindowListUI();
 	}
 
 	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))

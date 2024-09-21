@@ -56,8 +56,13 @@ public:
 	void ServerRPC_ContentSave(const FString& strContent); // 서버로 게시한 정보를 보내서 저장시킨다.
 	UFUNCTION(NetMulticast , Reliable)
 	void MulticastRPC_ContentSave(const FString& strContent); // 클라이언트에 게시판 정보를 보내고 기록 시킨다.
-	//----------------------------------------------
-	UPROPERTY(EditDefaultsOnly , BlueprintReadOnly)
+	//----------------------------------------------화면 공유 UI 관련
+	UPROPERTY(BlueprintReadWrite)
+	class UWindowList* WindowListWidget;
+	void initWindowListUI();
+	void ShowWindowListUI();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* PlayerUI;
 
 	UPROPERTY(EditDefaultsOnly , BlueprintReadOnly)
