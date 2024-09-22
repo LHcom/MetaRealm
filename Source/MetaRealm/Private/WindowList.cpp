@@ -27,37 +27,10 @@ void UWindowList::NativeConstruct()
 	Super::NativeConstruct();
 
 	// 레벨에 배치된 ScreenActor를 찾음
-	TArray<AActor*> FoundActors;
-	//UGameplayStatics::GetAllActorsOfClass(GetWorld() , AScreenActor::StaticClass() , FoundActors);
-	if (UWorld* World = GEngine->GetWorldFromContextObject(GetWorld(), EGetWorldErrorMode::LogAndReturnNull))
+	for (TActorIterator<AScreenActor> It(GetWorld() , AScreenActor::StaticClass()); It; ++It)
 	{
-		for (FActorIterator It(World); It; ++It)
-		{
-			AActor* Actor = *It;
-			if (Actor->ActorHasTag(FName("Screen")))
-			{
-				FoundActors.Add(Actor);
-			}
-		}
-	}
-
-	if (FoundActors.Num() > 0)
-	{
-		// ScreenActor를 가져옴
-		ScreenActor = Cast<AScreenActor>(FoundActors[0]);
-
-		if (ScreenActor)
-		{
-			UE_LOG(LogTemp , Log , TEXT("ScreenActor found successfully."));
-		}
-		else
-		{
-			UE_LOG(LogTemp , Error , TEXT("ScreenActor is null after casting."));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp , Error , TEXT("ScreenActor not found in the level."));
+		ScreenActor = *It;
+		break;
 	}
 
 	ButtonLookSharingScreen->OnClicked.AddDynamic(this , &UWindowList::OnButtonLookSharingScreen);
@@ -66,7 +39,7 @@ void UWindowList::NativeConstruct()
 	ImageCoveringScreen->SetVisibility(ESlateVisibility::Hidden);
 
 	Me = Cast<APlayerCharacter>(GetOwningPlayerPawn());
-	if(Me)
+	if (Me)
 	{
 		UE_LOG(LogTemp , Warning , TEXT("Me is not Null"));
 		Me->WindowListWidget->TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share")));
@@ -91,9 +64,9 @@ void UWindowList::NativeOnInitialized()
 	Super::NativeOnInitialized();
 }
 
-void UWindowList::SetUserID(FString ID, const bool& bAddPlayer)
+void UWindowList::SetUserID(FString ID , const bool& bAddPlayer)
 {
-	ScreenActor->SetViewSharingUserID(ID, bAddPlayer);
+	ScreenActor->SetViewSharingUserID(ID , bAddPlayer);
 }
 
 void UWindowList::OnButtonWindowScreen()
@@ -103,11 +76,11 @@ void UWindowList::OnButtonWindowScreen()
 	if (bStreaming)
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중
-		
+
 		if (ScreenActor)
 		{
 			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
-			SetUserID(streamID, true);
+			SetUserID(streamID , true);
 		}
 		else
 		{
@@ -162,8 +135,8 @@ void UWindowList::OnButtonWindowScreen()
 	{
 		Me->WindowListWidget->TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
-		SetUserID(streamID, false);
-		
+		SetUserID(streamID , false);
+
 		//1. PixelStreaming 모듈을 가져옵니다.
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
 			"PixelStreaming");

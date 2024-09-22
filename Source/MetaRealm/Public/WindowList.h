@@ -18,6 +18,7 @@ class METAREALM_API UWindowList : public UUserWidget
 public:
 	// UUserWidget이 초기화될 때 호출되는 함수
 	virtual void NativeConstruct() override;
+	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeOnInitialized();
 
@@ -45,6 +46,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
     class UImage* ImageSharingScreen; //공유된 화면을 표시할 이미지
 
+	UPROPERTY()
 	class AScreenActor* ScreenActor;
 
 	UPROPERTY(meta = (BindWidget))
