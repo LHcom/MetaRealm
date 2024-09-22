@@ -241,9 +241,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	initProceedingUI();
 	if (IsLocallyControlled())
 	{
+		initProceedingUI();
 		initMemoUI();
 		initMsgUI();
 	}
