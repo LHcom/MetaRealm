@@ -71,16 +71,16 @@ void AMR_Controller::BeginPlay()
 		ViewMainUI();
 	}
 
-	//if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	//{
-	//	FBoardStruct currData = gi->GetBoardData();
-	//	TArray<FProceedStruct> proceedData = gi->GetProceedData();
-	//	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
-	//	{
-	//		gs->gsContent = currData.ContentString;
-	//		gs->ArrRecordInfo = proceedData;
-	//	}
-	//}
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	{
+		FBoardStruct currData = gi->GetBoardData();
+		TArray<FProceedStruct> proceedData = gi->GetProceedData();
+		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
+		{
+			gs->gsContent = currData.ContentString;
+			gs->ArrRecordInfo = proceedData;
+		}
+	}
 	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 	{
 		if ( me )

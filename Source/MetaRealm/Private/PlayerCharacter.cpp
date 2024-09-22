@@ -75,7 +75,7 @@ APlayerCharacter::APlayerCharacter()
 		Cylinder->SetRelativeLocation(FVector(0 , 0 , -90));
 		Cylinder->SetRelativeScale3D(FVector(2.0f , 2.0f , 0.035f));
 	}
-	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
+	/*ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
 	if (CylinderMesh1.Succeeded())
 	{
 		Cylinder->SetMaterial(0 , CylinderMesh1.Object);
@@ -92,7 +92,7 @@ APlayerCharacter::APlayerCharacter()
 	if (CylinderMesh3.Succeeded())
 	{
 		CylinderMaterial3 = CylinderMesh3.Object;
-	}
+	}*/
 }
 
 void APlayerCharacter::initProceedingUI()

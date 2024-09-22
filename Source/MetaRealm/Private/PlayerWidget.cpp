@@ -26,7 +26,7 @@ void UPlayerWidget::NativeConstruct()
 
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	
-	OnMic->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedOnMic);
+	OnMic->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedOnMic);	
 
 	OpenReactionUI->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedOpenReactionUI);
 	ClickReaction1->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedReaction1);
@@ -226,27 +226,69 @@ void UPlayerWidget::ClickedOpenStateUI()
 
 void UPlayerWidget::ClickedState1()
 {
-	me->ServerSetCylinderMaterial(1);
+	if ( me->HasAuthority() ) {
+		me->SetCylinderMaterial(1);
+		FString tempStr = FString::Printf(TEXT("접속중"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else {
+		me->ServerSetCylinderMaterial(1);
+		FString tempStr = FString::Printf(TEXT("접속중"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	/*me->ServerSetCylinderMaterial(1);
 	FString tempStr = FString::Printf(TEXT("접속중"));
 	StateText->SetText(FText::FromString(tempStr));
 	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
-	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);*/
 }
 
 void UPlayerWidget::ClickedState2()
 {
-	me->ServerSetCylinderMaterial(2);
+	if ( me->HasAuthority() ) {
+		me->SetCylinderMaterial(2);
+		FString tempStr = FString::Printf(TEXT("집중모드"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else {
+		me->ServerSetCylinderMaterial(2);
+		FString tempStr = FString::Printf(TEXT("집중모드"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	/*me->ServerSetCylinderMaterial(2);
 	FString tempStr = FString::Printf(TEXT("집중모드"));
 	StateText->SetText(FText::FromString(tempStr));
 	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
-	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);*/
 }
 
 void UPlayerWidget::ClickedState3()
 {
-	me->ServerSetCylinderMaterial(3);
+	if ( me->HasAuthority() ) {
+		me->SetCylinderMaterial(3);
+		FString tempStr = FString::Printf(TEXT("자리비움"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else {
+		me->ServerSetCylinderMaterial(3);
+		FString tempStr = FString::Printf(TEXT("자리비움"));
+		StateText->SetText(FText::FromString(tempStr));
+		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
+		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+	/*me->ServerSetCylinderMaterial(3);
 	FString tempStr = FString::Printf(TEXT("자리비움"));
 	StateText->SetText(FText::FromString(tempStr));
 	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
-	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
+	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);*/
 }

@@ -84,13 +84,13 @@ public:
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial1;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial2;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial3;
 
 	UFUNCTION()

@@ -42,6 +42,7 @@ public:
 	void ClickedOnMic();
 
 	bool isMicOn = false;
+
 	// ======================================================== Reaction Button Binding Start
 
 	UPROPERTY(meta=(BindWidget))
