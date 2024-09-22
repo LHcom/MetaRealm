@@ -63,6 +63,15 @@ void UWindowList::NativeConstruct()
 	ButtonWindowScreen->OnClicked.AddDynamic(this , &UWindowList::OnButtonWindowScreen);
 	ImageSharingScreen->SetVisibility(ESlateVisibility::Hidden);
 	ImageCoveringScreen->SetVisibility(ESlateVisibility::Hidden);
+
+	if(GetOwningLocalPlayer())
+	{
+		UE_LOG(LogTemp , Error , TEXT("Having Owner"));
+	}
+	else
+	{
+		UE_LOG(LogTemp , Error , TEXT("No Having Owner"));
+	}
 }
 
 void UWindowList::NativeTick(const FGeometry& MyGeometry , float InDeltaTime)
