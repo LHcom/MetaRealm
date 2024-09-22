@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UW_Chat.h"
@@ -20,17 +20,18 @@ void UUW_Chat::NativeConstruct()
 
 void UUW_Chat::AddChatMessage(const FString& Message)
 {
-	// Text 오브젝트를 생성하고, ScrollBox에 추가한다.
 	UTextBlock* NewTextBlock = NewObject<UTextBlock>(Chat_ScrollBox);
 	NewTextBlock->SetText(FText::FromString(Message));
 
-	// 글씨 크기를 변경하기 위해 폰트 정보를 설정한다.
 	FSlateFontInfo FontInfo = NewTextBlock->GetFont();
 	FontInfo.Size = 15;  
 	NewTextBlock->SetFont(FontInfo);
 
+	FSlateColor FontColor = FSlateColor(FLinearColor::Black);
+	NewTextBlock->SetColorAndOpacity(FontColor);
+
 	Chat_ScrollBox->AddChild(NewTextBlock);
-	Chat_ScrollBox->ScrollToEnd(); // 가장 최근 채팅을 보기 위해, 스크롤을 가장 아래로 내린다.
+	Chat_ScrollBox->ScrollToEnd();
 }
 
 void UUW_Chat::SetChatInputTextMessage(const FText& Text)

@@ -18,6 +18,7 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
 	DOREPLIFETIME(AMetaRealmGameState, ArrStreamingUserID);
 	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerNames);
+	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerStates);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
@@ -35,7 +36,7 @@ void AMetaRealmGameState::OnRep_ReplicatedHasBegunPlay()
 }
 
 void AMetaRealmGameState::OnRep_Proceeding()
-{	
+{
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
 	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
@@ -57,15 +58,28 @@ void AMetaRealmGameState::OnRep_StreamingID()
 
 void AMetaRealmGameState::AddPlayerName(const FString& PlayerName)
 {
-	if ( !ConnectedPlayerNames.Contains(PlayerName) )
+	/*if ( !ConnectedPlayerNames.Contains(PlayerName) )
 	{
 		ConnectedPlayerNames.Add(PlayerName);
+	}*/
+	ConnectedPlayerNames.Add(PlayerName);
+	ConnectedPlayerStates.Add(TEXT("접속중"));
+	BroadcastPlayerList();
+}
+
+void AMetaRealmGameState::UpdatePlayerState(const FString& PlayerName , const FString& NewState)
+{
+	int32 PlayerIndex = ConnectedPlayerNames.IndexOfByKey(PlayerName);
+	if ( PlayerIndex != INDEX_NONE )
+	{
+		ConnectedPlayerStates[PlayerIndex] = NewState;
+		BroadcastPlayerList();
 	}
 }
 
 void AMetaRealmGameState::BroadcastPlayerList()
 {
-	Multicast_UpdatePlayerList(ConnectedPlayerNames);
+	Multicast_UpdatePlayerList(ConnectedPlayerNames , ConnectedPlayerStates);
 }
 
 TArray<FString> AMetaRealmGameState::GetAllPlayerNames()
@@ -73,13 +87,18 @@ TArray<FString> AMetaRealmGameState::GetAllPlayerNames()
 	return ConnectedPlayerNames;
 }
 
-void AMetaRealmGameState::Multicast_UpdatePlayerList_Implementation(const TArray<FString>& PlayerNames)
+TArray<FString> AMetaRealmGameState::GetAllPlayerStates()
+{
+	return ConnectedPlayerStates;
+}
+
+void AMetaRealmGameState::Multicast_UpdatePlayerList_Implementation(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates)
 {
 	for ( AMR_Controller* Controller : TActorRange<AMR_Controller>(GetWorld()) )
 	{
 		if ( Controller )
 		{
-			Controller->UpdatePlayerList(PlayerNames); // 각 클라이언트의 리스트 업데이트
+			Controller->UpdatePlayerList(PlayerNames , PlayerStates);
 		}
 	}
 

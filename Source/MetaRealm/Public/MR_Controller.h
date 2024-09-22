@@ -35,10 +35,10 @@ public:
 
 	UFUNCTION()
 	void ViewMainUI();
-
-	 // UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
-    UFUNCTION(BlueprintCallable, Category = "Player Management")
-    void UpdatePlayerList(const TArray<FString>& PlayerNames);
+	
+	// UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
+	UFUNCTION(BlueprintCallable)
+	void UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerMoveToMeetingRoomMap();
