@@ -189,27 +189,6 @@ void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation()
 
 	if ( !PlayerCharacter )
 	{
-
-		AActor* MeetingRoom = MeetingRoomActors[0];
-		if (me)
-		{
-			me->SetActorLocation(MeetingRoom->GetActorLocation());
-			auto player = CastChecked<APlayerCharacter>(me);
-			if (player)
-			{
-				player->MeetingStartTime = player->GetSystemTime();
-				//player->ShowWindowListUI();
-
-				if (gm)
-				{
-					if (gm->MeetingMember.IsEmpty())
-						gm->MeetingMember = player->GetMemberName();
-					else
-						gm->MeetingMember += "," + player->GetMemberName();
-				}
-			}
-		}
-
 		return;
 	}
 	MulticastMoveToMeetingRoomMap(PlayerCharacter);
