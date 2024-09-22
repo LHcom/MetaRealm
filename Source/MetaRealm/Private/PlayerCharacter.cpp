@@ -329,21 +329,7 @@ UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
 	}
 }
 
-void APlayerCharacter::SetCylinderMaterial(int32 value)
-{
-	if (value == 1 && CylinderMaterial1)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial1);
-	}
-	else if (value == 2 && CylinderMaterial2)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial2);
-	}
-	else if (value == 3 && CylinderMaterial3)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial3);
-	}
-}
+
 
 void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 {
@@ -351,8 +337,24 @@ void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 }
 
 void APlayerCharacter::MulticastSetCylinderMaterial_Implementation(int32 value)
+{	
+	SetCylinderMaterial(value);	
+}
+
+void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
-	SetCylinderMaterial(value);
+	if ( value == 1 && CylinderMaterial1 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial1);
+	}
+	else if ( value == 2 && CylinderMaterial2 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial2);
+	}
+	else if ( value == 3 && CylinderMaterial3 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial3);
+	}
 }
 
 void APlayerCharacter::SignUp(const FString& JSON)

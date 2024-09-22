@@ -227,7 +227,7 @@ void UPlayerWidget::ClickedOpenStateUI()
 void UPlayerWidget::ClickedState1()
 {
 	if ( me->HasAuthority() ) {
-		me->SetCylinderMaterial(1);
+		me->MulticastSetCylinderMaterial(1);
 		FString tempStr = FString::Printf(TEXT("접속중"));
 		StateText->SetText(FText::FromString(tempStr));
 		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
@@ -250,7 +250,7 @@ void UPlayerWidget::ClickedState1()
 void UPlayerWidget::ClickedState2()
 {
 	if ( me->HasAuthority() ) {
-		me->SetCylinderMaterial(2);
+		me->MulticastSetCylinderMaterial(2);
 		FString tempStr = FString::Printf(TEXT("집중모드"));
 		StateText->SetText(FText::FromString(tempStr));
 		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
@@ -273,7 +273,7 @@ void UPlayerWidget::ClickedState2()
 void UPlayerWidget::ClickedState3()
 {
 	if ( me->HasAuthority() ) {
-		me->SetCylinderMaterial(3);
+		me->MulticastSetCylinderMaterial(3);
 		FString tempStr = FString::Printf(TEXT("자리비움"));
 		StateText->SetText(FText::FromString(tempStr));
 		StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
