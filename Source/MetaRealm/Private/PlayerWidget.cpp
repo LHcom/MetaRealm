@@ -21,8 +21,11 @@ void UPlayerWidget::NativeConstruct()
 	me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 
 	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
-	FString name = gi->NickName;
-	PlayerName->SetText(FText::FromString(name));
+	if(gi)
+	{
+		FString name = gi->NickName;
+		PlayerName->SetText(FText::FromString(name));
+	}	
 
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	

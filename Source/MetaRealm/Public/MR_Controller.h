@@ -9,7 +9,7 @@
 #include "MR_Controller.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class METAREALM_API AMR_Controller : public APlayerController
@@ -33,15 +33,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
 
-	UFUNCTION()
-	void ViewMainUI();
-	
-	// UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
 	UFUNCTION(BlueprintCallable)
-	void UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
+	void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerMoveToMeetingRoomMap();
+	void ServerMoveToMeetingRoomMap(const FString& NickName);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);
@@ -87,9 +83,15 @@ public:
 	class UMessagePopupWidget* MsgUI;
 	//------------------------------------------플레이어 정보 기록
 	void SetUserInfo(const FString& tkAdrr, const FString& nickName);
+
 	//------------------------------------------화면 공유 UI
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> WindowListFactory;
 	UPROPERTY(BlueprintReadWrite)
 	class UWindowList* WindowListUI;
+
+	 // 플레이어 이름 추가 함수
+    UFUNCTION(Server , Reliable)
+    void AddPlayerName(const FString& PlayerName);
+
 };

@@ -18,28 +18,27 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
 	DOREPLIFETIME(AMetaRealmGameState, ArrStreamingUserID);
 	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerNames);
-	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerStates);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Begin"));
 	Super::HandleBeginPlay();
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("End"));
 }
 
 void AMetaRealmGameState::OnRep_ReplicatedHasBegunPlay()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Begin"));
 	Super::OnRep_ReplicatedHasBegunPlay();
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("End"));
 }
 
 void AMetaRealmGameState::OnRep_Proceeding()
 {
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
-	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Add New Proceeding"));
+	AB_LOG(LogABNetwork , Log , TEXT("Now Proceeding Count : %d") , ArrRecordInfo.Num());
 }
 
 void AMetaRealmGameState::OnRep_StreamingID()
@@ -98,8 +97,8 @@ void AMetaRealmGameState::Multicast_UpdatePlayerList_Implementation(const TArray
 	{
 		if ( Controller )
 		{
-			Controller->UpdatePlayerList(PlayerNames , PlayerStates);
+			UE_LOG(LogTemp , Warning , TEXT("Player Info : %s") , *ConnectedPlayerNames[ConnectedPlayerNames.Num()-1]);
+			Controller->UpdatePlayerList(ConnectedPlayerNames);
 		}
 	}
-
 }

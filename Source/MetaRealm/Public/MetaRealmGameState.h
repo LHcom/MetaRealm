@@ -7,7 +7,7 @@
 #include "MetaRealmGameState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class METAREALM_API AMetaRealmGameState : public AGameStateBase
@@ -23,9 +23,9 @@ public:
 	// 게시판 내용을 저장할 변수
 	UPROPERTY(Replicated)
 	FString gsContent;
-	
+
 	// 회의실 내용을 리스트에 보관
-	UPROPERTY(ReplicatedUsing=OnRep_Proceeding)
+	UPROPERTY(ReplicatedUsing = OnRep_Proceeding)
 	TArray<struct FProceedStruct> ArrRecordInfo;
 
 	UFUNCTION()
@@ -40,29 +40,16 @@ public:
 
 	//==================================================
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
-    TArray<FString> ConnectedPlayerNames;
+	UPROPERTY(Replicated , BlueprintReadOnly , ReplicatedUsing = OnRep_ConnectedPlayerName)
+	TArray<FString> ConnectedPlayerNames;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
-    TArray<FString> ConnectedPlayerStates;
+	UFUNCTION()
+	void OnRep_ConnectedPlayerName();
 
-    // 플레이어 이름 추가 함수
-    UFUNCTION(BlueprintCallable)
-    void AddPlayerName(const FString& PlayerName);
 
-    UFUNCTION(BlueprintCallable)
-    void UpdatePlayerState(const FString& PlayerName, const FString& NewState);
+	// 플레이어 이름 추가 함수
+	/*UFUNCTION(Server , Reliable)
+	void AddPlayerName(const FString& PlayerName);*/
 
-    UFUNCTION(BlueprintCallable)
-    void BroadcastPlayerList();
-
-    UFUNCTION(BlueprintCallable)
-    TArray<FString> GetAllPlayerNames();
-
-    UFUNCTION(BlueprintCallable)
-    TArray<FString> GetAllPlayerStates();
-    
-    // 플레이어 이름 리스트가 변경되었을 때 호출되는 함수
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
 };
+
