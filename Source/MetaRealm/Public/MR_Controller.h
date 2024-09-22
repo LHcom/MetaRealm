@@ -9,7 +9,7 @@
 #include "MR_Controller.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class METAREALM_API AMR_Controller : public APlayerController
@@ -32,12 +32,12 @@ public:
     // PlayerList 위젯 블루프린트 클래스
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerMoveToMeetingRoomMap();
+	void ServerMoveToMeetingRoomMap(const FString& NickName);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);

@@ -20,7 +20,6 @@
 #include "Blueprint/UserWidget.h"
 #include "UW_PlayerList.h"
 #include "MainPlayerList.h"
-#include "NetGameInstance.h"
 
 
 void AMR_Controller::PostInitializeComponents()
@@ -38,7 +37,7 @@ void AMR_Controller::PostNetInit()
 	UNetDriver* NetDriver = GetNetDriver();
 	if ( NetDriver )
 	{
-		if ( NetDriver->ServerConnection )
+		if (NetDriver->ServerConnection)
 			AB_LOG(LogABNetwork , Log , TEXT("Server Connection: %s") , *NetDriver->ServerConnection.GetName());
 	}
 	else
@@ -82,7 +81,6 @@ void AMR_Controller::BeginPlay()
 				//gs->BroadcastPlayerList();
 			}
 		}
-
 	}
 }
 
@@ -96,13 +94,13 @@ void AMR_Controller::SetupInputComponent()
 
 void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 {
-	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass))
 	{
 		MainUIWidget->AddToViewport();
 
-		for ( int32 i = 0; i < PlayerNames.Num(); i++ )
+		for (int32 i = 0; i < PlayerNames.Num(); i++)
 		{
-			if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+			if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass))
 			{
 				FString pName , pState;
 				if ( PlayerNames[i].Split("|" , &pName , &pState) )
@@ -116,48 +114,56 @@ void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 	}
 }
 
-void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation()
+void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation(const FString& NickName)
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if ( !PlayerCharacter )
+	if (!PlayerCharacter)
 	{
 		return;
 	}
-	MulticastMoveToMeetingRoomMap(PlayerCharacter);
+	if (gm)
+	{
+		UE_LOG(LogTemp , Warning , TEXT("Join Meeting Room Member : %s") , *NickName);
 
+		if (gm->MeetingMember.IsEmpty())
+			gm->MeetingMember = NickName;
+		else
+			gm->MeetingMember += "," + NickName;
+	}
+
+	MulticastMoveToMeetingRoomMap(PlayerCharacter);
 }
 
 void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharacter* PlayerCharacter)
 {
-	if ( !PlayerCharacter ) {
+	if (!PlayerCharacter)
+	{
 		return;
 	}
 
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
 
-	if ( MeetingRoomActors.Num() > 0 )
+	if (MeetingRoomActors.Num() > 0)
 	{
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
-
-		if ( gm )
-		{
-			if ( gm->MeetingMember.IsEmpty() )
-				gm->MeetingMember = PlayerCharacter->GetMemberName();
-			else
-				gm->MeetingMember += "," + PlayerCharacter->GetMemberName();
-		}
 	}
 }
+
+// void AMR_Controller::ServerRPC_SetProceedMember_Implementation(const FString& strMember)
+// {
+//
+// }
 
 void AMR_Controller::ServerMoveToMainMap_Implementation()
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if ( !PlayerCharacter ) {
+	if (!PlayerCharacter)
+	{
 		return;
 	}
 	MulticastMoveToMainMap(PlayerCharacter);
@@ -167,13 +173,14 @@ void AMR_Controller::ServerMoveToMainMap_Implementation()
 
 void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* PlayerCharacter)
 {
-	if ( !PlayerCharacter ) {
+	if (!PlayerCharacter)
+	{
 		return;
 	}
 	TArray<AActor*> MainMapActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
 
-	if ( MainMapActors.Num() > 0 )
+	if (MainMapActors.Num() > 0)
 	{
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
@@ -184,7 +191,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 void AMR_Controller::SendMessage(const FText& Text)
 {
 	FString PlayerName;
-	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		PlayerName = gi->NickName;
 	}
@@ -243,7 +250,7 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 	// 서버에서는 모든 PlayerController에게 이벤트를 보낸다.
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetPawn()->GetWorld() , APlayerController::StaticClass() , OutActors);
-	for ( AActor* OutActor : OutActors )
+	for (AActor* OutActor : OutActors)
 	{
 		AMR_Controller* pc = Cast<AMR_Controller>(OutActor);
 		if ( pc )
