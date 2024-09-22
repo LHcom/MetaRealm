@@ -4,6 +4,7 @@
 #include "WindowList.h"
 
 #include "EngineUtils.h"
+#include "PlayerCharacter.h"
 #include "ScreenActor.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
@@ -64,13 +65,15 @@ void UWindowList::NativeConstruct()
 	ImageSharingScreen->SetVisibility(ESlateVisibility::Hidden);
 	ImageCoveringScreen->SetVisibility(ESlateVisibility::Hidden);
 
-	if(GetOwningLocalPlayer())
+	Me = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+	if(Me)
 	{
-		UE_LOG(LogTemp , Error , TEXT("Having Owner"));
+		UE_LOG(LogTemp , Warning , TEXT("Me is not Null"));
+		Me->WindowListWidget->TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share")));
 	}
 	else
 	{
-		UE_LOG(LogTemp , Error , TEXT("No Having Owner"));
+		UE_LOG(LogTemp , Warning , TEXT("Me is NullPtr"));
 	}
 }
 
@@ -100,12 +103,11 @@ void UWindowList::OnButtonWindowScreen()
 	if (bStreaming)
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중
-
+		
 		if (ScreenActor)
 		{
 			ScreenActor->WindowScreenPlaneMesh->SetVisibility(true);
 			SetUserID(streamID, true);
-			//ScreenActor->WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
 		}
 		else
 		{
@@ -158,7 +160,7 @@ void UWindowList::OnButtonWindowScreen()
 	}
 	else
 	{
-		TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
+		Me->WindowListWidget->TextWindowScreen->SetText(FText::FromString(TEXT("Screen Share"))); //화면 공유
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 		SetUserID(streamID, false);
 		

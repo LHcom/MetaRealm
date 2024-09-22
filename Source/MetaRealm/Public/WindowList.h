@@ -101,5 +101,7 @@ public:
 	////Grid 패널에 프로세스 리스트UI를 현재 프로세스 창만큼의 수를 채우는 함수
 	//void InitProcessListUI();
 
-
+private:
+	UPROPERTY()
+	class APlayerCharacter* Me;
 };
