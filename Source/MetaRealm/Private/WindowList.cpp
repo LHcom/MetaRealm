@@ -101,7 +101,7 @@ void UWindowList::OnButtonWindowScreen()
 			{
 				{
 					ScreenActor->UpdateTexture();
-					SetUserID(streamID);
+					SetUserID(streamID, true);
 					//Back Buffer를 비디오 입력으로 설정합니다.
 					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
 
