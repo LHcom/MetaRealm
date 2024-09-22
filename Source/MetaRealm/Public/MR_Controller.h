@@ -41,7 +41,7 @@ public:
 	void UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerMoveToMeetingRoomMap();
+	void ServerMoveToMeetingRoomMap(const FString& NickName);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);
@@ -87,4 +87,7 @@ public:
 	class UMessagePopupWidget* MsgUI;
 	//------------------------------------------플레이어 정보 기록
 	void SetUserInfo(const FString& tkAdrr, const FString& nickName);
+	//------------------------------------------회의록
+	// UFUNCTION(Server, Reliable)
+	// void ServerRPC_SetProceedMember(const FString& strMember);
 };

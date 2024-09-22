@@ -4,6 +4,7 @@
 #include "EnterMeetingRoomUI.h"
 #include "MR_Controller.h"
 #include "Components/Button.h"
+#include "NetGameInstance.h"
 
 void UEnterMeetingRoomUI::NativeConstruct()
 {
@@ -17,7 +18,9 @@ void UEnterMeetingRoomUI::ButtonEnterClicked()
 	if (APlayerController* pc = GetOwningPlayer()) {
 		AMR_Controller* mc = Cast<AMR_Controller>(pc);
 		if (mc) {
-			mc->ServerMoveToMeetingRoomMap();
+			if(auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+				mc->ServerMoveToMeetingRoomMap(gi->NickName);
+			
 			SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
