@@ -71,21 +71,17 @@ void AMR_Controller::BeginPlay()
 		//ViewMainUI();
 	}
 
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
 	{
 		FBoardStruct currData = gi->GetBoardData();
 		TArray<FProceedStruct> proceedData = gi->GetProceedData();
-		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+		FString PlayerName = gi->NickName;
+		
+		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 		{
 			gs->gsContent = currData.ContentString;
 			gs->ArrRecordInfo = proceedData;
-		}
-	}
-	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
-	{
-		FString PlayerName = gi->NickName;
-		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
-		{
 			gs->AddPlayerName(PlayerName);
 			gs->BroadcastPlayerList();
 		}
@@ -142,56 +138,94 @@ void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames , const
 	}
 }
 
-
-void AMR_Controller::MoveToMeetingRoomMap()
+void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation()
 {
-	TArray<AActor*> MeetingRoomActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MeetingRoom"), MeetingRoomActors);
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (MeetingRoomActors.Num() > 0)
+	if ( !PlayerCharacter )
+	{
+		return;
+	}
+	MulticastMoveToMeetingRoomMap(PlayerCharacter);
+
+}
+
+void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharacter* PlayerCharacter)
+{
+	if ( !PlayerCharacter ) {
+		return;
+	}
+
+	TArray<AActor*> MeetingRoomActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
+
+	if ( MeetingRoomActors.Num() > 0 )
 	{
 		AActor* MeetingRoom = MeetingRoomActors[0];
-		if (me)
-		{
-			me->SetActorLocation(MeetingRoom->GetActorLocation());
-			auto player = CastChecked<APlayerCharacter>(me);
-			if (player)
-			{
-				player->MeetingStartTime = player->GetSystemTime();
+		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
+		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
 
-				if (gm)
-				{
-					if (gm->MeetingMember.IsEmpty())
-						gm->MeetingMember = player->GetMemberName();
-					else
-						gm->MeetingMember += "," + player->GetMemberName();
-				}
-			}
+		if ( gm )
+		{
+			if ( gm->MeetingMember.IsEmpty() )
+				gm->MeetingMember = PlayerCharacter->GetMemberName();
+			else
+				gm->MeetingMember += "," + PlayerCharacter->GetMemberName();
 		}
 	}
-	// ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
 }
 
-void AMR_Controller::MoveToMainMap()
+void AMR_Controller::ServerMoveToMainMap_Implementation()
 {
-	TArray<AActor*> MainMapActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MainRoom"), MainMapActors);
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (MainMapActors.Num() > 0)
-	{
-		AActor* MainMap = MainMapActors[0];
-
-		if (me)
-		{
-			me->SetActorLocation(MainMap->GetActorLocation());
-			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, "Move!", false);
-			auto player = CastChecked<APlayerCharacter>(me);
-			if (player)
-				player->MeetingEndTime = player->GetSystemTime();
-		}
+	if ( !PlayerCharacter ) {
+		return;
 	}
+	MulticastMoveToMainMap(PlayerCharacter);
+	
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
+
+void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* PlayerCharacter)
+{
+	if ( !PlayerCharacter ) {
+		return;
+	}
+	TArray<AActor*> MainMapActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
+
+	if ( MainMapActors.Num() > 0 )
+	{
+		AActor* MainMap = MainMapActors[0];
+		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
+		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
+	}
+}
+
+//void AMR_Controller::SendMessage(const FText& Text)
+//{
+//	// 온라인 서브시스템에서 Identity 인터페이스를 가져옴
+//	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+//	if ( OnlineSub )
+//	{
+//		IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+//		if ( Identity.IsValid() )
+//		{
+//			// 0번째 로컬 플레이어의 고유 ID를 가져옴
+//			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
+//			if ( UserId.IsValid() )
+//			{
+//				// 스팀 닉네임을 가져옴
+//				FString UserName = Identity->GetPlayerNickname(*UserId);
+//				FString Message = FString::Printf(TEXT("%s : %s") , *UserName , *Text.ToString());
+//
+//				// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+//				CtoS_SendMessage(Message);
+//			}
+//		}
+//	}
+//}
 
 void AMR_Controller::SendMessage(const FText& Text)
 {

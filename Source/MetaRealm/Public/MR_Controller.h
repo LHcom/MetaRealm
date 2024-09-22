@@ -35,15 +35,22 @@ public:
 
 	UFUNCTION()
 	void ViewMainUI();
-
+	
+	// UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
 
-	UFUNCTION(BlueprintCallable)
-	void MoveToMeetingRoomMap();
-	
-	UFUNCTION(BlueprintCallable)
-	void MoveToMainMap();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerMoveToMeetingRoomMap();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerMoveToMainMap();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastMoveToMainMap(APlayerCharacter* PlayerCharacter);
 
 	void SendMessage(const FText& Text);
 

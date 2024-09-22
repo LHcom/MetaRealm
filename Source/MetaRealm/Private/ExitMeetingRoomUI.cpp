@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ExitMeetingRoomUI.h"
@@ -17,7 +17,7 @@ void UExitMeetingRoomUI::ButtonExitClicked()
 	if (APlayerController* pc = GetOwningPlayer()) {
 		AMR_Controller* mc = Cast<AMR_Controller>(pc);
 		if (mc) {
-			mc->MoveToMainMap();
+			mc->ServerMoveToMainMap();
 			SetVisibility(ESlateVisibility::Hidden);
 		}
 	}

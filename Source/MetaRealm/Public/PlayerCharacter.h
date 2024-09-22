@@ -63,10 +63,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* ReactionUIComponent;
 
-	UFUNCTION(Server , Reliable)
+	UFUNCTION(Server, Reliable)
 	void ServerSetReaction(int32 ReactionIdx);
 
-	UFUNCTION(NetMulticast , Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetReaction(int32 ReactionIdx);
 
 	UFUNCTION()
@@ -84,13 +84,13 @@ public:
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* Cylinder;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial1;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial2;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* CylinderMaterial3;
 
 	UFUNCTION()
