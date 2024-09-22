@@ -248,11 +248,14 @@ void APlayerCharacter::BeginPlay()
 		initMsgUI();
 	}
 
-	if (PlayerUI){
-		if ( IsLocallyControlled() ) {
+	if (PlayerUI)
+	{
+		if (IsLocallyControlled())
+		{
 			PlayerUI->SetVisibility(true);
 		}
-		else {
+		else
+		{
 			PlayerUI->SetVisibility(false);
 		}
 	}
@@ -335,10 +338,11 @@ void APlayerCharacter::ShowReaction(int32 ReactionIdx)
 {
 	FTimerHandle Handle;
 	UTexture2D* ReactionTexture = GetReactionTextureFromId(ReactionIdx);
-	if ( ReactionTexture && ReactionComp && ReactionComp->Image2) {
+	if (ReactionTexture && ReactionComp && ReactionComp->Image2)
+	{
 		ReactionComp->Image2->SetVisibility(ESlateVisibility::Visible);
 		ReactionComp->Image2->SetBrushFromTexture(ReactionTexture);
-		GetWorld()->GetTimerManager().SetTimer(Handle, this, &APlayerCharacter::HideReaction, 3.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(Handle , this , &APlayerCharacter::HideReaction , 3.0f , false);
 	}
 }
 
@@ -349,7 +353,7 @@ void APlayerCharacter::HideReaction()
 
 UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
 {
-	switch ( ReactionIdx )
+	switch (ReactionIdx)
 	{
 	case 1: return ReactionArray[0];
 	case 2: return ReactionArray[1];
@@ -499,4 +503,37 @@ void APlayerCharacter::initMsgUI()
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is null"));
 	}
+}
+
+void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString& PlayerID, const bool bAddPlayer)
+{
+	if (auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	{
+		if (bAddPlayer)
+		{
+			if (gs->ArrStreamingUserID.Find(PlayerID) >= 0)
+				return;
+
+			gs->ArrStreamingUserID.Add(PlayerID);
+			if(HasAuthority())
+				gs->OnRep_StreamingID();
+		}
+		else
+		{
+			if (gs->ArrStreamingUserID.Num() == 0)
+				return;
+
+			if (gs->ArrStreamingUserID.Find(PlayerID) < 0)
+				return;
+
+			gs->ArrStreamingUserID.Remove(PlayerID);
+			if(HasAuthority())
+				gs->OnRep_StreamingID();
+		}
+	}
+}
+
+void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation()
+{
+	
 }

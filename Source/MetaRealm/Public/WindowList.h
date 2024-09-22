@@ -18,6 +18,7 @@ class METAREALM_API UWindowList : public UUserWidget
 public:
 	// UUserWidget이 초기화될 때 호출되는 함수
 	virtual void NativeConstruct() override;
+	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeOnInitialized();
 
@@ -45,6 +46,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
     class UImage* ImageSharingScreen; //공유된 화면을 표시할 이미지
 
+	UPROPERTY()
 	class AScreenActor* ScreenActor;
 
 	UPROPERTY(meta = (BindWidget))
@@ -67,7 +69,7 @@ public:
 
 	//주어진 ID를 사용하여 ScreenActor의 공유 사용자 ID 설정
 	UFUNCTION()
-	void SetUserID(FString ID); 
+	void SetUserID(FString ID, const bool& bAddPlayer); 
 
 	// 버튼을 눌렀을 때, 호출될 델리게이트에 등록할 함수
 	//화면 공유 버튼을 클릭할 때 호출, 픽셀 스트리밍을 시작
@@ -101,5 +103,7 @@ public:
 	////Grid 패널에 프로세스 리스트UI를 현재 프로세스 창만큼의 수를 채우는 함수
 	//void InitProcessListUI();
 
-
+private:
+	UPROPERTY()
+	class APlayerCharacter* Me;
 };

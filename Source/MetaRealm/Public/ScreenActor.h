@@ -83,7 +83,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UWindowList* WindowList; //최종적으로 픽셀 스트리밍을 출력할 UI
 
-	void SetViewSharingUserID(FString ID);
+	void SetViewSharingUserID(FString ID, const bool& bAddPlayer);
 
 	//블루프린트 함수 호출
 	void StopLookSharingScreen(); //스트리밍 중지

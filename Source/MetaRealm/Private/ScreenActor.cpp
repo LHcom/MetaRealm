@@ -389,11 +389,12 @@ UTexture2D* AScreenActor::CaptureScreenToTexture()
 	return Texture;
 }
 
-void AScreenActor::SetViewSharingUserID(FString ID)
+void AScreenActor::SetViewSharingUserID(FString ID, const bool& bAddPlayer)
 {
-	gs->ArrStreamingUserID.Add(ID);
+	if(auto Mycharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
+		Mycharacter->ServerRPC_SetStreamingPlayer(ID,bAddPlayer);
+	
 	AB_LOG(LogABNetwork , Log , TEXT("Set Streaming Player ID : %s") , *ID);
-	//ChangeLookSharingScreen();
 }
 
 void AScreenActor::StopLookSharingScreen()
