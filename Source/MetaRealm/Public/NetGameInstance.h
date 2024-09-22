@@ -53,7 +53,7 @@ public:
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
 	// 방 이름
-	FString MyroomName = TEXT("METAREALM");
+	FString MyroomName = TEXT("MTVSMETAREALM");
 	// 세션 이름
 	FString mySessionName = TEXT("MTVSMETAREALM");
 
