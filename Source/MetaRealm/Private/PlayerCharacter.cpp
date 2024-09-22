@@ -274,7 +274,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	else {
-		initWindowListUI();
+		//initWindowListUI();
 	}
 
 	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))

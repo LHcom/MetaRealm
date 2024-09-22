@@ -23,22 +23,17 @@ void UProcessListButton::OnChangeProcessButtonClicked()
     if ( ProcessName ) {
         FString SelectedWindowTitle = ProcessName->GetText().ToString();
 
-		// 레벨에 배치된 ScreenActor를 찾음
-		TArray<AActor*> FoundActors;
-		if ( UWorld* World = GEngine->GetWorldFromContextObject(GetWorld() , EGetWorldErrorMode::LogAndReturnNull) )
-		{
-			for ( FActorIterator It(World); It; ++It )
-			{
-				AActor* Actor = *It;
-				if ( Actor->ActorHasTag(FName("Screen")) )
-				{
-					FoundActors.Add(Actor);
-				}
-			}
+        for ( TActorIterator<AScreenActor> It(GetWorld() , AScreenActor::StaticClass()); It; ++It )
+        {
+            ScreenActor = *It;
+            break;
+        }
+
+		//ScreenActor의 FindTargetWindow 함수 호출
+		if ( ScreenActor ) {
+			ScreenActor->FindTargetWindow(SelectedWindowTitle);
 		}
 
-        //ScreenActor의 FindTargetWindow 함수 호출
-        //if( )
     }
 
 }

@@ -87,6 +87,8 @@ AScreenActor::AScreenActor()
 	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
 	SceneCapture->CaptureSource = SCS_FinalColorLDR;
 	SceneCapture->TextureTarget = RenderTarget;
+
+	bShouldUpdateTexture = false;
 }
 
 // Called when the game starts or when spawned
@@ -107,12 +109,12 @@ void AScreenActor::BeginPlay()
 	WindowScreenPlaneMesh->SetMaterial(0 , DynamicMaterial);
 	WindowScreenPlaneMesh->SetRelativeLocationAndRotation(FVector(400 , 0 , 0) , FRotator(0 , 90 , 90));
 
-	WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld() , WindowListFactory));
+	/*WindowList = Cast<UWindowList>(CreateWidget<UUserWidget>(GetWorld() , WindowListFactory));
 	if (WindowList)
 	{
 		WindowList->AddToViewport(-1);
 		WindowList->SetScreenActor(this);
-	}
+	}*/
 
 	gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState());
 	if (gs)
@@ -120,6 +122,8 @@ void AScreenActor::BeginPlay()
 		AB_LOG(LogABNetwork , Log , TEXT("======================================================================"));
 		AB_LOG(LogABNetwork , Log , TEXT("Current Streaming Player Num : %d") , gs->ArrStreamingUserID.Num());
 	}
+
+	LogActiveWindowTitles();
 }
 
 // Called every frame
@@ -129,13 +133,25 @@ void AScreenActor::Tick(float DeltaTime)
 
 	//FindTargetWindow();
 
-	//UpdateTexture();
+	if ( bShouldUpdateTexture ) {
+		UpdateTexture();
+	}
+	else {
+		ReadFrame();
+	}
 }
 
 void AScreenActor::ReadFrame()
 {
 	cv::Mat desktopImage = GetScreenToCVMat();
 	imageTexture = MatToTexture2D(desktopImage);
+
+	// 캡처된 화면을 동적 머티리얼에 적용
+	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
+	{
+		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
+		RenderTarget->UpdateResourceImmediate();
+	}
 }
 
 UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
@@ -171,6 +187,7 @@ UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
 	return Texture;
 }
 
+//주모니터 화면
 cv::Mat AScreenActor::GetScreenToCVMat()
 {
 	HDC hScreenDC = GetDC(NULL);
@@ -189,6 +206,7 @@ cv::Mat AScreenActor::GetScreenToCVMat()
 	return matImage;
 }
 
+//특정 화면
 cv::Mat AScreenActor::GetWindowToCVMat(HWND hwnd)
 {
 	RECT windowRect;
@@ -225,20 +243,20 @@ void AScreenActor::LogActiveWindowTitles()
 		{
 			int length = GetWindowTextLength(hwnd);
 			if (length == 0)
-				return true; 
+				return true;
 
 			if (!IsWindowVisible(hwnd))
-				return true; 
+				return true;
 
 			WINDOWPLACEMENT placement;
 			placement.length = sizeof(WINDOWPLACEMENT);
 			GetWindowPlacement(hwnd, &placement);
 			if (placement.showCmd == SW_SHOWMINIMIZED)
-				return true; 
+				return true;
 
 			LONG style = GetWindowLong(hwnd, GWL_STYLE);
 			if (!(style & WS_OVERLAPPEDWINDOW))
-				return true; 
+				return true;
 
 			TCHAR windowTitle[256];
 			GetWindowText(hwnd, windowTitle, 256);
@@ -246,14 +264,17 @@ void AScreenActor::LogActiveWindowTitles()
 			TArray<FString>* WindowList = (TArray<FString>*)lParam;
 			WindowList->Add(FString(windowTitle));
 
+			FString title = FString(windowTitle);
+			UE_LOG(LogTemp , Log , TEXT("Active Window: %s") , *title);
+
 			return true;
 		}, (LPARAM)&WindowTitles);
 
 }
 
-void AScreenActor::FindTargetWindow()
+void AScreenActor::FindTargetWindow(FString TargetWindowTitle)
 {
-	TargetWindowHandle = nullptr; 
+	TargetWindowHandle = nullptr;
 
 	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
 		{
@@ -261,7 +282,7 @@ void AScreenActor::FindTargetWindow()
 			GetWindowText(hwnd, windowTitle, 256);
 
 			// 타겟을 찾음
-			if (FString(windowTitle) == "MetaRealm - Microsoft Visual Studio")
+			if (FString(windowTitle) == *(FString*)lParam)
 			{
 				HWND* targetHandle = (HWND*)lParam;
 				*targetHandle = hwnd;
@@ -273,30 +294,32 @@ void AScreenActor::FindTargetWindow()
 
 	if (TargetWindowHandle == nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
+		UE_LOG(LogTemp, Warning, TEXT("Target window not found"));
+		bShouldUpdateTexture = false;
 	}
 	else
 	{
 		//UE_LOG(LogTemp, Log, TEXT("Target window found: "));
+		bShouldUpdateTexture = true;
 	}
 }
 
 void AScreenActor::UpdateTexture()
 {
-	//if (TargetWindowHandle != nullptr)
-	//{
-	//	//특정 앱만 찾아서 화면 공유
-	//	cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
-	//	imageTexture = MatToTexture2D(windowImage);
-	//	//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
-	//}
-	//else
-	//{
-	//	//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
-	//	ReadFrame(); 
-	//}
+	if (TargetWindowHandle != nullptr)
+	{
+		//특정 앱만 찾아서 화면 공유
+		cv::Mat windowImage = GetWindowToCVMat(TargetWindowHandle);
+		imageTexture = MatToTexture2D(windowImage);
+		//UE_LOG(LogTemp, Warning, TEXT("Successfully captured the window: ChatGPT - Chrome"));
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Target window not found. Capturing main screen instead."));
+		ReadFrame();
+	}
 
-	// 먼저 GetWorld()가 유효한지 확인합니다.
+	 //먼저 GetWorld()가 유효한지 확인합니다.
 	if (!GetWorld())
 	{
 		UE_LOG(LogTemp , Error , TEXT("GetWorld() is null!"));
@@ -304,96 +327,35 @@ void AScreenActor::UpdateTexture()
 	}
 
 	// 일정 시간 간격으로 화면 캡처 수행
-	static float TimeAccumulator = 0.0f;
-	const float CaptureInterval = 0.1f; // 1초에 한 번 캡처
-	TimeAccumulator += GetWorld()->GetDeltaSeconds();
+	//static float TimeAccumulator = 0.0f;
+	//const float CaptureInterval = 0.1f; // 1초에 한 번 캡처
+	//TimeAccumulator += GetWorld()->GetDeltaSeconds();
 
-	if (TimeAccumulator >= CaptureInterval)
+	//if (TimeAccumulator >= CaptureInterval)
+	//{
+	//	TimeAccumulator = 0.0f;
+	//	FScopeLock Lock(&CriticalSection);
+	//	if ( imageTexture )
+	//	{
+	//		imageTexture->ConditionalBeginDestroy();
+	//	}
+	//	imageTexture = CaptureScreenToTexture();
+
+	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
 	{
-		TimeAccumulator = 0.0f;
-		FScopeLock Lock(&CriticalSection);
-		if (CapturedTexture)
-		{
-			CapturedTexture->ConditionalBeginDestroy();
-		}
-		CapturedTexture = CaptureScreenToTexture();
-
-		if (DynamicMaterial && CapturedTexture && WindowScreenPlaneMesh)
-		{
-			//CapturedTexture->SRGB = true;
-			// BaseTexture 파라미터에 텍스처 설정
-			DynamicMaterial->SetTextureParameterValue(TEXT("Base") , CapturedTexture);
-			RenderTarget->UpdateResourceImmediate();
-			// PlaneMesh에 머티리얼 적용
-		}
-	}
-}
-
-UTexture2D* AScreenActor::CaptureScreenToTexture()
-{
-	int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	HDC hScreenDC = GetDC(NULL);
-	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
-	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC , ScreenWidth , ScreenHeight);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC , hBitmap);
-	BitBlt(hMemoryDC , 0 , 0 , ScreenWidth , ScreenHeight , hScreenDC , 0 , 0 , SRCCOPY);
-	SelectObject(hMemoryDC , hOldBitmap);
-
-	BITMAPINFOHEADER bi;
-	bi.biSize = sizeof(BITMAPINFOHEADER);
-	bi.biWidth = ScreenWidth;
-	bi.biHeight = -ScreenHeight; // 비트맵이 상하 반전되지 않도록 음수로 설정
-	bi.biPlanes = 1;
-	bi.biBitCount = 32; // 32비트 비트맵 (8비트 * 4 채널)
-	bi.biCompression = BI_RGB;
-	bi.biSizeImage = 0;
-	bi.biXPelsPerMeter = 0;
-	bi.biYPelsPerMeter = 0;
-	bi.biClrUsed = 0;
-	bi.biClrImportant = 0;
-
-	std::vector<BYTE> Buffer(ScreenWidth * ScreenHeight * 4);
-	GetDIBits(hMemoryDC , hBitmap , 0 , ScreenHeight , Buffer.data() , (BITMAPINFO*)&bi , DIB_RGB_COLORS);
-
-	// 명도 감소 비율 (예: 0.8로 명도를 20% 감소)
-	float BrightnessFactor = 0.8f;
-
-	// 각 픽셀의 RGB 값을 명도 감소 비율로 조정
-	for (int32 i = 0; i < ScreenWidth * ScreenHeight * 4; i += 4)
-	{
-		// R, G, B 값을 감소
-		Buffer[i] = static_cast<BYTE>(Buffer[i] * BrightnessFactor); // Red
-		Buffer[i + 1] = static_cast<BYTE>(Buffer[i + 1] * BrightnessFactor); // Green
-		Buffer[i + 2] = static_cast<BYTE>(Buffer[i + 2] * BrightnessFactor); // Blue
-		// 알파 값(Buffer[i+3])은 변경하지 않음 (투명도 유지)
+		// BaseTexture 파라미터에 텍스처 설정
+		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
+		RenderTarget->UpdateResourceImmediate();
+		// PlaneMesh에 머티리얼 적용
 	}
 
-	// UTexture2D 동적 생성
-	UTexture2D* Texture = UTexture2D::CreateTransient(ScreenWidth , ScreenHeight , PF_B8G8R8A8);
-	if (!Texture)
-		return nullptr;
-
-	// 텍스처 데이터를 업데이트
-	void* TextureData = Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-	FMemory::Memcpy(TextureData , Buffer.data() , Buffer.size());
-	Texture->GetPlatformData()->Mips[0].BulkData.Unlock();
-	Texture->UpdateResource();
-
-	// 리소스 정리
-	DeleteObject(hBitmap);
-	DeleteDC(hMemoryDC);
-	ReleaseDC(NULL , hScreenDC);
-
-	return Texture;
 }
 
 void AScreenActor::SetViewSharingUserID(FString ID, const bool& bAddPlayer)
 {
 	if(auto Mycharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
 		Mycharacter->ServerRPC_SetStreamingPlayer(ID,bAddPlayer);
-	
+
 	AB_LOG(LogABNetwork , Log , TEXT("Set Streaming Player ID : %s") , *ID);
 }
 

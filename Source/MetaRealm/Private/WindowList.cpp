@@ -20,6 +20,7 @@
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
 #include "SharingUserSlot.h"
 #include "Kismet/GameplayStatics.h"
+#include "ProcessListButton.h"
 
 
 void UWindowList::NativeConstruct()
@@ -87,49 +88,51 @@ void UWindowList::OnButtonWindowScreen()
 			UE_LOG(LogTemp , Error , TEXT("ScreenActor nullptr"));
 		}
 
-		// // 1. PixelStreaming 모듈을 가져옵니다.
-		// IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
-		// 	"PixelStreaming");
-		// //FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
-		//
-		// if (PixelStreamingModule)
-		// {
-		// 	// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
-		// 	CurrentStreamer = PixelStreamingModule->FindStreamer(streamID); //GetCurrentSessionID());
-		// 	if (CurrentStreamer.IsValid())
-		// 	{
-		// 		{
-		// 			ScreenActor->UpdateTexture();
-		// 			SetUserID(streamID);
-		// 			//Back Buffer를 비디오 입력으로 설정합니다.
-		// 			CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
-		//
-		// 			UGameViewportClient* GameViewport = GEngine->GameViewport;
-		// 			ScreenActor->SceneCapture->Activate();
-		//
-		//
-		// 			// 2. Pixel Streaming 비디오 입력으로 설정
-		// 			VideoInput =
-		// 				FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
-		//
-		// 			CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
-		//
-		// 			//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
-		// 			CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
-		//
-		// 			//스트리밍을 시작합니다.
-		// 			CurrentStreamer->StartStreaming();
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
-		// 	}
-		// }
-		// else
-		// {
-		// 	UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
-		// }
+		// 1. PixelStreaming 모듈을 가져옵니다.
+		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
+			"PixelStreaming");
+		//FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
+
+		if (PixelStreamingModule)
+		{
+			// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
+			CurrentStreamer = PixelStreamingModule->FindStreamer(streamID); //GetCurrentSessionID());
+			if (CurrentStreamer.IsValid())
+			{
+				{
+					ScreenActor->UpdateTexture();
+					SetUserID(streamID);
+					//Back Buffer를 비디오 입력으로 설정합니다.
+					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
+
+					UGameViewportClient* GameViewport = GEngine->GameViewport;
+					ScreenActor->SceneCapture->Activate();
+
+
+					// 2. Pixel Streaming 비디오 입력으로 설정
+					VideoInput =
+						FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
+
+					CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
+
+					//Streamer->SetVideoInput(FPixelStreamingVideoInputViewport::Create(Streamer));
+					CurrentStreamer->SetSignallingServerURL("ws://125.132.216.190:5678");
+
+					//스트리밍을 시작합니다.
+					CurrentStreamer->StartStreaming();
+
+					InitProcessListUI();
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp , Error , TEXT("Could not find a valid streamer with the given ID."));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
+		}
 	}
 	else
 	{
@@ -250,5 +253,31 @@ void UWindowList::InitSlot(TArray<FString> Items)
 
 			//SharingUserSlot->clickcnt = P_clickcnt; // 클릭 값 전달 (계속 InvSlot 갱신돼서 clickcnt값 업데이트 안 되는 문제 때문)
 		}
+	}
+}
+
+void UWindowList::InitProcessListUI()
+{
+	//기존 슬롯 제거
+	ProcessList->ClearChildren();
+	int32 Row = 0;
+	int32 Column = 0;
+
+	ScreenActor->LogActiveWindowTitles();
+
+	//프로세스 리스트 추가, 윈도우 타이틀 배열의 수만큼 채우고 싶다.
+	for( int i = 0; i < ScreenActor->WindowTitles.Num(); i++ ) {
+		ProcessListButtonSlot = CastChecked<UProcessListButton>(CreateWidget(GetWorld() , ProcessListButtonFactory));
+
+		if ( ProcessListButtonSlot ) {
+			ProcessListButtonSlot->SetVisibility(ESlateVisibility::Visible);
+			ProcessListButtonSlot->SetProcessList(ScreenActor->WindowTitles[i]);
+
+			ProcessList->AddChildToUniformGrid(ProcessListButtonSlot , Row , Column);
+
+			UE_LOG(LogTemp , Warning , TEXT("ProcessListButtonSlot Add"));
+		}
+
+		Row++;
 	}
 }

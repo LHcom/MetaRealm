@@ -89,19 +89,19 @@ public:
 
 public:
 	//==========특정 화면 공유 부분
-	//UPROPERTY(EditAnywhere , BlueprintReadWrite , meta = (BindWidget))
-	//class UUniformGridPanel* ProcessList; //현재 자신의 컴에서 실행되고 있는 창의 목록을 넣을 패널
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , meta = (BindWidget))
+	class UUniformGridPanel* ProcessList; //현재 자신의 컴에서 실행되고 있는 창의 목록을 넣을 패널
 
-	//// 현재 켜져있는 프로세스 목록을 표시할 버튼 위젯 템플릿
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TSubclassOf<UUserWidget> ProcessListButtonFactory;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//class UProcessListButton* ProcessListButtonSlot; //사용자 정보를 표시하는 슬롯
+	// 현재 켜져있는 프로세스 목록을 표시할 버튼 위젯 템플릿
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> ProcessListButtonFactory;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UProcessListButton* ProcessListButtonSlot; //사용자 정보를 표시하는 슬롯
 
-	////화면 공유가 있는 레벨에 들어갔을 경우 곧바로 프로세스 리스트가 뜸.
+	//화면 공유가 있는 레벨에 들어갔을 경우 곧바로 프로세스 리스트가 뜸.
 
-	////Grid 패널에 프로세스 리스트UI를 현재 프로세스 창만큼의 수를 채우는 함수
-	//void InitProcessListUI();
+	//Grid 패널에 프로세스 리스트UI를 현재 프로세스 창만큼의 수를 채우는 함수
+	void InitProcessListUI();
 
 private:
 	UPROPERTY()

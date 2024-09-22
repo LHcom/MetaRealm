@@ -54,10 +54,13 @@ public:
 	// 캡처할 특정 창의 핸들을 저장하는 변수
 	HWND TargetWindowHandle;
 
-	void FindTargetWindow();
+	void FindTargetWindow(FString TargetWindowTitle);
 
 	// 창 제목을 저장할 변수 추가
 	TArray<FString> WindowTitles;
+
+	//Tick에서 UpdateTexture를 호출할지 여부를 나타내는 플래그
+	bool bShouldUpdateTexture;
 
 
 	//액터의 전반적인 위치 고정용
@@ -68,8 +71,8 @@ public:
 
 	class UMaterialInstanceDynamic* DynamicMaterial;
 
-	UTexture2D* CaptureScreenToTexture();
-	UTexture2D* CapturedTexture;
+	//UTexture2D* CaptureScreenToTexture();
+	//UTexture2D* CapturedTexture;
 
 public:
 	//=========픽셀 스트리밍 ===========
