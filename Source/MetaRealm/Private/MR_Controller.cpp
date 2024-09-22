@@ -167,10 +167,13 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 
 		if ( gm )
 		{
-			if ( gm->MeetingMember.IsEmpty() )
-				gm->MeetingMember = PlayerCharacter->GetMemberName();
-			else
-				gm->MeetingMember += "," + PlayerCharacter->GetMemberName();
+			if(auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+			{
+				if ( gm->MeetingMember.IsEmpty() )
+					gm->MeetingMember = gi->NickName;
+				else
+					gm->MeetingMember += "," + gi->NickName;
+			}
 		}
 	}
 }

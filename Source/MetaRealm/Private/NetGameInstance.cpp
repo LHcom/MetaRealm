@@ -444,14 +444,19 @@ FString UNetGameInstance::GetRowsOfDT(UDataTable* DT)
 		if (!RowData) continue;
 
 		CSVString += RowName.ToString() + TEXT(",");
-		
+
 		// 각 행의 각 열을 CSV로 추가
 		for (TFieldIterator<FProperty> It(RowStruct); It; ++It)
 		{
 			FProperty* Property = *It;
 			FString Value;
-			Property->ExportTextItem_Direct(Value , Property->ContainerPtrToValuePtr<void>(RowData) , nullptr , nullptr ,
-			                         PPF_None);
+			Property->ExportTextItem_Direct(Value , Property->ContainerPtrToValuePtr<void>(RowData) , nullptr ,
+			                                nullptr ,
+			                                PPF_None);
+			if (Value.Contains(","))
+			{
+				Value = "\"" + Value + "\"";
+			}
 			CSVString += Value + TEXT(",");
 		}
 		CSVString.RemoveFromEnd(TEXT(","));
