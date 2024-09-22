@@ -76,7 +76,7 @@ APlayerCharacter::APlayerCharacter()
 		Cylinder->SetRelativeLocation(FVector(0 , 0 , -90));
 		Cylinder->SetRelativeScale3D(FVector(2.0f , 2.0f , 0.035f));
 	}
-	ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
+	/*ConstructorHelpers::FObjectFinder<UMaterial> CylinderMesh1(TEXT("/Game/KSK/Material/CylinderMaterial1"));
 	if (CylinderMesh1.Succeeded())
 	{
 		Cylinder->SetMaterial(0 , CylinderMesh1.Object);
@@ -93,7 +93,7 @@ APlayerCharacter::APlayerCharacter()
 	if (CylinderMesh3.Succeeded())
 	{
 		CylinderMaterial3 = CylinderMesh3.Object;
-	}
+	}*/
 }
 
 void APlayerCharacter::initProceedingUI()
@@ -369,21 +369,7 @@ UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
 	}
 }
 
-void APlayerCharacter::SetCylinderMaterial(int32 value)
-{
-	if (value == 1 && CylinderMaterial1)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial1);
-	}
-	else if (value == 2 && CylinderMaterial2)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial2);
-	}
-	else if (value == 3 && CylinderMaterial3)
-	{
-		Cylinder->SetMaterial(0 , CylinderMaterial3);
-	}
-}
+
 
 void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 {
@@ -391,8 +377,24 @@ void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 }
 
 void APlayerCharacter::MulticastSetCylinderMaterial_Implementation(int32 value)
+{	
+	SetCylinderMaterial(value);	
+}
+
+void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
-	SetCylinderMaterial(value);
+	if ( value == 1 && CylinderMaterial1 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial1);
+	}
+	else if ( value == 2 && CylinderMaterial2 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial2);
+	}
+	else if ( value == 3 && CylinderMaterial3 )
+	{
+		Cylinder->SetMaterial(0 , CylinderMaterial3);
+	}
 }
 
 void APlayerCharacter::SignUp(const FString& JSON)

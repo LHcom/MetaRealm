@@ -40,12 +40,17 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Player Management")
     void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerMoveToMeetingRoomMap();
 
-	UFUNCTION(BlueprintCallable)
-	void MoveToMeetingRoomMap();
-	
-	UFUNCTION(BlueprintCallable)
-	void MoveToMainMap();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerMoveToMainMap();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastMoveToMainMap(APlayerCharacter* PlayerCharacter);
 
 	void SendMessage(const FText& Text);
 

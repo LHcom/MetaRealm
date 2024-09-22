@@ -72,23 +72,17 @@ void AMR_Controller::BeginPlay()
 
 	}
 
-	/*auto player = CastChecked<APlayerCharacter>(me);
-	if ( player ) {
-		player->initWindowListUI();
-		player->ShowWindowListUI();
-	}*/
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	{
+		FBoardStruct currData = gi->GetBoardData();
+		TArray<FProceedStruct> proceedData = gi->GetProceedData();
+		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
+		{
+			gs->gsContent = currData.ContentString;
+			gs->ArrRecordInfo = proceedData;
+		}
+	}
 
-
-	//if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	//{
-	//	FBoardStruct currData = gi->GetBoardData();
-	//	TArray<FProceedStruct> proceedData = gi->GetProceedData();
-	//	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
-	//	{
-	//		gs->gsContent = currData.ContentString;
-	//		gs->ArrRecordInfo = proceedData;
-	//	}
-	//}
 	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 	{
 		if ( me )
@@ -189,13 +183,13 @@ void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 	}
 }
 
-void AMR_Controller::MoveToMeetingRoomMap()
+void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation()
 {
-	TArray<AActor*> MeetingRoomActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MeetingRoom"), MeetingRoomActors);
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (MeetingRoomActors.Num() > 0)
+	if ( !PlayerCharacter )
 	{
+
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		if (me)
 		{
@@ -215,29 +209,64 @@ void AMR_Controller::MoveToMeetingRoomMap()
 				}
 			}
 		}
+
+		return;
 	}
-	// ClientTravel("/Game/KSK/Maps/SK_MeetingRoomMap", ETravelType::TRAVEL_Absolute, true);
+	MulticastMoveToMeetingRoomMap(PlayerCharacter);
+
 }
 
-void AMR_Controller::MoveToMainMap()
+void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharacter* PlayerCharacter)
 {
-	TArray<AActor*> MainMapActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MainRoom"), MainMapActors);
+	if ( !PlayerCharacter ) {
+		return;
+	}
 
-	if (MainMapActors.Num() > 0)
+	TArray<AActor*> MeetingRoomActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
+
+	if ( MeetingRoomActors.Num() > 0 )
 	{
-		AActor* MainMap = MainMapActors[0];
+		AActor* MeetingRoom = MeetingRoomActors[0];
+		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
+		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
 
-		if (me)
+		if ( gm )
 		{
-			me->SetActorLocation(MainMap->GetActorLocation());
-			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, "Move!", false);
-			auto player = CastChecked<APlayerCharacter>(me);
-			if (player)
-				player->MeetingEndTime = player->GetSystemTime();
+			if ( gm->MeetingMember.IsEmpty() )
+				gm->MeetingMember = PlayerCharacter->GetMemberName();
+			else
+				gm->MeetingMember += "," + PlayerCharacter->GetMemberName();
 		}
 	}
+}
+
+void AMR_Controller::ServerMoveToMainMap_Implementation()
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+
+	if ( !PlayerCharacter ) {
+		return;
+	}
+	MulticastMoveToMainMap(PlayerCharacter);
+	
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
+}
+
+void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* PlayerCharacter)
+{
+	if ( !PlayerCharacter ) {
+		return;
+	}
+	TArray<AActor*> MainMapActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
+
+	if ( MainMapActors.Num() > 0 )
+	{
+		AActor* MainMap = MainMapActors[0];
+		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
+		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
+	}
 }
 
 //void AMR_Controller::SendMessage(const FText& Text)

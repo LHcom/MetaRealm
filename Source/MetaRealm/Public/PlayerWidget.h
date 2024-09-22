@@ -33,10 +33,17 @@ public:
 
 	// ======================================================== Character Component Save End
 
-	// ======================================================== Reaction Button Binding Start
-	
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* PlayerName;
+
+	UPROPERTY(meta=(BindWidget))
+	class UButton* OnMic;
+	UFUNCTION(BlueprintCallable)
+	void ClickedOnMic();
+
+	bool isMicOn = false;
+
+	// ======================================================== Reaction Button Binding Start
 
 	UPROPERTY(meta=(BindWidget))
 	class UBorder* ReactionBar;
