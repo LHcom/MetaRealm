@@ -15,7 +15,6 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AMetaRealmGameState, gsContent);
 	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
 	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerNames);
-	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerStates);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
@@ -41,52 +40,31 @@ void AMetaRealmGameState::OnRep_Proceeding()
 	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
 }
 
-//====================================================================================================
+//=========================================================================================
 
-void AMetaRealmGameState::AddPlayerName(const FString& PlayerName)
-{
-	/*if ( !ConnectedPlayerNames.Contains(PlayerName) )
-	{
-		ConnectedPlayerNames.Add(PlayerName);
-	}*/
-	ConnectedPlayerNames.Add(PlayerName);
-	ConnectedPlayerStates.Add(TEXT("접속중"));
-	BroadcastPlayerList();
-}
-
-void AMetaRealmGameState::UpdatePlayerState(const FString& PlayerName , const FString& NewState)
-{
-	int32 PlayerIndex = ConnectedPlayerNames.IndexOfByKey(PlayerName);
-	if ( PlayerIndex != INDEX_NONE )
-	{
-		ConnectedPlayerStates[PlayerIndex] = NewState;
-		BroadcastPlayerList(); 
-	}
-}
-
-void AMetaRealmGameState::BroadcastPlayerList()
-{
-	Multicast_UpdatePlayerList(ConnectedPlayerNames , ConnectedPlayerStates);
-}
-
-TArray<FString> AMetaRealmGameState::GetAllPlayerNames()
-{
-	return ConnectedPlayerNames;
-}
-
-TArray<FString> AMetaRealmGameState::GetAllPlayerStates()
-{
-	return ConnectedPlayerStates;
-}
-
-void AMetaRealmGameState::Multicast_UpdatePlayerList_Implementation(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates)
+void AMetaRealmGameState::OnRep_ConnectedPlayerName()
 {
 	for ( AMR_Controller* Controller : TActorRange<AMR_Controller>(GetWorld()) )
 	{
 		if ( Controller )
 		{
-			Controller->UpdatePlayerList(PlayerNames , PlayerStates); 
+			Controller->UpdatePlayerList(ConnectedPlayerNames);
 		}
 	}
 }
+
+void AMetaRealmGameState::AddPlayerName_Implementation(const FString& PlayerName)
+{
+	if ( !ConnectedPlayerNames.Contains(PlayerName) )
+	{
+		FString PlayerInfo = PlayerName+ FString::Printf(TEXT("|접속중"));
+		ConnectedPlayerNames.Add(PlayerInfo);
+		if ( HasAuthority() )
+		{
+			OnRep_ConnectedPlayerName();
+		}
+	}
+}
+
+
 

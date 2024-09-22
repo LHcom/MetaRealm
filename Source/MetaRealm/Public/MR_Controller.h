@@ -32,13 +32,9 @@ public:
     // PlayerList 위젯 블루프린트 클래스
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
-
-	UFUNCTION()
-	void ViewMainUI();
 	
-	// UpdatePlayerList 함수: 서버에서 전송된 플레이어 리스트로 UI를 업데이트하는 함수
 	UFUNCTION(BlueprintCallable)
-	void UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
+	void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerMoveToMeetingRoomMap();

@@ -33,29 +33,16 @@ public:
 
 	//==================================================
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(Replicated, BlueprintReadOnly, ReplicatedUsing=OnRep_ConnectedPlayerName)
     TArray<FString> ConnectedPlayerNames;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
-    TArray<FString> ConnectedPlayerStates;
+    UFUNCTION()
+    void OnRep_ConnectedPlayerName();
+
 
     // 플레이어 이름 추가 함수
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(Server , Reliable)
     void AddPlayerName(const FString& PlayerName);
 
-    UFUNCTION(BlueprintCallable)
-    void UpdatePlayerState(const FString& PlayerName, const FString& NewState);
-
-    UFUNCTION(BlueprintCallable)
-    void BroadcastPlayerList();
-
-    UFUNCTION(BlueprintCallable)
-    TArray<FString> GetAllPlayerNames();
-
-    UFUNCTION(BlueprintCallable)
-    TArray<FString> GetAllPlayerStates();
-    
-    // 플레이어 이름 리스트가 변경되었을 때 호출되는 함수
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_UpdatePlayerList(const TArray<FString>& PlayerNames , const TArray<FString>& PlayerStates);
 };
+
