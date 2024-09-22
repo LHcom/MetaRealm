@@ -7,7 +7,7 @@
 #include "MetaRealmGameState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class METAREALM_API AMetaRealmGameState : public AGameStateBase
@@ -23,9 +23,9 @@ public:
 	// 게시판 내용을 저장할 변수
 	UPROPERTY(Replicated)
 	FString gsContent;
-	
+
 	// 회의실 내용을 리스트에 보관
-	UPROPERTY(ReplicatedUsing=OnRep_Proceeding)
+	UPROPERTY(ReplicatedUsing = OnRep_Proceeding)
 	TArray<struct FProceedStruct> ArrRecordInfo;
 
 	UFUNCTION()
@@ -33,16 +33,16 @@ public:
 
 	//==================================================
 
-    UPROPERTY(Replicated, BlueprintReadOnly, ReplicatedUsing=OnRep_ConnectedPlayerName)
-    TArray<FString> ConnectedPlayerNames;
+	UPROPERTY(Replicated , BlueprintReadOnly , ReplicatedUsing = OnRep_ConnectedPlayerName)
+	TArray<FString> ConnectedPlayerNames;
 
-    UFUNCTION()
-    void OnRep_ConnectedPlayerName();
+	UFUNCTION()
+	void OnRep_ConnectedPlayerName();
 
 
-    // 플레이어 이름 추가 함수
-    UFUNCTION(Server , Reliable)
-    void AddPlayerName(const FString& PlayerName);
+	// 플레이어 이름 추가 함수
+	/*UFUNCTION(Server , Reliable)
+	void AddPlayerName(const FString& PlayerName);*/
 
 };
 

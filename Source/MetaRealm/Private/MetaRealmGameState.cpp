@@ -12,32 +12,32 @@ void AMetaRealmGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AMetaRealmGameState, gsContent);
-	DOREPLIFETIME(AMetaRealmGameState, ArrRecordInfo);
+	DOREPLIFETIME(AMetaRealmGameState , gsContent);
+	DOREPLIFETIME(AMetaRealmGameState , ArrRecordInfo);
 	DOREPLIFETIME(AMetaRealmGameState , ConnectedPlayerNames);
 }
 
 void AMetaRealmGameState::HandleBeginPlay()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Begin"));
 	Super::HandleBeginPlay();
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("End"));
 }
 
 void AMetaRealmGameState::OnRep_ReplicatedHasBegunPlay()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Begin"));
 	Super::OnRep_ReplicatedHasBegunPlay();
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("End"));
 }
 
 void AMetaRealmGameState::OnRep_Proceeding()
 {
 	// 데이터 테이블에 내용을 추가한다.
-	
+
 	// 내용이 갱신되면 플레이어에게 알람을 보내준다.
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Add New Proceeding"));
-	AB_LOG(LogABNetwork, Log, TEXT("Now Proceeding Count : %d"), ArrRecordInfo.Num());
+	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Add New Proceeding"));
+	AB_LOG(LogABNetwork , Log , TEXT("Now Proceeding Count : %d") , ArrRecordInfo.Num());
 }
 
 //=========================================================================================
@@ -48,23 +48,16 @@ void AMetaRealmGameState::OnRep_ConnectedPlayerName()
 	{
 		if ( Controller )
 		{
+			UE_LOG(LogTemp , Warning , TEXT("Player Info : %s") , *ConnectedPlayerNames[ConnectedPlayerNames.Num()-1]);
 			Controller->UpdatePlayerList(ConnectedPlayerNames);
 		}
 	}
 }
 
-void AMetaRealmGameState::AddPlayerName_Implementation(const FString& PlayerName)
-{
-	if ( !ConnectedPlayerNames.Contains(PlayerName) )
-	{
-		FString PlayerInfo = PlayerName+ FString::Printf(TEXT("|접속중"));
-		ConnectedPlayerNames.Add(PlayerInfo);
-		if ( HasAuthority() )
-		{
-			OnRep_ConnectedPlayerName();
-		}
-	}
-}
+//void AMetaRealmGameState::AddPlayerName_Implementation(const FString& PlayerName)
+//{
+//	
+//}
 
 
 

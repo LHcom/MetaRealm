@@ -66,20 +66,23 @@ void AMR_Controller::BeginPlay()
 
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
-
-	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	if ( IsLocalController() )
 	{
-		FBoardStruct currData = gi->GetBoardData();
-		TArray<FProceedStruct> proceedData = gi->GetProceedData();
-		FString PlayerName = gi->NickName;
-
-		if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
+		if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
 		{
-			gs->gsContent = currData.ContentString;
-			gs->ArrRecordInfo = proceedData;
-			gs->AddPlayerName(PlayerName);
-			//gs->BroadcastPlayerList();
+			FBoardStruct currData = gi->GetBoardData();
+			TArray<FProceedStruct> proceedData = gi->GetProceedData();
+			FString PlayerName = gi->NickName;
+			if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
+			{
+				UE_LOG(LogTemp , Warning , TEXT("Send Player Name : %s") , *PlayerName);
+				gs->gsContent = currData.ContentString;
+				gs->ArrRecordInfo = proceedData;
+				AddPlayerName(PlayerName);
+				//gs->BroadcastPlayerList();
+			}
 		}
+
 	}
 }
 
@@ -214,6 +217,24 @@ void AMR_Controller::SetUserInfo(const FString& tkAdrr , const FString& nickName
 		gi->TkAdrr = tkAdrr;
 		gi->NickName = nickName;
 	}
+}
+
+void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
+{
+	FString PlayerInfo = PlayerName + FString::Printf(TEXT("|접속중"));
+	UE_LOG(LogTemp , Warning , TEXT("Player Name : %s") , *PlayerName);
+	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) ) {
+		if ( !gs->ConnectedPlayerNames.Contains(PlayerInfo) )
+		{
+			gs->ConnectedPlayerNames.Add(PlayerInfo);
+			if ( HasAuthority() )
+			{
+
+				gs->OnRep_ConnectedPlayerName();
+			}
+		}
+	}
+
 }
 
 // 채팅 ==========================================================================================================
