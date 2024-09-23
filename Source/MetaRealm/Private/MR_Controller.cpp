@@ -20,6 +20,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UW_PlayerList.h"
 #include "MainPlayerList.h"
+#include "WindowList.h"
 
 
 void AMR_Controller::PostInitializeComponents()
@@ -128,6 +129,16 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
+		PlayerCharacter->WindowListWidget->AddToViewport(-1);
+		PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+		/*
+		if ( gm )
+		{
+			if ( gm->MeetingMember.IsEmpty() )
+				gm->MeetingMember = PlayerCharacter->GetMemberName();
+			else
+				gm->MeetingMember += "," + PlayerCharacter->GetMemberName();
+		}*/
 	}
 }
 
@@ -158,6 +169,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
 		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
+		PlayerCharacter->WindowListWidget->RemoveFromParent(); 
 	}
 }
 

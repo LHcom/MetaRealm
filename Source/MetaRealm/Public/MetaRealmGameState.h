@@ -31,6 +31,13 @@ public:
 	UFUNCTION()
 	void OnRep_Proceeding();
 
+public:
+	//=================화면공유
+	UPROPERTY(BlueprintReadOnly , ReplicatedUsing=OnRep_StreamingID)
+	TArray<FString> ArrStreamingUserID;
+	UFUNCTION()
+	void OnRep_StreamingID();
+
 	//==================================================
 
 	UPROPERTY(Replicated , BlueprintReadOnly , ReplicatedUsing = OnRep_ConnectedPlayerName)
