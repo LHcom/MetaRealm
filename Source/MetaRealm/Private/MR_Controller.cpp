@@ -151,7 +151,6 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
 		/*
-		PlayerCharacter->initWindowListUI();
 		if ( gm )
 		{
 			if ( gm->MeetingMember.IsEmpty() )
