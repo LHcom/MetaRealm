@@ -54,10 +54,6 @@ void AMetaRealmGameState::OnRep_ConnectedPlayerName()
 	}
 }
 
-//void AMetaRealmGameState::AddPlayerName_Implementation(const FString& PlayerName)
-//{
-//	
-//}
 
 
 

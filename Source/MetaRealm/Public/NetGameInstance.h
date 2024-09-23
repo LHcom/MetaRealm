@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -53,9 +53,9 @@ public:
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
 	// 방 이름
-	FString MyroomName = TEXT("MTVSMETAREALM");
+	FString MyroomName = TEXT("MTVSMETAREALM4");
 	// 세션 이름
-	FString mySessionName = TEXT("MTVSMETAREALM");
+	FString mySessionName = TEXT("MTVSMETAREALM4");
 
 	// 세션 검색이 완료되면 호출해야 하는 Delegate
 	FSearchComplete onSearchComplete;

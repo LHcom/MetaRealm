@@ -40,9 +40,5 @@ public:
 	void OnRep_ConnectedPlayerName();
 
 
-	// 플레이어 이름 추가 함수
-	/*UFUNCTION(Server , Reliable)
-	void AddPlayerName(const FString& PlayerName);*/
-
 };
 
