@@ -122,7 +122,7 @@ void UWindowList::OnButtonWindowScreen()
 					//스트리밍을 시작합니다.
 					CurrentStreamer->StartStreaming();
 
-					InitProcessListUI();
+					//InitProcessListUI();
 				}
 			}
 			else

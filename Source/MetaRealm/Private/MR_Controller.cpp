@@ -129,8 +129,8 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
-		PlayerCharacter->WindowListWidget->AddToViewport(-1);
-		PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+		// PlayerCharacter->WindowListWidget->AddToViewport(-1);
+		// PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
 		/*
 		if ( gm )
 		{
@@ -169,7 +169,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
 		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
-		PlayerCharacter->WindowListWidget->RemoveFromParent(); 
+		//PlayerCharacter->WindowListWidget->RemoveFromParent(); 
 	}
 }
 
