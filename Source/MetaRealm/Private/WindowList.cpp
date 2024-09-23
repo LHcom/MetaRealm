@@ -129,6 +129,7 @@ void UWindowList::OnButtonWindowScreen()
 					InitProcessListUI();
 
 					ScreenActor->ChangeLookSharingScreen();
+
 				}
 			}
 			else

@@ -93,28 +93,6 @@ void AMR_Controller::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Chat") , EInputEvent::IE_Pressed , this , &AMR_Controller::FocusChatInputText);
 }
 
-void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
-{
-	if (UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass))
-	{
-		MainUIWidget->AddToViewport();
-
-		for (int32 i = 0; i < PlayerNames.Num(); i++)
-		{
-			if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass))
-			{
-				FString pName , pState;
-				if ( PlayerNames[i].Split("|" , &pName , &pState) )
-				{
-					PlayerListWidget->SetPlayerName(pName);
-					PlayerListWidget->SetPlayerState(pState);
-					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
-				}
-			}
-		}
-	}
-}
-
 void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation(const FString& NickName)
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
@@ -151,8 +129,8 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
-		PlayerCharacter->WindowListWidget->AddToViewport(-1);
-		PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+		// PlayerCharacter->WindowListWidget->AddToViewport(-1);
+		// PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
 		/*
 		if ( gm )
 		{
@@ -163,11 +141,6 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		}*/
 	}
 }
-
-// void AMR_Controller::ServerRPC_SetProceedMember_Implementation(const FString& strMember)
-// {
-//
-// }
 
 void AMR_Controller::ServerMoveToMainMap_Implementation()
 {
@@ -196,37 +169,8 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
 		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
-		PlayerCharacter->WindowListWidget->RemoveFromParent(); 
+		//PlayerCharacter->WindowListWidget->RemoveFromParent(); 
 	}
-}
-
-void AMR_Controller::SendMessage(const FText& Text)
-{
-	FString PlayerName;
-	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
-	{
-		PlayerName = gi->NickName;
-	}
-	FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
-
-	// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
-	CtoS_SendMessage(Message);
-}
-
-void AMR_Controller::FocusGame()
-{
-	SetInputMode(FInputModeGameAndUI());
-}
-
-void AMR_Controller::FocusChatInputText()
-{
-	AMain_HUD* HUD = GetHUD<AMain_HUD>();
-	if ( HUD == nullptr ) return;
-
-	FInputModeGameAndUI InputMode;
-	InputMode.SetWidgetToFocus(HUD->GetChatInputTextObject());
-
-	SetInputMode(InputMode);
 }
 
 void AMR_Controller::SetUserInfo(const FString& tkAdrr , const FString& nickName)
@@ -237,6 +181,8 @@ void AMR_Controller::SetUserInfo(const FString& tkAdrr , const FString& nickName
 		gi->NickName = nickName;
 	}
 }
+
+//플레이어리스트=====================================================================================
 
 void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 {
@@ -254,6 +200,29 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 		}
 	}
 
+}
+
+
+void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
+{
+	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	{
+		MainUIWidget->AddToViewport();
+
+		for ( int32 i = 0; i < PlayerNames.Num(); i++ )
+		{
+			if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+			{
+				FString pName , pState;
+				if ( PlayerNames[i].Split("|" , &pName , &pState) )
+				{
+					PlayerListWidget->SetPlayerName(pName);
+					PlayerListWidget->SetPlayerState(pState);
+					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+				}
+			}
+		}
+	}
 }
 
 // 채팅 ==========================================================================================================
@@ -279,4 +248,33 @@ void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 	if ( HUD == nullptr ) return;
 
 	HUD->AddChatMessage(Message);
+}
+
+void AMR_Controller::SendMessage(const FText& Text)
+{
+	FString PlayerName;
+	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	{
+		PlayerName = gi->NickName;
+	}
+	FString Message = FString::Printf(TEXT("%s : %s") , *PlayerName , *Text.ToString());
+
+	// 서버로 메시지를 전송 (CtoS_SendMessage 호출)
+	CtoS_SendMessage(Message);
+}
+
+void AMR_Controller::FocusGame()
+{
+	SetInputMode(FInputModeGameAndUI());
+}
+
+void AMR_Controller::FocusChatInputText()
+{
+	AMain_HUD* HUD = GetHUD<AMain_HUD>();
+	if ( HUD == nullptr ) return;
+
+	FInputModeGameAndUI InputMode;
+	InputMode.SetWidgetToFocus(HUD->GetChatInputTextObject());
+
+	SetInputMode(InputMode);
 }
