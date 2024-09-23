@@ -136,9 +136,9 @@ void AScreenActor::Tick(float DeltaTime)
 	if ( bShouldUpdateTexture ) {
 		UpdateTexture();
 	}
-	else {
+	/*else {
 		ReadFrame();
-	}
+	}*/
 }
 
 void AScreenActor::ReadFrame()
