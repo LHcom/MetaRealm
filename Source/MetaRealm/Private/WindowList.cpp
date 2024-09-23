@@ -52,6 +52,12 @@ void UWindowList::NativeConstruct()
 	}
 }
 
+void UWindowList::NativeDestruct()
+{
+	Super::NativeDestruct();
+	CurrentStreamer->SetVideoInput(nullptr);
+}
+
 void UWindowList::NativeTick(const FGeometry& MyGeometry , float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry , InDeltaTime);
@@ -106,13 +112,11 @@ void UWindowList::OnButtonWindowScreen()
 					//Back Buffer를 비디오 입력으로 설정합니다.
 					CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
 
-					UGameViewportClient* GameViewport = GEngine->GameViewport;
 					ScreenActor->SceneCapture->Activate();
 
 
 					// 2. Pixel Streaming 비디오 입력으로 설정
-					VideoInput =
-						FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
+					VideoInput =FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);
 
 					CurrentStreamer->SetVideoInput(VideoInput); // 스트리밍에 사용
 
@@ -123,6 +127,8 @@ void UWindowList::OnButtonWindowScreen()
 					CurrentStreamer->StartStreaming();
 
 					InitProcessListUI();
+
+					ScreenActor->ChangeLookSharingScreen();
 				}
 			}
 			else

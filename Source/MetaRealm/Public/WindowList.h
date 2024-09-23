@@ -18,7 +18,7 @@ class METAREALM_API UWindowList : public UUserWidget
 public:
 	// UUserWidget이 초기화될 때 호출되는 함수
 	virtual void NativeConstruct() override;
-	
+	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeOnInitialized();
 

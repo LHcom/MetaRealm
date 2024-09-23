@@ -64,29 +64,21 @@ AScreenActor::AScreenActor()
 	WindowScreenPlaneMesh->SetVisibility(false);
 
 
-	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("RenderTarget"));
+	//RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("RenderTarget"));
 	// RenderTarget을 경로에서 로드하고 할당
-	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAsset(
-		TEXT(
-			"/Script/Engine.TextureRenderTarget2D'/Game/VoiceChat_BD/Blueprint/TextureRenderTarget2D.TextureRenderTarget2D'"));
-	if (RenderTargetAsset.Succeeded())
-	{
-		RenderTarget = RenderTargetAsset.Object;
-	}
+	//static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAsset(
+	//	TEXT(
+	//		"/Script/Engine.TextureRenderTarget2D'/Game/VoiceChat_BD/Blueprint/TextureRenderTarget2D.TextureRenderTarget2D'"));
+	//if (RenderTargetAsset.Succeeded())
+	//{
+	//	RenderTarget = RenderTargetAsset.Object;
+	//}
 
-	RenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
-	RenderTarget->SRGB = false;
-	RenderTarget->bAutoGenerateMips = false;
-	RenderTarget->bForceLinearGamma = true;
-	RenderTarget->TargetGamma = 2.2f;
-	RenderTarget->AddressX = TextureAddress::TA_Clamp;
-	RenderTarget->AddressY = TextureAddress::TA_Clamp;
-	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN) , GetSystemMetrics(SM_CYSCREEN));
+	
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->SetupAttachment(RootComponent);
-	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
 	SceneCapture->CaptureSource = SCS_FinalColorLDR;
-	SceneCapture->TextureTarget = RenderTarget;
+
 
 	bShouldUpdateTexture = false;
 }
@@ -122,7 +114,24 @@ void AScreenActor::BeginPlay()
 		AB_LOG(LogABNetwork , Log , TEXT("======================================================================"));
 		AB_LOG(LogABNetwork , Log , TEXT("Current Streaming Player Num : %d") , gs->ArrStreamingUserID.Num());
 	}
-
+	RenderTarget = NewObject<UTextureRenderTarget2D>(this);
+	RenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
+	RenderTarget->SRGB = false;
+	RenderTarget->bAutoGenerateMips = false;
+	RenderTarget->bForceLinearGamma = true;
+	RenderTarget->TargetGamma = 2.2f;
+	RenderTarget->AddressX = TextureAddress::TA_Clamp;
+	RenderTarget->AddressY = TextureAddress::TA_Clamp;
+	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN) , GetSystemMetrics(SM_CYSCREEN));
+	if ( RenderTarget && SceneCapture )
+	{
+		SceneCapture->TextureTarget = RenderTarget;
+		//SceneCapture->CaptureScene();
+	}
+	else
+	{
+		UE_LOG(LogTemp , Error , TEXT("Initialization failed in BeginPlay"));
+	}
 	LogActiveWindowTitles();
 }
 
@@ -150,7 +159,7 @@ void AScreenActor::ReadFrame()
 	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
 	{
 		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//RenderTarget->UpdateResourceImmediate();
 	}
 }
 
@@ -344,8 +353,8 @@ void AScreenActor::UpdateTexture()
 	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
 	{
 		// BaseTexture 파라미터에 텍스처 설정
-		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
+		//RenderTarget->UpdateResourceImmediate();
 		// PlaneMesh에 머티리얼 적용
 	}
 
