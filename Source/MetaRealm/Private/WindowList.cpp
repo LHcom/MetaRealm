@@ -4,6 +4,7 @@
 #include "WindowList.h"
 
 #include "EngineUtils.h"
+#include "NetGameInstance.h"
 #include "PlayerCharacter.h"
 #include "ScreenActor.h"
 #include "Components/UniformGridPanel.h"
@@ -73,7 +74,8 @@ void UWindowList::SetUserID(FString ID , const bool& bAddPlayer)
 void UWindowList::OnButtonWindowScreen()
 {
 	bStreaming = !bStreaming;
-	FString streamID = FString::FromInt(GetWorld()->GetFirstPlayerController()->GetUniqueID());
+	FString streamID="Editor";
+	
 	if (bStreaming)
 	{
 		TextWindowScreen->SetText(FText::FromString(TEXT("Sharing"))); //공유중
@@ -92,7 +94,6 @@ void UWindowList::OnButtonWindowScreen()
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::Get().LoadModulePtr<IPixelStreamingModule>(
 			"PixelStreaming");
 		//FModuleManager::GetModulePtr<IPixelStreamingModule>("PixelStreaming");
-
 		if (PixelStreamingModule)
 		{
 			// 현재 세션의 아이디를 가져와서 Streamer를 생성한다.
@@ -140,6 +141,8 @@ void UWindowList::OnButtonWindowScreen()
 		ScreenActor->WindowScreenPlaneMesh->SetVisibility(false);
 		SetUserID(streamID , false);
 
+		ProcessList->ClearChildren();
+		
 		//1. PixelStreaming 모듈을 가져옵니다.
 		IPixelStreamingModule* PixelStreamingModule = FModuleManager::GetModulePtr<IPixelStreamingModule>(
 			"PixelStreaming");
