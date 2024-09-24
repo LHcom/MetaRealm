@@ -77,9 +77,9 @@ FString UJsonParseLib::SoundToTextJsonParse(const FString& strJson , FString& ou
 	if (FJsonSerializer::Deserialize(reader , result))
 	{
 		//<><><> API Return 값에 따라 파싱하는게 달라져야함.
-		if (result->HasField(TEXT("messages")))
+		if (result->HasField(TEXT("response")))
 		{
-			outStrMessage = result->GetStringField(TEXT("messages"));
+			outStrMessage = result->GetStringField(TEXT("response"));
 		}
 		// TArray<TSharedPtr<FJsonValue>> parseDataList = result->GetArrayField(TEXT("items"));
 		// for (auto data : parseDataList)
