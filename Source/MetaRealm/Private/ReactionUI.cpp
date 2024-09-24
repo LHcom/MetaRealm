@@ -1,8 +1,19 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ReactionUI.h"
 #include "Components/Image.h"
+#include "NetGameInstance.h"
+#include "Components/TextBlock.h"
+
+void UReactionUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
+	NickNameText->SetText(FText::FromString(gi->NickName));
+
+}
 
 void UReactionUI::ShowReaction(UTexture2D* ReactionImage)
 {

@@ -80,7 +80,7 @@ void UPlayerWidget::ClickedOpenReactionUI()
 void UPlayerWidget::ClickedReaction1()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(1);
+		me->MulticastSetReaction(1);
 	}
 	else if (me->ReactionArray[0] ) {
 		me->ServerSetReaction(1);
@@ -90,7 +90,7 @@ void UPlayerWidget::ClickedReaction1()
 void UPlayerWidget::ClickedReaction2()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(2);
+		me->MulticastSetReaction(2);
 	}
 	else if ( me->ReactionArray[1] ) {
 		me->ServerSetReaction(2);
@@ -100,7 +100,7 @@ void UPlayerWidget::ClickedReaction2()
 void UPlayerWidget::ClickedReaction3()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(3);
+		me->MulticastSetReaction(3);
 	}
 	else if ( me->ReactionArray[2] ) {
 		me->ServerSetReaction(3);
@@ -110,7 +110,7 @@ void UPlayerWidget::ClickedReaction3()
 void UPlayerWidget::ClickedReaction4()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(4);
+		me->MulticastSetReaction(4);
 	}
 	else if ( me->ReactionArray[3] ) {
 		me->ServerSetReaction(4);
@@ -120,7 +120,7 @@ void UPlayerWidget::ClickedReaction4()
 void UPlayerWidget::ClickedReaction5()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(5);
+		me->MulticastSetReaction(5);
 	}
 	else if ( me->ReactionArray[4] ) {
 		me->ServerSetReaction(5);
@@ -130,7 +130,7 @@ void UPlayerWidget::ClickedReaction5()
 void UPlayerWidget::ClickedReaction6()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(6);
+		me->MulticastSetReaction(6);
 	}
 	else if ( me->ReactionArray[5] ) {
 		me->ServerSetReaction(6);
@@ -140,7 +140,7 @@ void UPlayerWidget::ClickedReaction6()
 void UPlayerWidget::ClickedReaction7()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(7);
+		me->MulticastSetReaction(7);
 	}
 	else if ( me->ReactionArray[6] ) {
 		me->ServerSetReaction(7);
@@ -150,7 +150,7 @@ void UPlayerWidget::ClickedReaction7()
 void UPlayerWidget::ClickedReaction8()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(8);
+		me->MulticastSetReaction(8);
 	}
 	else if ( me->ReactionArray[7] ) {
 		me->ServerSetReaction(8);
@@ -160,7 +160,7 @@ void UPlayerWidget::ClickedReaction8()
 void UPlayerWidget::ClickedReaction9()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(9);
+		me->MulticastSetReaction(9);
 	}
 	else if ( me->ReactionArray[8] ) {
 		me->ServerSetReaction(9);
@@ -170,7 +170,7 @@ void UPlayerWidget::ClickedReaction9()
 void UPlayerWidget::ClickedReaction10()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(10);
+		me->MulticastSetReaction(10);
 	}
 	else if ( me->ReactionArray[9] ) {
 		me->ServerSetReaction(10);
@@ -180,7 +180,7 @@ void UPlayerWidget::ClickedReaction10()
 void UPlayerWidget::ClickedReaction11()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(11);
+		me->MulticastSetReaction(11);
 	}
 	else if ( me->ReactionArray[10] ) {
 		me->ServerSetReaction(11);
@@ -190,7 +190,7 @@ void UPlayerWidget::ClickedReaction11()
 void UPlayerWidget::ClickedReaction12()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(12);
+		me->MulticastSetReaction(12);
 	}
 	else if ( me->ReactionArray[11] ) {
 		me->ServerSetReaction(12);
@@ -200,7 +200,7 @@ void UPlayerWidget::ClickedReaction12()
 void UPlayerWidget::ClickedReaction13()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(13);
+		me->MulticastSetReaction(13);
 	}
 	else if ( me->ReactionArray[12] ) {
 		me->ServerSetReaction(13);
@@ -210,7 +210,7 @@ void UPlayerWidget::ClickedReaction13()
 void UPlayerWidget::ClickedReaction14()
 {
 	if ( me->HasAuthority() ) {
-		me->ShowReaction(14);
+		me->MulticastSetReaction(14);
 	}
 	else if ( me->ReactionArray[13] ) {
 		me->ServerSetReaction(14);
