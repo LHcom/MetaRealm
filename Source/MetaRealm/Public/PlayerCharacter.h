@@ -61,6 +61,7 @@ public:
 	class UWindowList* WindowListWidget;
 	void initWindowListUI();
 	void ShowWindowListUI();
+	void HideWindowListUI();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* PlayerUI;

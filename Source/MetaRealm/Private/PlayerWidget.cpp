@@ -363,14 +363,17 @@ void UPlayerWidget::ClickedState3()
 
 void UPlayerWidget::OnMyClickkedVideo()
 {
+	isVideoOn= !isVideoOn;
 	if (isVideoOn)
-	{
-		btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-		isVideoOn = false;
+	{		
+		btn_video->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
+		if(me)
+			me->ShowWindowListUI();
 	}
 	else
 	{
-		btn_video->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
-		isVideoOn = true;
+		btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+		if(me)
+			me->HideWindowListUI();
 	}
 }

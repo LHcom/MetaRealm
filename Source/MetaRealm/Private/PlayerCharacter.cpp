@@ -184,8 +184,9 @@ void APlayerCharacter::initWindowListUI()
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoWidget is not null"));
 		WindowListWidget = pc->WindowListUI;
-		//WindowListWidget->AddToViewport(1);
-		//WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
+		
+		WindowListWidget->AddToViewport(1);
+		WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -197,7 +198,15 @@ void APlayerCharacter::ShowWindowListUI()
 {
 	if (WindowListWidget)
 	{
-		WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+		WindowListWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+}
+
+void APlayerCharacter::HideWindowListUI()
+{
+	if (WindowListWidget)
+	{
+		WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
