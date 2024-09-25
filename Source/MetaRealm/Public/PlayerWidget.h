@@ -8,19 +8,21 @@
 #include "PlayerWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class METAREALM_API UPlayerWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+private:
+	virtual void NativeOnInitialized() override;
+
 public:
 	virtual void NativeConstruct() override;
 
 
 	// ======================================================== Character Component Save Start
-	
+
 	UPROPERTY()
 	class APlayerCharacter* me;
 
@@ -34,10 +36,10 @@ public:
 
 	// ======================================================== Character Component Save End
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* PlayerName;
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UButton* OnMic;
 	UFUNCTION(BlueprintCallable)
 	void ClickedOnMic();
@@ -46,80 +48,80 @@ public:
 
 	// ======================================================== Reaction Button Binding Start
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UBorder* ReactionBar;
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* OpenReactionUI;
 	UFUNCTION()
 	void ClickedOpenReactionUI();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction1;
 	UFUNCTION()
 	void ClickedReaction1();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction2;
 	UFUNCTION()
 	void ClickedReaction2();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction3;
 	UFUNCTION()
 	void ClickedReaction3();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction4;
 	UFUNCTION()
 	void ClickedReaction4();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction5;
 	UFUNCTION()
 	void ClickedReaction5();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction6;
 	UFUNCTION()
 	void ClickedReaction6();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction7;
 	UFUNCTION()
 	void ClickedReaction7();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction8;
 	UFUNCTION()
 	void ClickedReaction8();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction9;
 	UFUNCTION()
 	void ClickedReaction9();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction10;
 	UFUNCTION()
 	void ClickedReaction10();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction11;
 	UFUNCTION()
 	void ClickedReaction11();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction12;
 	UFUNCTION()
 	void ClickedReaction12();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction13;
 	UFUNCTION()
 	void ClickedReaction13();
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickReaction14;
 	UFUNCTION()
 	void ClickedReaction14();
@@ -128,28 +130,28 @@ public:
 	// 
 	// ======================================================== State Button Binding Start
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UCanvasPanel* PlayerStateBar;
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UTextBlock* StateText;
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* OpenStateUI;
 	UFUNCTION()
 	void ClickedOpenStateUI();
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickState1;
 	UFUNCTION()
 	void ClickedState1();
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickState2;
 	UFUNCTION()
 	void ClickedState2();
 
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	class UButton* ClickState3;
 	UFUNCTION()
 	void ClickedState3();
@@ -157,7 +159,7 @@ public:
 	// ======================================================== State Button Binding Start
 
 	// ======================================================== 화면공유
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_video;
 
 	UFUNCTION()
