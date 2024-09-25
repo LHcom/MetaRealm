@@ -26,6 +26,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/Image.h"
 #include "WindowList.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -95,6 +96,17 @@ APlayerCharacter::APlayerCharacter()
 	{
 		CylinderMaterial3 = CylinderMesh3.Object;
 	}*/
+
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("audioComp"));
+	// if(audioComp)
+	// {
+	// 	// FSoundAttenuationSettings AttenuationSettings;
+	// 	// AttenuationSettings.bAttenuate = true; // enable attenuation
+	// 	// AttenuationSettings.AttenuationShape = EAttenuationShape::Sphere; // set shape
+	// 	// AttenuationSettings.FalloffDistance = 500.0f; // set the maximum distance at which the sound could be heard.
+	// 	//audioComp->SetAttenuationOverrides(AttenuationSettings);
+	// 	audioComp->SetAttenuationSettings(AudioAttenuation);
+	// }
 }
 
 void APlayerCharacter::initProceedingUI()
