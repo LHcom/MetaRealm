@@ -3,9 +3,6 @@
 
 #include "JsonParseLib.h"
 
-#include "MetaRealmGameState.h"
-#include "MR_Controller.h"
-
 FString UJsonParseLib::MakeJson(const TMap<FString , FString>& source)
 {
 	// source를 JsonObject 형식으로 만든다.
