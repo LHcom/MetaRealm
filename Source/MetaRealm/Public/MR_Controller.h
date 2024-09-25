@@ -93,5 +93,8 @@ public:
 	 // 플레이어 이름 추가 함수
     UFUNCTION(Server , Reliable)
     void AddPlayerName(const FString& PlayerName);
+	// ------------------------------------------플레이어 리스트
+	UPROPERTY()
+	class UMainPlayerList* MainUIWidget;
 
 };

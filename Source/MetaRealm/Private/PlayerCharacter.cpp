@@ -26,6 +26,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/Image.h"
 #include "WindowList.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -46,6 +47,7 @@ APlayerCharacter::APlayerCharacter()
 	{
 		PlayerUI->SetWidgetClass(PlayerUIClass.Class);
 		PlayerUI->SetDrawSize(FVector2D(1920 , 1080));
+		PlayerUI->SetRelativeLocation(FVector(0 , 0 , 400));
 	}
 
 	// 플레이어 Reaction UI 관련 애들=========================================================================
@@ -94,6 +96,17 @@ APlayerCharacter::APlayerCharacter()
 	{
 		CylinderMaterial3 = CylinderMesh3.Object;
 	}*/
+
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("audioComp"));
+	// if(audioComp)
+	// {
+	// 	// FSoundAttenuationSettings AttenuationSettings;
+	// 	// AttenuationSettings.bAttenuate = true; // enable attenuation
+	// 	// AttenuationSettings.AttenuationShape = EAttenuationShape::Sphere; // set shape
+	// 	// AttenuationSettings.FalloffDistance = 500.0f; // set the maximum distance at which the sound could be heard.
+	// 	//audioComp->SetAttenuationOverrides(AttenuationSettings);
+	// 	audioComp->SetAttenuationSettings(AudioAttenuation);
+	// }
 }
 
 void APlayerCharacter::initProceedingUI()
@@ -154,25 +167,26 @@ void APlayerCharacter::initMemoUI()
 void APlayerCharacter::initWindowListUI()
 {
 	auto pc = Cast<AMR_Controller>(Controller);
-	if ( nullptr == pc )
+	if (nullptr == pc)
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] Player Controller is null"));
 		return;
 	}
 
-	if ( !pc->MemoUIFactory )
+	if (!pc->MemoUIFactory)
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoFactory is null"));
 		return;
 	}
 
 	pc->WindowListUI = CastChecked<UWindowList>(CreateWidget(GetWorld() , pc->WindowListFactory));
-	if ( pc->WindowListUI )
+	if (pc->WindowListUI)
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoWidget is not null"));
 		WindowListWidget = pc->WindowListUI;
-		//WindowListWidget->AddToViewport(1);
-		//WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
+		
+		WindowListWidget->AddToViewport(1);
+		WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -182,8 +196,17 @@ void APlayerCharacter::initWindowListUI()
 
 void APlayerCharacter::ShowWindowListUI()
 {
-	if ( WindowListWidget ) {
-		WindowListWidget->SetVisibility(ESlateVisibility::Visible);
+	if (WindowListWidget)
+	{
+		WindowListWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+}
+
+void APlayerCharacter::HideWindowListUI()
+{
+	if (WindowListWidget)
+	{
+		WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -246,7 +269,7 @@ void APlayerCharacter::BeginPlay()
 		initProceedingUI();
 		initMemoUI();
 		initMsgUI();
-		initWindowListUI(); 
+		initWindowListUI();
 	}
 
 	if (PlayerUI)
@@ -274,7 +297,8 @@ void APlayerCharacter::BeginPlay()
 			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
 		}
 	}
-	else {
+	else
+	{
 		//initWindowListUI();
 	}
 
@@ -375,28 +399,27 @@ UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
 }
 
 
-
 void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 {
 	MulticastSetCylinderMaterial(value);
 }
 
 void APlayerCharacter::MulticastSetCylinderMaterial_Implementation(int32 value)
-{	
-	SetCylinderMaterial(value);	
+{
+	SetCylinderMaterial(value);
 }
 
 void APlayerCharacter::SetCylinderMaterial(int32 value)
 {
-	if ( value == 1 && CylinderMaterial1 )
+	if (value == 1 && CylinderMaterial1)
 	{
 		Cylinder->SetMaterial(0 , CylinderMaterial1);
 	}
-	else if ( value == 2 && CylinderMaterial2 )
+	else if (value == 2 && CylinderMaterial2)
 	{
 		Cylinder->SetMaterial(0 , CylinderMaterial2);
 	}
-	else if ( value == 3 && CylinderMaterial3 )
+	else if (value == 3 && CylinderMaterial3)
 	{
 		Cylinder->SetMaterial(0 , CylinderMaterial3);
 	}
@@ -506,7 +529,7 @@ void APlayerCharacter::initMsgUI()
 	}
 }
 
-void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString& PlayerID, const bool bAddPlayer)
+void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString& PlayerID , const bool bAddPlayer)
 {
 	if (auto gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 	{
@@ -516,7 +539,7 @@ void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString
 				return;
 
 			gs->ArrStreamingUserID.Add(PlayerID);
-			if(HasAuthority())
+			if (HasAuthority())
 				gs->OnRep_StreamingID();
 		}
 		else
@@ -528,7 +551,7 @@ void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString
 				return;
 
 			gs->ArrStreamingUserID.Remove(PlayerID);
-			if(HasAuthority())
+			if (HasAuthority())
 				gs->OnRep_StreamingID();
 		}
 	}
@@ -536,5 +559,4 @@ void APlayerCharacter::ServerRPC_SetStreamingPlayer_Implementation(const FString
 
 void APlayerCharacter::Multicast_SetStreamingPlayer_Implementation()
 {
-	
 }

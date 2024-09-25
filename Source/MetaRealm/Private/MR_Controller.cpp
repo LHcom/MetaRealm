@@ -21,6 +21,7 @@
 #include "UW_PlayerList.h"
 #include "MainPlayerList.h"
 #include "WindowList.h"
+#include "Components/WidgetComponent.h"
 
 
 void AMR_Controller::PostInitializeComponents()
@@ -128,6 +129,9 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 	{
 		AActor* MeetingRoom = MeetingRoomActors[0];
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
+		/*if(PlayerCharacter->PlayerUI)
+			PlayerCharacter->PlayerUI->SetRelativeLocation(FVector(0,0,60));*/
+		
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
 		// PlayerCharacter->WindowListWidget->AddToViewport(-1);
 		// PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
@@ -169,6 +173,8 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
 		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
+		/*if(PlayerCharacter->PlayerUI)
+			PlayerCharacter->PlayerUI->SetRelativeLocation(FVector(0,0,400));*/
 		//PlayerCharacter->WindowListWidget->RemoveFromParent(); 
 	}
 }
@@ -205,7 +211,8 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 
 void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 {
-	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass);
+	if ( MainUIWidget )
 	{
 		MainUIWidget->AddToViewport();
 

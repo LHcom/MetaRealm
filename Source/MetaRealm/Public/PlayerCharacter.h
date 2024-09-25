@@ -61,6 +61,7 @@ public:
 	class UWindowList* WindowListWidget;
 	void initWindowListUI();
 	void ShowWindowListUI();
+	void HideWindowListUI();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UWidgetComponent* PlayerUI;
@@ -132,4 +133,7 @@ public:
 	void ServerRPC_SetStreamingPlayer(const FString& PlayerID , const bool bAddPlayer);
 	UFUNCTION(NetMulticast , Reliable)
 	void Multicast_SetStreamingPlayer();
+	// ========================================================= 보이스채팅
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class UAudioComponent* audioComp;
 };
