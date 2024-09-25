@@ -87,6 +87,6 @@ public:
 	//=======================로그인
 	UPROPERTY()
 	FString TkAdrr;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString NickName;
 };
