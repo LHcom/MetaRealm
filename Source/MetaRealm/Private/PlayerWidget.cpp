@@ -13,6 +13,7 @@
 #include "MR_Controller.h"
 #include "NetGameInstance.h"
 #include "Components/AudioComponent.h"
+#include "MainPlayerList.h"
 
 void UPlayerWidget::NativeConstruct()
 {
@@ -28,6 +29,10 @@ void UPlayerWidget::NativeConstruct()
 		UE_LOG(LogTemp , Warning , TEXT("UPlayerWidget me is nullptr"));
 
 
+	auto* pc = Cast<AMR_Controller>(GetOwningPlayerPawn()->GetController());
+	if ( pc && pc->MainUIWidget ) {
+		pc->MainUIWidget->PlayerList;
+	}
 	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
 	if (gi)
 	{
@@ -66,6 +71,32 @@ void UPlayerWidget::NativeConstruct()
 	// 초기 색상 초기화
 	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
 	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+
+	if ( PlayerList_btn )
+	{
+		PlayerList_btn->OnClicked.AddDynamic(this , &UPlayerWidget::VisiblePlayerList);
+	}
+
+	if ( pc->MainUIWidget->PlayerList )
+	{
+		pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UPlayerWidget::VisiblePlayerList()
+{
+	auto* pc = Cast<AMR_Controller>(GetOwningPlayerPawn()->GetController());
+	if ( pc->MainUIWidget->PlayerList )
+	{
+		if ( pc->MainUIWidget->PlayerList->GetVisibility() == ESlateVisibility::Visible )
+		{
+			pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
 }
 
 void UPlayerWidget::ClickedOnMic()
@@ -365,7 +396,7 @@ void UPlayerWidget::OnMyClickkedVideo()
 {
 	isVideoOn= !isVideoOn;
 	if (isVideoOn)
-	{		
+	{
 		btn_video->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
 		if(me)
 			me->ShowWindowListUI();
