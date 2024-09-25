@@ -198,7 +198,7 @@ void APlayerCharacter::ShowWindowListUI()
 {
 	if (WindowListWidget)
 	{
-		WindowListWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		WindowListWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
 
