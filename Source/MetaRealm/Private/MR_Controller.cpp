@@ -211,7 +211,8 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 
 void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 {
-	if ( UMainPlayerList* MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass) )
+	MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass);
+	if ( MainUIWidget )
 	{
 		MainUIWidget->AddToViewport();
 

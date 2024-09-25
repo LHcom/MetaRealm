@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MainPlayerList.h"
 #include "PlayerWidget.generated.h"
 
 /**
@@ -163,4 +164,23 @@ public:
 	void OnMyClickkedVideo();
 
 	bool isVideoOn = false;
+
+	//========================================================== playerListbutton
+
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* PlayerList_btn;
+
+	//UPROPERTY()
+	//class UMainPlayerList* playerlist;
+
+	//UPROPERTY(EditDefaultsOnly)
+	//TSubclassOf<UMainPlayerList> PlayerListFactory;
+
+	UFUNCTION()
+	void VisiblePlayerList();
+
+	//UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
+	//UWidget* PlayerList;
+
 };
