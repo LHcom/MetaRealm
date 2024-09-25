@@ -30,6 +30,7 @@ void UPlayerWidget::NativeConstruct()
 	ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	
 	OnMic->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedOnMic);	
+	btn_video->OnClicked.AddDynamic(this , &UPlayerWidget::OnMyClickkedVideo);	
 
 	OpenReactionUI->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedOpenReactionUI);
 	ClickReaction1->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedReaction1);
@@ -53,20 +54,25 @@ void UPlayerWidget::NativeConstruct()
 	ClickState1->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState1);
 	ClickState2->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState2);
 	ClickState3->OnClicked.AddDynamic(this, &UPlayerWidget::ClickedState3);
+
+	// 초기 색상 초기화
+	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
 }
 
 void UPlayerWidget::ClickedOnMic()
 {
 	if ( isMicOn ) {
-		OnMic->SetBackgroundColor(FLinearColor(1.f, 0.564706, 0.639216, 1.f));
+		OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
 		isMicOn = false;
 	}
 	else {
-		OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+		OnMic->SetBackgroundColor(FLinearColor(1.f, 0.564706, 0.639216, 1.f));
 		isMicOn = true;
 	}
 }
 
+#pragma region Reaction
 void UPlayerWidget::ClickedOpenReactionUI()
 {
 	if (ReactionBar->IsVisible()) {
@@ -216,6 +222,7 @@ void UPlayerWidget::ClickedReaction14()
 		me->ServerSetReaction(14);
 	}
 }
+#pragma endregion
 
 void UPlayerWidget::ClickedOpenStateUI()
 {
@@ -294,4 +301,16 @@ void UPlayerWidget::ClickedState3()
 	StateText->SetText(FText::FromString(tempStr));
 	StateText->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
 	PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);*/
+}
+
+void UPlayerWidget::OnMyClickkedVideo()
+{
+	if ( isVideoOn ) {
+		btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+		isVideoOn = false;
+	}
+	else {
+		btn_video->SetBackgroundColor(FLinearColor(1.f, 0.564706, 0.639216, 1.f));
+		isVideoOn = true;
+	}
 }

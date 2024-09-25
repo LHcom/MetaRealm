@@ -154,4 +154,13 @@ public:
 	void ClickedState3();
 
 	// ======================================================== State Button Binding Start
+
+	// ======================================================== 화면공유
+	UPROPERTY(meta=(BindWidget))
+	class UButton* btn_video;
+
+	UFUNCTION()
+	void OnMyClickkedVideo();
+
+	bool isVideoOn = false;
 };
