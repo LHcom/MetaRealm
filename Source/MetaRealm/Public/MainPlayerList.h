@@ -20,22 +20,14 @@ class METAREALM_API UMainPlayerList : public UUserWidget
 
 public:
 
-	//virtual void NativeConstruct() override;
-
 	UPROPERTY(BlueprintReadWrite)
 	class UPlayerWidget* PlayerListWidget;
-
-	/*UPROPERTY(Meta = (BindWidget))
-	class UButton* PlayerList_btn;*/
 
 	UPROPERTY(Meta = (BindWidget))
 	class UBorder* PlayerList;
 
 	UPROPERTY(Meta = (BindWidget))
 	class UScrollBox* PlayListScrollBox;
-
-	//UFUNCTION()
-	//void VisiblePlayerList();
 
 
 	void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);

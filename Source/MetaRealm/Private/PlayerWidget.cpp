@@ -26,6 +26,7 @@ void UPlayerWidget::NativeConstruct()
 	if ( pc && pc->MainUIWidget ) {
 		pc->MainUIWidget->PlayerList;
 	}
+
 	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
 	if(gi)
 	{
