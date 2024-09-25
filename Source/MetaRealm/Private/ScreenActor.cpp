@@ -101,8 +101,7 @@ void AScreenActor::BeginPlay()
 	WindowScreenPlaneMesh->SetRelativeScale3D(FVector(3 , 2 , 1));
 	sceneComp->AttachToComponent(playerCamera , FAttachmentTransformRules::SnapToTargetIncludingScale); //카메라 붙이기
 
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation() ,
-	                                                                 playerCamera->GetComponentLocation());
+	//FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(sceneComp->GetComponentLocation() , playerCamera->GetComponentLocation());
 
 	// Z 축이 카메라를 향하도록 회전
 	DynamicMaterial = UMaterialInstanceDynamic::Create(WindowScreenPlaneMesh->GetMaterial(0) , this);

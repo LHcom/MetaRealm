@@ -22,6 +22,8 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeOnInitialized();
 
+	virtual void NativeDestruct();
+
 
 public:
 	// UMG에서 가져올 GridPanel, 창 목록 버튼, 및 관련된 위젯

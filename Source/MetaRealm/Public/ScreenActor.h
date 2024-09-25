@@ -76,8 +76,8 @@ public:
 
 public:
 	//=========픽셀 스트리밍 ===========
-	// UPROPERTY(BlueprintReadWrite)
-	// FString UserID; //픽셀 스트리밍 아이디
+	UPROPERTY(BlueprintReadWrite)
+	FString UserID; //픽셀 스트리밍 아이디
 	
 	UPROPERTY(EditDefaultsOnly , BlueprintReadWrite , Category = "Components")
 	class UStaticMeshComponent* WindowScreenPlaneMesh; //픽셀 스트리밍 하는 Plane
