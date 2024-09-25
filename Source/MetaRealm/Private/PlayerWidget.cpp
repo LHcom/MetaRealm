@@ -25,6 +25,10 @@ void UPlayerWidget::NativeOnInitialized()
 	{
 		pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Hidden);
 	}
+	
+	// 초기 색상 초기화
+	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
 }
 
 void UPlayerWidget::NativeConstruct()
@@ -75,10 +79,6 @@ void UPlayerWidget::NativeConstruct()
 	ClickState1->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedState1);
 	ClickState2->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedState2);
 	ClickState3->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedState3);
-
-	// 초기 색상 초기화
-	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
 
 	if ( PlayerList_btn )
 	{
