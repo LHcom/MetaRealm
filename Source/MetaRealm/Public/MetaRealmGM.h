@@ -7,7 +7,7 @@
 #include "Windows/HideWindowsPlatformTypes.h"
 
 #include "PreOpenCVHeaders.h"
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 #include "PostOpenCVHeaders.h"
 
 #include "CoreMinimal.h"
