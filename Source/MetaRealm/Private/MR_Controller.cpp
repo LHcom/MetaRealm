@@ -22,6 +22,7 @@
 #include "MainPlayerList.h"
 #include "WindowList.h"
 #include "Components/WidgetComponent.h"
+#include "Components/AudioComponent.h"
 
 
 void AMR_Controller::PostInitializeComponents()
@@ -85,6 +86,16 @@ void AMR_Controller::BeginPlay()
 			}
 		}
 	}
+
+	USoundBase* BGMSound = LoadObject<USoundBase>(nullptr , TEXT("/Script/Engine.SoundWave'/Game/KHH/Sound/game-music-loop-1-143979.game-music-loop-1-143979'"));
+	if ( CurrentMapName == "KHH_level" )
+	{
+		if (BGMSound)
+		{
+			audioComp=UGameplayStatics::SpawnSound2D(GetWorld() , BGMSound);
+			audioComp->Play(0.f);
+		}	
+	}
 }
 
 void AMR_Controller::SetupInputComponent()
@@ -113,6 +124,7 @@ void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation(const FString& Ni
 			gm->MeetingMember += "," + NickName;
 	}
 
+	audioComp->Stop();
 	MulticastMoveToMeetingRoomMap(PlayerCharacter);
 }
 
@@ -122,7 +134,6 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 	{
 		return;
 	}
-
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
 
@@ -155,8 +166,8 @@ void AMR_Controller::ServerMoveToMainMap_Implementation()
 	{
 		return;
 	}
+	audioComp->Play(3);
 	MulticastMoveToMainMap(PlayerCharacter);
-
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
 
@@ -207,7 +218,6 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 	}
 
 }
-
 
 void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 {

@@ -98,4 +98,7 @@ public:
 	UPROPERTY()
 	class UMainPlayerList* MainUIWidget;
 
+	//--------------------------------------------Sound
+	UPROPERTY()
+	UAudioComponent* audioComp;
 };
