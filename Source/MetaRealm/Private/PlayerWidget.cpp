@@ -15,13 +15,29 @@
 #include "Components/AudioComponent.h"
 #include "MainPlayerList.h"
 
+void UPlayerWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	auto* pc = Cast<AMR_Controller>(GetOwningPlayerPawn()->GetController());
+
+	if ( pc && pc->MainUIWidget && pc->MainUIWidget->PlayerList )
+	{
+		pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
+	// 초기 색상 초기화
+	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
+}
+
 void UPlayerWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UE_LOG(LogTemp , Warning ,
-	       TEXT("===================================UPlayerWidget=========================================="));
+		   TEXT("===================================UPlayerWidget=========================================="));
 	me = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	if (me)
+	if ( me )
 	{
 		UE_LOG(LogTemp , Warning , TEXT("UPlayerWidget me is not null"));
 	}
@@ -29,13 +45,8 @@ void UPlayerWidget::NativeConstruct()
 		UE_LOG(LogTemp , Warning , TEXT("UPlayerWidget me is nullptr"));
 
 
-	auto* pc = Cast<AMR_Controller>(GetOwningPlayerPawn()->GetController());
-	if ( pc && pc->MainUIWidget ) {
-		pc->MainUIWidget->PlayerList;
-	}
-
 	auto* gi = Cast<UNetGameInstance>(GetGameInstance());
-	if (gi)
+	if ( gi )
 	{
 		FString name = gi->NickName;
 		PlayerName->SetText(FText::FromString(name));
@@ -69,25 +80,17 @@ void UPlayerWidget::NativeConstruct()
 	ClickState2->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedState2);
 	ClickState3->OnClicked.AddDynamic(this , &UPlayerWidget::ClickedState3);
 
-	// 초기 색상 초기화
-	OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-	btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-
 	if ( PlayerList_btn )
 	{
 		PlayerList_btn->OnClicked.AddDynamic(this , &UPlayerWidget::VisiblePlayerList);
-	}
-
-	if ( pc->MainUIWidget->PlayerList )
-	{
-		pc->MainUIWidget->PlayerList->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
 void UPlayerWidget::VisiblePlayerList()
 {
 	auto* pc = Cast<AMR_Controller>(GetOwningPlayerPawn()->GetController());
-	if ( pc->MainUIWidget->PlayerList )
+
+	if ( pc && pc->MainUIWidget && pc->MainUIWidget->PlayerList )
 	{
 		if ( pc->MainUIWidget->PlayerList->GetVisibility() == ESlateVisibility::Visible )
 		{
@@ -102,10 +105,10 @@ void UPlayerWidget::VisiblePlayerList()
 
 void UPlayerWidget::ClickedOnMic()
 {
-	if (isMicOn)
+	if ( isMicOn )
 	{
 		OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-		if (me && me->audioComp)
+		if ( me && me->audioComp )
 		{
 			me->audioComp->Play();
 			me->GetController<AMR_Controller>()->StartTalking();
@@ -115,7 +118,7 @@ void UPlayerWidget::ClickedOnMic()
 	else
 	{
 		OnMic->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
-		if (me && me->audioComp)
+		if ( me && me->audioComp )
 		{
 			me->audioComp->Play();
 			me->GetController<AMR_Controller>()->StopTalking();
@@ -127,7 +130,7 @@ void UPlayerWidget::ClickedOnMic()
 #pragma region Reaction
 void UPlayerWidget::ClickedOpenReactionUI()
 {
-	if (ReactionBar->IsVisible())
+	if ( ReactionBar->IsVisible() )
 	{
 		ReactionBar->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -139,11 +142,11 @@ void UPlayerWidget::ClickedOpenReactionUI()
 
 void UPlayerWidget::ClickedReaction1()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(1);
+		me->MulticastSetReaction(1);
 	}
-	else if (me->ReactionArray[0])
+	else if ( me->ReactionArray[0] )
 	{
 		me->ServerSetReaction(1);
 	}
@@ -151,11 +154,11 @@ void UPlayerWidget::ClickedReaction1()
 
 void UPlayerWidget::ClickedReaction2()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(2);
+		me->MulticastSetReaction(2);
 	}
-	else if (me->ReactionArray[1])
+	else if ( me->ReactionArray[1] )
 	{
 		me->ServerSetReaction(2);
 	}
@@ -163,11 +166,11 @@ void UPlayerWidget::ClickedReaction2()
 
 void UPlayerWidget::ClickedReaction3()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(3);
+		me->MulticastSetReaction(3);
 	}
-	else if (me->ReactionArray[2])
+	else if ( me->ReactionArray[2] )
 	{
 		me->ServerSetReaction(3);
 	}
@@ -175,11 +178,11 @@ void UPlayerWidget::ClickedReaction3()
 
 void UPlayerWidget::ClickedReaction4()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(4);
+		me->MulticastSetReaction(4);
 	}
-	else if (me->ReactionArray[3])
+	else if ( me->ReactionArray[3] )
 	{
 		me->ServerSetReaction(4);
 	}
@@ -187,11 +190,11 @@ void UPlayerWidget::ClickedReaction4()
 
 void UPlayerWidget::ClickedReaction5()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(5);
+		me->MulticastSetReaction(5);
 	}
-	else if (me->ReactionArray[4])
+	else if ( me->ReactionArray[4] )
 	{
 		me->ServerSetReaction(5);
 	}
@@ -199,11 +202,11 @@ void UPlayerWidget::ClickedReaction5()
 
 void UPlayerWidget::ClickedReaction6()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(6);
+		me->MulticastSetReaction(6);
 	}
-	else if (me->ReactionArray[5])
+	else if ( me->ReactionArray[5] )
 	{
 		me->ServerSetReaction(6);
 	}
@@ -211,11 +214,11 @@ void UPlayerWidget::ClickedReaction6()
 
 void UPlayerWidget::ClickedReaction7()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(7);
+		me->MulticastSetReaction(7);
 	}
-	else if (me->ReactionArray[6])
+	else if ( me->ReactionArray[6] )
 	{
 		me->ServerSetReaction(7);
 	}
@@ -223,11 +226,11 @@ void UPlayerWidget::ClickedReaction7()
 
 void UPlayerWidget::ClickedReaction8()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(8);
+		me->MulticastSetReaction(8);
 	}
-	else if (me->ReactionArray[7])
+	else if ( me->ReactionArray[7] )
 	{
 		me->ServerSetReaction(8);
 	}
@@ -235,11 +238,11 @@ void UPlayerWidget::ClickedReaction8()
 
 void UPlayerWidget::ClickedReaction9()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(9);
+		me->MulticastSetReaction(9);
 	}
-	else if (me->ReactionArray[8])
+	else if ( me->ReactionArray[8] )
 	{
 		me->ServerSetReaction(9);
 	}
@@ -247,11 +250,11 @@ void UPlayerWidget::ClickedReaction9()
 
 void UPlayerWidget::ClickedReaction10()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(10);
+		me->MulticastSetReaction(10);
 	}
-	else if (me->ReactionArray[9])
+	else if ( me->ReactionArray[9] )
 	{
 		me->ServerSetReaction(10);
 	}
@@ -259,11 +262,11 @@ void UPlayerWidget::ClickedReaction10()
 
 void UPlayerWidget::ClickedReaction11()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(11);
+		me->MulticastSetReaction(11);
 	}
-	else if (me->ReactionArray[10])
+	else if ( me->ReactionArray[10] )
 	{
 		me->ServerSetReaction(11);
 	}
@@ -271,11 +274,11 @@ void UPlayerWidget::ClickedReaction11()
 
 void UPlayerWidget::ClickedReaction12()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(12);
+		me->MulticastSetReaction(12);
 	}
-	else if (me->ReactionArray[11])
+	else if ( me->ReactionArray[11] )
 	{
 		me->ServerSetReaction(12);
 	}
@@ -283,11 +286,11 @@ void UPlayerWidget::ClickedReaction12()
 
 void UPlayerWidget::ClickedReaction13()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(13);
+		me->MulticastSetReaction(13);
 	}
-	else if (me->ReactionArray[12])
+	else if ( me->ReactionArray[12] )
 	{
 		me->ServerSetReaction(13);
 	}
@@ -295,11 +298,11 @@ void UPlayerWidget::ClickedReaction13()
 
 void UPlayerWidget::ClickedReaction14()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
-		me->ShowReaction(14);
+		me->MulticastSetReaction(14);
 	}
-	else if (me->ReactionArray[13])
+	else if ( me->ReactionArray[13] )
 	{
 		me->ServerSetReaction(14);
 	}
@@ -308,7 +311,7 @@ void UPlayerWidget::ClickedReaction14()
 
 void UPlayerWidget::ClickedOpenStateUI()
 {
-	if (PlayerStateBar->IsVisible())
+	if ( PlayerStateBar->IsVisible() )
 	{
 		PlayerStateBar->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -320,7 +323,7 @@ void UPlayerWidget::ClickedOpenStateUI()
 
 void UPlayerWidget::ClickedState1()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
 		me->MulticastSetCylinderMaterial(1);
 		FString tempStr = FString::Printf(TEXT("접속중"));
@@ -345,7 +348,7 @@ void UPlayerWidget::ClickedState1()
 
 void UPlayerWidget::ClickedState2()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
 		me->MulticastSetCylinderMaterial(2);
 		FString tempStr = FString::Printf(TEXT("집중모드"));
@@ -370,7 +373,7 @@ void UPlayerWidget::ClickedState2()
 
 void UPlayerWidget::ClickedState3()
 {
-	if (me->HasAuthority())
+	if ( me->HasAuthority() )
 	{
 		me->MulticastSetCylinderMaterial(3);
 		FString tempStr = FString::Printf(TEXT("자리비움"));
@@ -395,17 +398,17 @@ void UPlayerWidget::ClickedState3()
 
 void UPlayerWidget::OnMyClickkedVideo()
 {
-	isVideoOn= !isVideoOn;
-	if (isVideoOn)
+	isVideoOn = !isVideoOn;
+	if ( isVideoOn )
 	{
 		btn_video->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
-		if(me)
+		if ( me )
 			me->ShowWindowListUI();
 	}
 	else
 	{
 		btn_video->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-		if(me)
+		if ( me )
 			me->HideWindowListUI();
 	}
 }
