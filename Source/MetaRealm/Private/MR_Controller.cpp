@@ -230,10 +230,9 @@ void AMR_Controller::UpdatePlayerName_Implementation(const FString& PlayerName ,
 void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 {
 	//MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass);
-	if (MainUIWidget)
+	if (auto Me = Cast<APlayerCharacter>(GetPawn()))
 	{
-		//MainUIWidget->AddToViewport();
-		MainUIWidget->PlayListScrollBox->ClearChildren();
+		Me->PlayerMainUI->PlayListScrollBox->ClearChildren();
 		for (int32 i = 0; i < PlayerNames.Num(); i++)
 		{
 			if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass))
@@ -243,11 +242,29 @@ void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
 				{
 					PlayerListWidget->SetPlayerName(pName);
 					PlayerListWidget->SetPlayerState(pState);
-					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+					Me->PlayerMainUI->AddPlayerToScrollBox(PlayerListWidget);
 				}
 			}
 		}
 	}
+	// if (MainUIWidget)
+	// {
+	// 	//MainUIWidget->AddToViewport();
+	// 	MainUIWidget->PlayListScrollBox->ClearChildren();
+	// 	for (int32 i = 0; i < PlayerNames.Num(); i++)
+	// 	{
+	// 		if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass))
+	// 		{
+	// 			FString pName , pState;
+	// 			if (PlayerNames[i].Split("|" , &pName , &pState))
+	// 			{
+	// 				PlayerListWidget->SetPlayerName(pName);
+	// 				PlayerListWidget->SetPlayerState(pState);
+	// 				MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 
 // 채팅 ==========================================================================================================
