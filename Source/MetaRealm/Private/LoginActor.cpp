@@ -4,7 +4,6 @@
 #include "LoginActor.h"
 #include "LoginUI.h"
 #include "SignUpUI.h"
-#include "LobyWidget.h"
 
 // Sets default values
 ALoginActor::ALoginActor()

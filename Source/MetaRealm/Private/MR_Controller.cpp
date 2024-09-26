@@ -74,13 +74,14 @@ void AMR_Controller::BeginPlay()
 			FBoardStruct currData = gi->GetBoardData();
 			TArray<FProceedStruct> proceedData = gi->GetProceedData();
 			FString PlayerName = gi->NickName;
+
+			// 
 			if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
 			{
 				UE_LOG(LogTemp , Warning , TEXT("Send Player Name : %s") , *PlayerName);
 				gs->gsContent = currData.ContentString;
 				gs->ArrRecordInfo = proceedData;
 				AddPlayerName(PlayerName);
-				//gs->BroadcastPlayerList();
 			}
 		}
 	}
@@ -200,7 +201,6 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 			gs->ConnectedPlayerNames.Add(PlayerInfo);
 			if ( HasAuthority() )
 			{
-
 				gs->OnRep_ConnectedPlayerName();
 			}
 		}

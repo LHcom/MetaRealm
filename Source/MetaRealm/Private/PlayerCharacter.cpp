@@ -184,7 +184,7 @@ void APlayerCharacter::initWindowListUI()
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initWindowList] MemoWidget is not null"));
 		WindowListWidget = pc->WindowListUI;
-		
+
 		WindowListWidget->AddToViewport(1);
 		WindowListWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -264,14 +264,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsLocallyControlled())
-	{
-		initProceedingUI();
-		initMemoUI();
-		initMsgUI();
-		initWindowListUI();
-	}
-
 	if (PlayerUI)
 	{
 		if (IsLocallyControlled())
@@ -299,7 +291,13 @@ void APlayerCharacter::BeginPlay()
 	}
 	else
 	{
-		//initWindowListUI();
+		if (IsLocallyControlled())
+		{
+			initProceedingUI();
+			initMemoUI();
+			initMsgUI();
+			initWindowListUI();
+		}
 	}
 
 	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
