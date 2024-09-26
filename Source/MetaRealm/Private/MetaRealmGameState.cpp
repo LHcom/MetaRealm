@@ -55,14 +55,14 @@ void AMetaRealmGameState::OnRep_StreamingID()
 	}
 }
 
-void AMetaRealmGameState::OnRep_ConnectedPlayerName()
-{
-	for ( AMR_Controller* Controller : TActorRange<AMR_Controller>(GetWorld()) )
-	{
-		if ( Controller )
-		{
-			UE_LOG(LogTemp , Warning , TEXT("Player Info : %s") , *ConnectedPlayerNames[ConnectedPlayerNames.Num()-1]);
-			Controller->UpdatePlayerList(ConnectedPlayerNames);
-		}
-	}
-}
+// void AMetaRealmGameState::OnRep_ConnectedPlayerName()
+// {
+// 	for ( AMR_Controller* Controller : TActorRange<AMR_Controller>(GetWorld()) )
+// 	{
+// 		if ( Controller )
+// 		{
+// 			UE_LOG(LogTemp , Warning , TEXT("Player Info : %s") , *ConnectedPlayerNames[ConnectedPlayerNames.Num()-1]);
+// 			Controller->UpdatePlayerList(ConnectedPlayerNames);
+// 		}
+// 	}
+// }

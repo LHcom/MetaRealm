@@ -40,12 +40,14 @@ public:
 
 	//==================================================
 
-	UPROPERTY(Replicated , BlueprintReadOnly , ReplicatedUsing = OnRep_ConnectedPlayerName)
+	// UPROPERTY(Replicated , BlueprintReadOnly , ReplicatedUsing = OnRep_ConnectedPlayerName)
+	// TArray<FString> ConnectedPlayerNames;
+
+	// UFUNCTION()
+	// void OnRep_ConnectedPlayerName();
+
+	UPROPERTY(Replicated , BlueprintReadOnly , Replicated)
 	TArray<FString> ConnectedPlayerNames;
-
-	UFUNCTION()
-	void OnRep_ConnectedPlayerName();
-
 
 };
 

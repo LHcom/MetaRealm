@@ -524,7 +524,7 @@ void APlayerCharacter::initMsgUI()
 		MsgWidget = pc->MsgUI;
 		MsgWidget->AddToViewport(99);
 		MsgWidget->SetVisibility(ESlateVisibility::Hidden);
-	}
+     	}
 	else
 	{
 		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MemoWidget is null"));

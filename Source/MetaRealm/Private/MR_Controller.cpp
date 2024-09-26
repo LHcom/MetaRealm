@@ -199,10 +199,10 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 		if ( !gs->ConnectedPlayerNames.Contains(PlayerInfo) )
 		{
 			gs->ConnectedPlayerNames.Add(PlayerInfo);
-			if ( HasAuthority() )
-			{
-				gs->OnRep_ConnectedPlayerName();
-			}
+			// if ( HasAuthority() )
+			// {
+			// 	gs->OnRep_ConnectedPlayerName();
+			// }
 		}
 	}
 
