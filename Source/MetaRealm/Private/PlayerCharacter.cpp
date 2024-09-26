@@ -288,14 +288,18 @@ void APlayerCharacter::BeginPlay()
 		{
 			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
 		}
+
+		if(IsLocallyControlled())
+		{
+			initMsgUI();
+		}
 	}
 	else
 	{
 		if (IsLocallyControlled())
 		{
 			initProceedingUI();
-			initMemoUI();
-			initMsgUI();
+			initMemoUI();			
 			initWindowListUI();
 		}
 	}
