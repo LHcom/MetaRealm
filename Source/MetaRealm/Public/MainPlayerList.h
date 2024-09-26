@@ -36,5 +36,8 @@ public:
 
 	UPROPERTY()
 	class AMR_Controller* PC;
-	
+
+	UPROPERTY()
+	class APlayerCharacter* Me;
+		
 };

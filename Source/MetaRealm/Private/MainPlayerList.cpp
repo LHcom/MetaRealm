@@ -5,6 +5,7 @@
 
 #include "MetaRealmGameState.h"
 #include "MR_Controller.h"
+#include "PlayerCharacter.h"
 #include "UW_PlayerList.h"
 #include "Components/ScrollBox.h"
 #include "Components/Button.h"
@@ -17,7 +18,7 @@ void UMainPlayerList::NativeTick(const FGeometry& MyGeometry , float InDeltaTime
 	if (PC)
 	{
 		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
-			PC->UpdatePlayerList(gs->ConnectedPlayerNames);
+			Me->UpdatePlayerList(gs->ConnectedPlayerNames);
 	}
 }
 
@@ -25,10 +26,11 @@ void UMainPlayerList::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (auto* Me = GetOwningPlayerPawn())
-	{
-		PC = Cast<AMR_Controller>(Me->GetController());
-	}
+	Me = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+	// if (Me)
+	// {
+	// 	PC = Cast<AMR_Controller>(Me->GetController());
+	// }
 }
 
 void UMainPlayerList::AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget)

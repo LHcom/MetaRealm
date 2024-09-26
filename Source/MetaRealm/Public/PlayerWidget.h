@@ -168,12 +168,10 @@ public:
 	bool isVideoOn = false;
 
 	//========================================================== playerListbutton
-
-
 	UPROPERTY(meta = (BindWidget))
 	class UButton* PlayerList_btn;
 
 	UFUNCTION()
 	void VisiblePlayerList();
-
+	void ChangePlayerState(const FString& PlayerState);
 };

@@ -30,11 +30,11 @@ public:
     TSubclassOf<class UMainPlayerList> MainUIWidgetClass;
 
     // PlayerList 위젯 블루프린트 클래스
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-    TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
+    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    // TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
 
-	UFUNCTION(BlueprintCallable)
-	void UpdatePlayerList(const TArray<FString>& PlayerNames);
+	// UFUNCTION(BlueprintCallable)
+	// void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerMoveToMeetingRoomMap(const FString& NickName);
@@ -93,6 +93,9 @@ public:
 	 // 플레이어 이름 추가 함수
     UFUNCTION(Server , Reliable)
     void AddPlayerName(const FString& PlayerName);
+
+	UFUNCTION(Server, Reliable)
+	void UpdatePlayerName(const FString& PlayerName, const FString& NewPlayerState);
 	
 	UPROPERTY()
 	class UMainPlayerList* MainUIWidget;

@@ -37,7 +37,7 @@ void AMR_Controller::PostNetInit()
 	Super::PostNetInit();
 
 	UNetDriver* NetDriver = GetNetDriver();
-	if ( NetDriver )
+	if (NetDriver)
 	{
 		if (NetDriver->ServerConnection)
 			AB_LOG(LogABNetwork , Log , TEXT("Server Connection: %s") , *NetDriver->ServerConnection.GetName());
@@ -55,7 +55,7 @@ void AMR_Controller::BeginPlay()
 	Super::BeginPlay();
 	me = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	gm = Cast<AMetaRealmGM>(GetWorld()->GetAuthGameMode());
-	if ( gm )
+	if (gm)
 	{
 		AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("gm is not null"));
 	}
@@ -67,16 +67,16 @@ void AMR_Controller::BeginPlay()
 
 	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
-	if ( IsLocalController() )
+	if (IsLocalController())
 	{
-		if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+		if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 		{
 			FBoardStruct currData = gi->GetBoardData();
 			TArray<FProceedStruct> proceedData = gi->GetProceedData();
 			FString PlayerName = gi->NickName;
 
 			// 
-			if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) )
+			if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 			{
 				UE_LOG(LogTemp , Warning , TEXT("Send Player Name : %s") , *PlayerName);
 				gs->gsContent = currData.ContentString;
@@ -132,7 +132,7 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 		PlayerCharacter->SetActorLocation(MeetingRoom->GetActorLocation());
 		/*if(PlayerCharacter->PlayerUI)
 			PlayerCharacter->PlayerUI->SetRelativeLocation(FVector(0,0,60));*/
-		
+
 		PlayerCharacter->MeetingStartTime = PlayerCharacter->GetSystemTime();
 		// PlayerCharacter->WindowListWidget->AddToViewport(-1);
 		// PlayerCharacter->WindowListWidget->SetVisibility(ESlateVisibility::Visible);
@@ -182,7 +182,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 
 void AMR_Controller::SetUserInfo(const FString& tkAdrr , const FString& nickName)
 {
-	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		gi->TkAdrr = tkAdrr;
 		gi->NickName = nickName;
@@ -195,8 +195,9 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 {
 	FString PlayerInfo = PlayerName + FString::Printf(TEXT("|접속중"));
 	UE_LOG(LogTemp , Warning , TEXT("Player Name : %s") , *PlayerName);
-	if ( auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()) ) {
-		if ( !gs->ConnectedPlayerNames.Contains(PlayerInfo) )
+	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
+	{
+		if (!gs->ConnectedPlayerNames.Contains(PlayerInfo))
 		{
 			gs->ConnectedPlayerNames.Add(PlayerInfo);
 			// if ( HasAuthority() )
@@ -205,32 +206,49 @@ void AMR_Controller::AddPlayerName_Implementation(const FString& PlayerName)
 			// }
 		}
 	}
-
 }
 
-
-void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
+void AMR_Controller::UpdatePlayerName_Implementation(const FString& PlayerName , const FString& NewPlayerState)
 {
-	MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass);
-	if ( MainUIWidget )
+	if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
 	{
-		MainUIWidget->AddToViewport();
-
-		for ( int32 i = 0; i < PlayerNames.Num(); i++ )
+		for (int i = 0; i < gs->ConnectedPlayerNames.Num(); i++)
 		{
-			if ( UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass) )
+			auto MPlayer = gs->ConnectedPlayerNames[i];
+			FString MPlayerName , MPlayerState , SplitStr = "|";
+			MPlayer.Split(SplitStr , &MPlayerName , &MPlayerState);
+			if (MPlayerName.Equals(PlayerName))
 			{
-				FString pName , pState;
-				if ( PlayerNames[i].Split("|" , &pName , &pState) )
-				{
-					PlayerListWidget->SetPlayerName(pName);
-					PlayerListWidget->SetPlayerState(pState);
-					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
-				}
+				FString ChangePlayerState = FString::Printf(TEXT("%s|%s") , *PlayerName , *NewPlayerState);
+				gs->ConnectedPlayerNames[i] = ChangePlayerState;
+				break;
 			}
 		}
 	}
 }
+
+// void AMR_Controller::UpdatePlayerList(const TArray<FString>& PlayerNames)
+// {
+// 	//MainUIWidget = CreateWidget<UMainPlayerList>(this , MainUIWidgetClass);
+// 	if (MainUIWidget)
+// 	{
+// 		//MainUIWidget->AddToViewport();
+// 		MainUIWidget->PlayListScrollBox->ClearChildren();
+// 		for (int32 i = 0; i < PlayerNames.Num(); i++)
+// 		{
+// 			if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(this , PlayerListWidgetClass))
+// 			{
+// 				FString pName , pState;
+// 				if (PlayerNames[i].Split("|" , &pName , &pState))
+// 				{
+// 					PlayerListWidget->SetPlayerName(pName);
+// 					PlayerListWidget->SetPlayerState(pState);
+// 					MainUIWidget->AddPlayerToScrollBox(PlayerListWidget);
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 // 채팅 ==========================================================================================================
 void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
@@ -241,7 +259,7 @@ void AMR_Controller::CtoS_SendMessage_Implementation(const FString& Message)
 	for (AActor* OutActor : OutActors)
 	{
 		AMR_Controller* pc = Cast<AMR_Controller>(OutActor);
-		if ( pc )
+		if (pc)
 		{
 			pc->StoC_SendMessage(Message);
 		}
@@ -252,7 +270,7 @@ void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 {
 	// 서버와 클라이언트는 이 이벤트를 받아서 실행한다.
 	AMain_HUD* HUD = GetHUD<AMain_HUD>();
-	if ( HUD == nullptr ) return;
+	if (HUD == nullptr) return;
 
 	HUD->AddChatMessage(Message);
 }
@@ -260,7 +278,7 @@ void AMR_Controller::StoC_SendMessage_Implementation(const FString& Message)
 void AMR_Controller::SendMessage(const FText& Text)
 {
 	FString PlayerName;
-	if ( auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()) )
+	if (auto* gi = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		PlayerName = gi->NickName;
 	}
@@ -278,7 +296,7 @@ void AMR_Controller::FocusGame()
 void AMR_Controller::FocusChatInputText()
 {
 	AMain_HUD* HUD = GetHUD<AMain_HUD>();
-	if ( HUD == nullptr ) return;
+	if (HUD == nullptr) return;
 
 	FInputModeGameAndUI InputMode;
 	InputMode.SetWidgetToFocus(HUD->GetChatInputTextObject());
