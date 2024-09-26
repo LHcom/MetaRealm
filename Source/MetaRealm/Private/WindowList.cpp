@@ -163,7 +163,7 @@ void UWindowList::OnButtonWindowScreen()
 
 		SetUserID(streamID, true);
 
-		InitProcessListUI(); //목록 받아오기
+		//InitProcessListUI(); //목록 받아오기
 
 		// 2. Pixel Streaming 비디오 입력으로 설정
 		VideoInput = FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);

@@ -84,7 +84,7 @@ AScreenActor::AScreenActor()
 	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN) , GetSystemMetrics(SM_CYSCREEN));
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->SetupAttachment(RootComponent);
-	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
+	//SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
 	SceneCapture->CaptureSource = SCS_FinalColorLDR;
 	SceneCapture->TextureTarget = RenderTarget;
 
