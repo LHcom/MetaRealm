@@ -31,13 +31,8 @@ public:
 	UPROPERTY(Meta = (BindWidget))
 	class UScrollBox* PlayListScrollBox;
 
-
 	void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);
 
 	UPROPERTY()
 	class AMR_Controller* PC;
-
-	UPROPERTY()
-	class APlayerCharacter* Me;
-		
 };

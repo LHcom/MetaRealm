@@ -140,8 +140,4 @@ public:
 	void initPlayerUI();
 	UPROPERTY()
 	class UMainPlayerList* PlayerMainUI;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
-	void UpdatePlayerList(const TArray<FString>& PlayerNames);
 };

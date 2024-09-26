@@ -225,28 +225,6 @@ void APlayerCharacter::initPlayerUI()
 	}
 }
 
-void APlayerCharacter::UpdatePlayerList(const TArray<FString>& PlayerNames)
-{
-	if (PlayerMainUI)
-	{
-		//MainUIWidget->AddToViewport();
-		PlayerMainUI->PlayListScrollBox->ClearChildren();
-		for (int32 i = 0; i < PlayerNames.Num(); i++)
-		{
-			if (UUW_PlayerList* PlayerListWidget = CreateWidget<UUW_PlayerList>(GetWorld() , PlayerListWidgetClass))
-			{
-				FString pName , pState;
-				if (PlayerNames[i].Split("|" , &pName , &pState))
-				{
-					PlayerListWidget->SetPlayerName(pName);
-					PlayerListWidget->SetPlayerState(pState);
-					PlayerMainUI->AddPlayerToScrollBox(PlayerListWidget);
-				}
-			}
-		}
-	}
-}
-
 void APlayerCharacter::ShowWindowListUI()
 {
 	if (WindowListWidget)

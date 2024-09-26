@@ -18,7 +18,7 @@ void UMainPlayerList::NativeTick(const FGeometry& MyGeometry , float InDeltaTime
 	if (PC)
 	{
 		if (auto* gs = Cast<AMetaRealmGameState>(GetWorld()->GetGameState()))
-			Me->UpdatePlayerList(gs->ConnectedPlayerNames);
+			PC->UpdatePlayerList(gs->ConnectedPlayerNames);
 	}
 }
 
@@ -26,11 +26,10 @@ void UMainPlayerList::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	Me = Cast<APlayerCharacter>(GetOwningPlayerPawn());
-	// if (Me)
-	// {
-	// 	PC = Cast<AMR_Controller>(Me->GetController());
-	// }
+	if (auto* Me = Cast<APlayerCharacter>(GetOwningPlayerPawn()))
+	{
+		PC = Cast<AMR_Controller>(Me->GetController());
+	}
 }
 
 void UMainPlayerList::AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget)
