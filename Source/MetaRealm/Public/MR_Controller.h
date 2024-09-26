@@ -89,12 +89,14 @@ public:
 	TSubclassOf<class UUserWidget> WindowListFactory;
 	UPROPERTY(BlueprintReadWrite)
 	class UWindowList* WindowListUI;
-
+	// ------------------------------------------플레이어 리스트
 	 // 플레이어 이름 추가 함수
     UFUNCTION(Server , Reliable)
     void AddPlayerName(const FString& PlayerName);
 
-	// ------------------------------------------플레이어 리스트
+	UFUNCTION(Server, Reliable)
+	void UpdatePlayerName(const FString& PlayerName, const FString& NewPlayerState);
+	
 	UPROPERTY()
 	class UMainPlayerList* MainUIWidget;
 

@@ -9,6 +9,7 @@
 #include "HttpLib.h"
 #include "InteractionWidget.h"
 #include "LoginActor.h"
+#include "MainPlayerList.h"
 #include "MemoWidget.h"
 #include "MessagePopupWidget.h"
 #include "MetaRealmGameState.h"
@@ -28,6 +29,7 @@
 #include "WindowList.h"
 #include "Components/AudioComponent.h"
 #include "CharacterCustomUI.h"
+#include "UW_PlayerList.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -195,6 +197,35 @@ void APlayerCharacter::initWindowListUI()
 	}
 }
 
+void APlayerCharacter::initPlayerUI()
+{
+	auto pc = Cast<AMR_Controller>(Controller);
+	if (nullptr == pc)
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initPlayerUI] Player Controller is null"));
+		return;
+	}
+
+	if (!pc->MainUIWidgetClass)
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initPlayerUI] MainUIWidgetClass is null"));
+		return;
+	}
+
+	pc->MainUIWidget = CastChecked<UMainPlayerList>(CreateWidget(GetWorld() , pc->MainUIWidgetClass));
+	if (pc->MainUIWidget)
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initPlayerUI] MainUIWidget is not null"));
+		PlayerMainUI = pc->MainUIWidget;
+		PlayerMainUI->AddToViewport();
+		PlayerMainUI->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		UE_LOG(LogTemp , Warning , TEXT("[initMemoUI] MainUIWidget is null"));
+	}
+}
+
 void APlayerCharacter::ShowWindowListUI()
 {
 	if (WindowListWidget)
@@ -290,7 +321,7 @@ void APlayerCharacter::BeginPlay()
 			HttpActor = Cast<AHttpLib>(HttpActorArr[0]);
 		}
 
-		if(IsLocallyControlled())
+		if (IsLocallyControlled())
 		{
 			initMsgUI();
 		}
@@ -300,9 +331,10 @@ void APlayerCharacter::BeginPlay()
 		if (IsLocallyControlled())
 		{
 			initProceedingUI();
-			initMemoUI();			
+			initMemoUI();
 			initWindowListUI();
 			initCharacterCustomUI();
+			initPlayerUI();
 		}
 	}
 

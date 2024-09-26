@@ -17,7 +17,9 @@ UCLASS()
 class METAREALM_API UMainPlayerList : public UUserWidget
 {
 	GENERATED_BODY()
-
+private:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeConstruct() override;
 public:
 
 	UPROPERTY(BlueprintReadWrite)
@@ -29,8 +31,8 @@ public:
 	UPROPERTY(Meta = (BindWidget))
 	class UScrollBox* PlayListScrollBox;
 
-
 	void AddPlayerToScrollBox(UUW_PlayerList* PlayerWidget);
 
-	
+	UPROPERTY()
+	class AMR_Controller* PC;
 };

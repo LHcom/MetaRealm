@@ -156,4 +156,8 @@ public:
 	// ========================================================= 보이스채팅
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UAudioComponent* audioComp;
+	// ==========================================플레이어 리스트
+	void initPlayerUI();
+	UPROPERTY()
+	class UMainPlayerList* PlayerMainUI;
 };
