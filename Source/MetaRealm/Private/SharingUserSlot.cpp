@@ -40,7 +40,8 @@ void USharingUserSlot::SetUserID(FString ID)
 
     if ( UserIDText )
     {
-        UserIDText->SetText(FText::FromString(CurrentUserID));
+        //UserIDText->SetText(FText::FromString(CurrentUserID));
+        UserIDText->SetText(FText::FromString("Editor"));
     }
 
     // 추가로 필요한 동작을 이곳에서 수행할 수 있음 (예: 특정 사용자에 대한 화면 공유 시작 등)
