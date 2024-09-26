@@ -84,7 +84,7 @@ AScreenActor::AScreenActor()
 	RenderTarget->InitAutoFormat(GetSystemMetrics(SM_CXSCREEN) , GetSystemMetrics(SM_CYSCREEN));
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->SetupAttachment(RootComponent);
-	SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
+	//SceneCapture->SetRelativeLocation(FVector(-1170.0 , 0 , 0));
 	SceneCapture->CaptureSource = SCS_FinalColorLDR;
 	SceneCapture->TextureTarget = RenderTarget;
 
@@ -120,6 +120,16 @@ void AScreenActor::BeginPlay()
 		AB_LOG(LogABNetwork , Log , TEXT("Current Streaming Player Num : %d") , gs->ArrStreamingUserID.Num());
 	}
 
+	if ( RenderTarget && SceneCapture )
+	{
+		SceneCapture->TextureTarget = RenderTarget;
+		//SceneCapture->CaptureScene();
+	}
+	else
+	{
+		UE_LOG(LogTemp , Error , TEXT("Initialization failed in BeginPlay"));
+	}
+
 	LogActiveWindowTitles();
 }
 
@@ -130,9 +140,19 @@ void AScreenActor::Tick(float DeltaTime)
 
 	//FindTargetWindow();
 
-	if ( bShouldUpdateTexture ) {
-		UpdateTexture();
+	static float TimeAccumulator = 0.0f;
+	const float CaptureInterval = 0.5f; // 0.5초마다 텍스처 업데이트
+	TimeAccumulator += DeltaTime;
+
+	if ( TimeAccumulator >= CaptureInterval && bShouldUpdateTexture )
+	{
+		TimeAccumulator = 0.0f;
+		UpdateTexture();  // 일정 시간 간격으로만 업데이트
 	}
+
+	/*if ( bShouldUpdateTexture ) {
+		UpdateTexture();
+	}*/
 	/*else {
 		ReadFrame();
 	}*/
@@ -147,7 +167,7 @@ void AScreenActor::ReadFrame()
 	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
 	{
 		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//RenderTarget->UpdateResourceImmediate();
 	}
 }
 
@@ -165,6 +185,7 @@ UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
 		FMemory::Memcpy(Data, bgraImage.data, bgraImage.total() * bgraImage.elemSize());
 		Mip.BulkData.Unlock();
 		Texture->PostEditChange();
+
 		Texture->UpdateResource();
 		return Texture;
 	}
@@ -342,7 +363,7 @@ void AScreenActor::UpdateTexture()
 	{
 		// BaseTexture 파라미터에 텍스처 설정
 		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//RenderTarget->UpdateResourceImmediate();
 		// PlaneMesh에 머티리얼 적용
 	}
 
@@ -350,6 +371,8 @@ void AScreenActor::UpdateTexture()
 
 void AScreenActor::SetViewSharingUserID(FString ID, const bool& bAddPlayer)
 {
+	UserID = ID; //UserID에 스트리머 ID 
+
 	if(auto Mycharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
 		Mycharacter->ServerRPC_SetStreamingPlayer(ID,bAddPlayer);
 
