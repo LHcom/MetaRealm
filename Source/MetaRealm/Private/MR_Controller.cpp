@@ -24,7 +24,6 @@
 #include "Components/WidgetComponent.h"
 #include "Components/AudioComponent.h"
 
-
 void AMR_Controller::PostInitializeComponents()
 {
 	AB_LOG(LogABNetwork , Log , TEXT("%s") , TEXT("Begin"));
@@ -87,14 +86,17 @@ void AMR_Controller::BeginPlay()
 		}
 	}
 
-	USoundBase* BGMSound = LoadObject<USoundBase>(nullptr , TEXT("/Script/Engine.SoundWave'/Game/KHH/Sound/game-music-loop-1-143979.game-music-loop-1-143979'"));
-	if ( CurrentMapName == "KHH_level" )
+	
+	if (CurrentMapName == "KHH_level")
 	{
+		USoundBase* BGMSound = LoadObject<USoundBase>(
+		nullptr , TEXT("/Script/Engine.SoundWave'/Game/KHH/Sound/game-music-loop-1-143979.game-music-loop-1-143979'"));
 		if (BGMSound)
 		{
-			audioComp=UGameplayStatics::SpawnSound2D(GetWorld() , BGMSound);
-			audioComp->Play(0.f);
-		}	
+			audioComp = UGameplayStatics::SpawnSound2D(GetWorld() , BGMSound);
+			audioComp->OnAudioFinished.AddDynamic(this , &AMR_Controller::OnMyFinishedAudio);
+			//audioComp->Play(0.f);
+		}
 	}
 }
 
@@ -123,8 +125,8 @@ void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation(const FString& Ni
 		else
 			gm->MeetingMember += "," + NickName;
 	}
-
-	audioComp->Stop();
+	if (audioComp)
+		audioComp->SetPaused(true);
 	MulticastMoveToMeetingRoomMap(PlayerCharacter);
 }
 
@@ -134,6 +136,7 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 	{
 		return;
 	}
+	
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
 
@@ -166,7 +169,8 @@ void AMR_Controller::ServerMoveToMainMap_Implementation()
 	{
 		return;
 	}
-	audioComp->Play(3);
+	if (audioComp)
+		audioComp->SetPaused(false);
 	MulticastMoveToMainMap(PlayerCharacter);
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
@@ -177,6 +181,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 	{
 		return;
 	}
+	
 	TArray<AActor*> MainMapActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
 
@@ -185,6 +190,7 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 		AActor* MainMap = MainMapActors[0];
 		PlayerCharacter->SetActorLocation(MainMap->GetActorLocation());
 		PlayerCharacter->MeetingEndTime = PlayerCharacter->GetSystemTime();
+
 		/*if(PlayerCharacter->PlayerUI)
 			PlayerCharacter->PlayerUI->SetRelativeLocation(FVector(0,0,400));*/
 		//PlayerCharacter->WindowListWidget->RemoveFromParent(); 
@@ -198,6 +204,12 @@ void AMR_Controller::SetUserInfo(const FString& tkAdrr , const FString& nickName
 		gi->TkAdrr = tkAdrr;
 		gi->NickName = nickName;
 	}
+}
+
+void AMR_Controller::OnMyFinishedAudio()
+{
+	if (audioComp)
+		audioComp->Play(0.f);
 }
 
 //플레이어리스트=====================================================================================

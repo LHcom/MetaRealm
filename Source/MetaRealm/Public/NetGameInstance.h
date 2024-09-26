@@ -53,9 +53,9 @@ public:
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
 	// 방 이름
-	FString MyroomName = TEXT("MTVSMETAREALM2");
+	FString MyroomName = TEXT("MTVSMETAREALM");
 	// 세션 이름
-	FString mySessionName = TEXT("MTVSMETAREALM2");
+	FString mySessionName = TEXT("MTVSMETAREALM");
 
 	// 세션 검색이 완료되면 호출해야 하는 Delegate
 	FSearchComplete onSearchComplete;

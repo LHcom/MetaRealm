@@ -26,26 +26,26 @@ public:
 	//FString GetSteamID() const;
 
 	// MainUI 위젯 블루프린트 클래스
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-    TSubclassOf<class UMainPlayerList> MainUIWidgetClass;
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "UI")
+	TSubclassOf<class UMainPlayerList> MainUIWidgetClass;
 
-    // PlayerList 위젯 블루프린트 클래스
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-    TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
+	// PlayerList 위젯 블루프린트 클래스
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "UI")
+	TSubclassOf<class UUW_PlayerList> PlayerListWidgetClass;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerList(const TArray<FString>& PlayerNames);
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	UFUNCTION(Server , Reliable , BlueprintCallable)
 	void ServerMoveToMeetingRoomMap(const FString& NickName);
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast , Reliable)
 	void MulticastMoveToMeetingRoomMap(APlayerCharacter* PlayerCharacter);
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	UFUNCTION(Server , Reliable , BlueprintCallable)
 	void ServerMoveToMainMap();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast , Reliable)
 	void MulticastMoveToMainMap(APlayerCharacter* PlayerCharacter);
 
 	void SendMessage(const FText& Text);
@@ -60,15 +60,14 @@ public:
 	class ACharacter* me;
 
 private:
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(Server , Unreliable)
 	void CtoS_SendMessage(const FString& Message);
 
-	UFUNCTION(Client, Unreliable)
+	UFUNCTION(Client , Unreliable)
 	void StoC_SendMessage(const FString& Message);
 
 	UPROPERTY()
 	class AMetaRealmGM* gm;
-
 
 public:
 	//-----------------------------------------게시판 관련
@@ -82,7 +81,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UMessagePopupWidget* MsgUI;
 	//------------------------------------------플레이어 정보 기록
-	void SetUserInfo(const FString& tkAdrr, const FString& nickName);
+	void SetUserInfo(const FString& tkAdrr , const FString& nickName);
 
 	//------------------------------------------화면 공유 UI
 	UPROPERTY(EditDefaultsOnly)
@@ -90,17 +89,19 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UWindowList* WindowListUI;
 	// ------------------------------------------플레이어 리스트
-	 // 플레이어 이름 추가 함수
-    UFUNCTION(Server , Reliable)
-    void AddPlayerName(const FString& PlayerName);
+	// 플레이어 이름 추가 함수
+	UFUNCTION(Server , Reliable)
+	void AddPlayerName(const FString& PlayerName);
 
-	UFUNCTION(Server, Reliable)
-	void UpdatePlayerName(const FString& PlayerName, const FString& NewPlayerState);
-	
+	UFUNCTION(Server , Reliable)
+	void UpdatePlayerName(const FString& PlayerName , const FString& NewPlayerState);
+
 	UPROPERTY()
 	class UMainPlayerList* MainUIWidget;
 
 	//--------------------------------------------Sound
 	UPROPERTY()
 	UAudioComponent* audioComp;
+	UFUNCTION()
+	void OnMyFinishedAudio();
 };
