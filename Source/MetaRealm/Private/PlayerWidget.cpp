@@ -155,21 +155,21 @@ void UPlayerWidget::ClickedOnMic()
 	if (isMicOn)
 	{
 		OnMic->SetBackgroundColor(FLinearColor(1.f , 1.f , 1.f , 1.f));
-		if (me && me->audioComp)
-		{
-			me->audioComp->Play();
-			me->GetController<AMR_Controller>()->StartTalking();
-		}
+		// if (me && me->audioComp)
+		// {
+		// 	me->audioComp->Play();
+		// 	me->GetController<AMR_Controller>()->StartTalking();
+		// }
 		isMicOn = false;
 	}
 	else
 	{
 		OnMic->SetBackgroundColor(FLinearColor(1.f , 0.564706 , 0.639216 , 1.f));
-		if (me && me->audioComp)
-		{
-			me->audioComp->Play();
-			me->GetController<AMR_Controller>()->StopTalking();
-		}
+		// if (me && me->audioComp)
+		// {
+		// 	me->audioComp->Play();
+		// 	me->GetController<AMR_Controller>()->StopTalking();
+		// }
 		isMicOn = true;
 	}
 }
