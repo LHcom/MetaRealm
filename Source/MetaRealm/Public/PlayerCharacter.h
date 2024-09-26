@@ -85,6 +85,26 @@ public:
 	UTexture2D* GetReactionTextureFromId(int32 ReactionIdx);
 
 	UPROPERTY(EditDefaultsOnly)
+	class UMaterial* CharMat[6];
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> CharMatFactory;
+
+	UPROPERTY()
+	class UCharacterCustomUI* CharMatWidget = nullptr;
+
+	void initCharacterCustomUI();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetMeshMat(int32 value);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSetMeshMat(int32 value);
+
+	UFUNCTION()
+	void SetMeshMat(int32 value);
+
+	UPROPERTY(EditDefaultsOnly)
 	class UTexture2D* ReactionArray[14];
 
 	UPROPERTY(EditdefaultsOnly , BlueprintReadOnly)
