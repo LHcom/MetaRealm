@@ -120,6 +120,16 @@ void AScreenActor::BeginPlay()
 		AB_LOG(LogABNetwork , Log , TEXT("Current Streaming Player Num : %d") , gs->ArrStreamingUserID.Num());
 	}
 
+	if ( RenderTarget && SceneCapture )
+	{
+		SceneCapture->TextureTarget = RenderTarget;
+		//SceneCapture->CaptureScene();
+	}
+	else
+	{
+		UE_LOG(LogTemp , Error , TEXT("Initialization failed in BeginPlay"));
+	}
+
 	LogActiveWindowTitles();
 }
 
@@ -147,7 +157,7 @@ void AScreenActor::ReadFrame()
 	if ( DynamicMaterial && imageTexture && WindowScreenPlaneMesh )
 	{
 		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//RenderTarget->UpdateResourceImmediate();
 	}
 }
 
@@ -342,7 +352,7 @@ void AScreenActor::UpdateTexture()
 	{
 		// BaseTexture 파라미터에 텍스처 설정
 		DynamicMaterial->SetTextureParameterValue(TEXT("Base") , imageTexture);
-		RenderTarget->UpdateResourceImmediate();
+		//RenderTarget->UpdateResourceImmediate();
 		// PlaneMesh에 머티리얼 적용
 	}
 

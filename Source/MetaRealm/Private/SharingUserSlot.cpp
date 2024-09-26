@@ -7,6 +7,8 @@
 #include "ScreenActor.h"
 #include "EngineUtils.h"
 #include "WindowList.h"
+#include "GameFramework/PlayerController.h"
+#include "MR_Controller.h"
 
 void USharingUserSlot::NativeConstruct()
 {
@@ -18,6 +20,10 @@ void USharingUserSlot::NativeConstruct()
         ScreenActor = *It;
         break;
     }
+
+    //WindowList = CastChecked<UWindowList>(CreateWidget(GetWorld() , WindowListFactory));
+    auto* pc = Cast<AMR_Controller>(GetWorld()->GetFirstPlayerController());
+    WindowList = pc->WindowListUI;
 
     // 버튼 클릭 시 호출할 함수 바인딩
     if ( UserIDButton )

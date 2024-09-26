@@ -211,6 +211,12 @@ void UWindowList::OnButtonLookSharingScreen()
 	bLookStreaming = !bLookStreaming;
 	if (bLookStreaming)
 	{
+		// 레벨에 배치된 ScreenActor를 찾음
+		for ( TActorIterator<AScreenActor> It(GetWorld() , AScreenActor::StaticClass()); It; ++It )
+		{
+			ScreenActor = *It;
+			break;
+		}
 		//TextLookSharingScreen->SetText(FText::FromString(TEXT("Watching"))); //보는중
 		ImageSharingScreen->SetVisibility(ESlateVisibility::Visible);
 		//블루프린트 subs
