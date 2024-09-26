@@ -27,6 +27,7 @@
 #include "Components/Image.h"
 #include "WindowList.h"
 #include "Components/AudioComponent.h"
+#include "CharacterCustomUI.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -301,6 +302,7 @@ void APlayerCharacter::BeginPlay()
 			initProceedingUI();
 			initMemoUI();			
 			initWindowListUI();
+			initCharacterCustomUI();
 		}
 	}
 
@@ -400,6 +402,33 @@ UTexture2D* APlayerCharacter::GetReactionTextureFromId(int32 ReactionIdx)
 	}
 }
 
+
+void APlayerCharacter::initCharacterCustomUI()
+{
+	CharMatWidget = CastChecked<UCharacterCustomUI>(CreateWidget(GetWorld() , CharMatFactory));
+	if ( CharMatWidget )
+	{
+		CharMatWidget->AddToViewport(0);
+	}
+}
+
+void APlayerCharacter::ServerSetMeshMat_Implementation(int32 value)
+{
+	GetMesh()->SetMaterial(0 , CharMat[value]);
+	MulticastSetMeshMat(value);
+}
+
+void APlayerCharacter::MulticastSetMeshMat_Implementation(int32 value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("why"));
+	GetMesh()->SetMaterial(0 , CharMat[value]);
+	SetMeshMat(value);
+}
+
+void APlayerCharacter::SetMeshMat(int32 value)
+{
+	GetMesh()->SetMaterial(0 , CharMat[value]);
+}
 
 void APlayerCharacter::ServerSetCylinderMaterial_Implementation(int32 value)
 {
