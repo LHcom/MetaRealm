@@ -140,9 +140,19 @@ void AScreenActor::Tick(float DeltaTime)
 
 	//FindTargetWindow();
 
-	if ( bShouldUpdateTexture ) {
-		UpdateTexture();
+	static float TimeAccumulator = 0.0f;
+	const float CaptureInterval = 0.5f; // 0.5초마다 텍스처 업데이트
+	TimeAccumulator += DeltaTime;
+
+	if ( TimeAccumulator >= CaptureInterval && bShouldUpdateTexture )
+	{
+		TimeAccumulator = 0.0f;
+		UpdateTexture();  // 일정 시간 간격으로만 업데이트
 	}
+
+	/*if ( bShouldUpdateTexture ) {
+		UpdateTexture();
+	}*/
 	/*else {
 		ReadFrame();
 	}*/
@@ -175,6 +185,7 @@ UTexture2D* AScreenActor::MatToTexture2D(const cv::Mat InMat)
 		FMemory::Memcpy(Data, bgraImage.data, bgraImage.total() * bgraImage.elemSize());
 		Mip.BulkData.Unlock();
 		Texture->PostEditChange();
+
 		Texture->UpdateResource();
 		return Texture;
 	}
