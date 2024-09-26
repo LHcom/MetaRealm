@@ -76,8 +76,10 @@ public:
 
 public:
 	//=========픽셀 스트리밍 ===========
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "PixelStreaming")
 	FString UserID; //픽셀 스트리밍 아이디
+
+	TSharedPtr<class IPixelStreamingStreamer> CurrentStreamer;
 	
 	UPROPERTY(EditDefaultsOnly , BlueprintReadWrite , Category = "Components")
 	class UStaticMeshComponent* WindowScreenPlaneMesh; //픽셀 스트리밍 하는 Plane
@@ -86,6 +88,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UWindowList* WindowList; //최종적으로 픽셀 스트리밍을 출력할 UI
 
+	UFUNCTION(BlueprintCallable, Category = "PixelStreaming")
 	void SetViewSharingUserID(FString ID, const bool& bAddPlayer);
 
 	//블루프린트 함수 호출

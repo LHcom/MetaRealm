@@ -83,6 +83,7 @@ void UWindowList::SetUserID(FString ID , const bool& bAddPlayer)
 void UWindowList::OnButtonWindowScreen()
 {
 	bStreaming = !bStreaming;
+	//bStreaming = true;
 	FString streamID; //유저아이디를 받아와서 streamID에 넣기
 	
 	if (bStreaming)
@@ -143,11 +144,18 @@ void UWindowList::OnButtonWindowScreen()
 		//{
 		//	UE_LOG(LogTemp , Error , TEXT("PixelStreamingModule is not available."));
 		//}
+		streamID = GetCurrentSessionID(); //세션 아이디 받아오기
 
 		IPixelStreamingModule& PixelStreamingModule1 = FModuleManager::LoadModuleChecked<IPixelStreamingModule>("PixelStreaming");
 		CurrentStreamer = PixelStreamingModule1.CreateStreamer(streamID);
 		if ( nullptr == CurrentStreamer )
 			return;
+
+		//ScreenActor에 CurrentStreamer 값 설정
+		ScreenActor->CurrentStreamer = CurrentStreamer;
+		//UserID로 StreamID 설정 (FString 타입)
+		ScreenActor->UserID = streamID;
+
 
 		//Back Buffer를 비디오 입력으로 설정합니다.
 		CurrentStreamer->SetInputHandlerType(EPixelStreamingInputType::RouteToWidget);
@@ -155,7 +163,7 @@ void UWindowList::OnButtonWindowScreen()
 
 		SetUserID(streamID, true);
 
-		ScreenActor->UserID = streamID;
+		InitProcessListUI(); //목록 받아오기
 
 		// 2. Pixel Streaming 비디오 입력으로 설정
 		VideoInput = FPixelStreamingVideoInputRenderTarget::Create(ScreenActor->SceneCapture->TextureTarget);

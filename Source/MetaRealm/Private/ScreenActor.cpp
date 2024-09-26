@@ -350,6 +350,8 @@ void AScreenActor::UpdateTexture()
 
 void AScreenActor::SetViewSharingUserID(FString ID, const bool& bAddPlayer)
 {
+	UserID = ID; //UserID에 스트리머 ID 
+
 	if(auto Mycharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
 		Mycharacter->ServerRPC_SetStreamingPlayer(ID,bAddPlayer);
 

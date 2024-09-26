@@ -55,7 +55,7 @@ public:
 	class UImage* ImageCoveringScreen; //화면을 덮는 이미지로, 공유 화면을 가리거나 특정 상태에서 보여주는 역할
 	
 	bool bStreaming; //현재 화면을 공유  중인지
-	bool bLookStreaming; // 현재의 화면 공유 스트리머를 나타냄. 픽셀 스트리밍을 통해 화면을 공유할 때 해당 스트리머 객체가 사용됨
+	bool bLookStreaming = false; // 현재의 화면 공유 스트리머를 나타냄. 픽셀 스트리밍을 통해 화면을 공유할 때 해당 스트리머 객체가 사용됨
 
 	TSharedPtr<class IPixelStreamingStreamer> CurrentStreamer;
 

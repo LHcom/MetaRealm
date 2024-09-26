@@ -24,6 +24,7 @@ void USharingUserSlot::NativeConstruct()
     {
         UserIDButton->OnClicked.AddDynamic(this , &USharingUserSlot::OnUserIDButtonClicked);
     }
+
 }
 
 void USharingUserSlot::SetUserID(FString ID)
@@ -44,7 +45,7 @@ void USharingUserSlot::OnUserIDButtonClicked()
     // 버튼 클릭 시 발생하는 이벤트, 다른 스트리머의 화면을 볼 수 있어야함
     //아이디 전환
     //ScreenActor->ChangeLookSharingScreen();
-
-    WindowList->OnButtonLookSharingScreen();
+    if( WindowList )
+        WindowList->OnButtonLookSharingScreen();
 
 }
