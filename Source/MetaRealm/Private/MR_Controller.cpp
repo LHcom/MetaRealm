@@ -125,8 +125,7 @@ void AMR_Controller::ServerMoveToMeetingRoomMap_Implementation(const FString& Ni
 		else
 			gm->MeetingMember += "," + NickName;
 	}
-	if (audioComp)
-		audioComp->SetPaused(true);
+	
 	MulticastMoveToMeetingRoomMap(PlayerCharacter);
 }
 
@@ -136,7 +135,8 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 	{
 		return;
 	}
-	
+	if (audioComp)
+		audioComp->SetPaused(true);
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
 
@@ -169,8 +169,7 @@ void AMR_Controller::ServerMoveToMainMap_Implementation()
 	{
 		return;
 	}
-	if (audioComp)
-		audioComp->SetPaused(false);
+	
 	MulticastMoveToMainMap(PlayerCharacter);
 	// ClientTravel("/Game/KHH/KHH_TestMap/KHH_TESTMap", ETravelType::TRAVEL_Absolute, true);
 }
@@ -181,7 +180,8 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 	{
 		return;
 	}
-	
+	if (audioComp)
+		audioComp->SetPaused(false);
 	TArray<AActor*> MainMapActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
 
