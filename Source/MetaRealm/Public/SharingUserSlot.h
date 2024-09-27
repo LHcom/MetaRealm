@@ -34,5 +34,14 @@ public:
     // 사용자 ID 버튼 클릭 시 호출될 함수
     UFUNCTION()
     void OnUserIDButtonClicked();
+
+    //스크린 액터
+    UPROPERTY(EditAnywhere , BlueprintReadWrite)
+    class AScreenActor* ScreenActor;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> WindowListFactory;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWindowList* WindowList; //사용자 정보를 표시하는 슬롯
 	
 };

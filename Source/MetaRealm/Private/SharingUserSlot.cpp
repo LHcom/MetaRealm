@@ -4,15 +4,33 @@
 #include "SharingUserSlot.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "ScreenActor.h"
+#include "EngineUtils.h"
+#include "WindowList.h"
+#include "GameFramework/PlayerController.h"
+#include "MR_Controller.h"
 
 void USharingUserSlot::NativeConstruct()
 {
     Super::NativeConstruct();
+
+    // 레벨에 배치된 ScreenActor를 찾음
+    for ( TActorIterator<AScreenActor> It(GetWorld() , AScreenActor::StaticClass()); It; ++It )
+    {
+        ScreenActor = *It;
+        break;
+    }
+
+    //WindowList = CastChecked<UWindowList>(CreateWidget(GetWorld() , WindowListFactory));
+    auto* pc = Cast<AMR_Controller>(GetWorld()->GetFirstPlayerController());
+    WindowList = pc->WindowListUI;
+
     // 버튼 클릭 시 호출할 함수 바인딩
     if ( UserIDButton )
     {
         UserIDButton->OnClicked.AddDynamic(this , &USharingUserSlot::OnUserIDButtonClicked);
     }
+
 }
 
 void USharingUserSlot::SetUserID(FString ID)
@@ -30,6 +48,10 @@ void USharingUserSlot::SetUserID(FString ID)
 
 void USharingUserSlot::OnUserIDButtonClicked()
 {
-    // 버튼 클릭 시 발생하는 이벤트, 나중에 화면 사용자를 변경하는 걸로 변경 예정
-    UE_LOG(LogTemp , Log , TEXT("UserID %s Button Click") , *CurrentUserID);
+    // 버튼 클릭 시 발생하는 이벤트, 다른 스트리머의 화면을 볼 수 있어야함
+    //아이디 전환
+    //ScreenActor->ChangeLookSharingScreen();
+    if( WindowList )
+        WindowList->OnButtonLookSharingScreen();
+
 }
