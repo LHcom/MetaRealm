@@ -2,6 +2,8 @@
 
 
 #include "CharacterCustomUI.h"
+
+#include "MR_Controller.h"
 #include "Components/Button.h"
 #include "PlayerCharacter.h"
 #include "Components/Image.h"
@@ -152,5 +154,9 @@ void UCharacterCustomUI::ClickedButtonSelect()
 		me->ServerSetMeshMat(value);
 		me->GetMesh()->SetMaterial(0 , me->CharMat[value]);
 	}*/
+	// if(auto* pc = Cast<AMR_Controller>(GetWorld()->GetFirstPlayerController()))
+	// {
+	// 	 pc->AudioPause();
+	// }
 	SetVisibility(ESlateVisibility::Hidden);
 }

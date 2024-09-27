@@ -104,4 +104,6 @@ public:
 	UAudioComponent* audioComp;
 	UFUNCTION()
 	void OnMyFinishedAudio();
+	UFUNCTION()
+	void AudioPause();
 };

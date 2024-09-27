@@ -87,17 +87,17 @@ void AMR_Controller::BeginPlay()
 	}
 
 	
-	if (CurrentMapName == "KHH_level")
-	{
-		USoundBase* BGMSound = LoadObject<USoundBase>(
-		nullptr , TEXT("/Script/Engine.SoundWave'/Game/KHH/Sound/game-music-loop-1-143979.game-music-loop-1-143979'"));
-		if (BGMSound)
-		{
-			audioComp = UGameplayStatics::SpawnSound2D(GetWorld() , BGMSound);
-			audioComp->OnAudioFinished.AddDynamic(this , &AMR_Controller::OnMyFinishedAudio);
-			//audioComp->Play(0.f);
-		}
-	}
+	// if (CurrentMapName == "KHH_level")
+	// {
+	// 	USoundBase* BGMSound = LoadObject<USoundBase>(
+	// 	nullptr , TEXT("/Script/Engine.SoundWave'/Game/KHH/Sound/game-music-loop-1-143979.game-music-loop-1-143979'"));
+	// 	if (BGMSound)
+	// 	{
+	// 		audioComp = UGameplayStatics::SpawnSound2D(GetWorld() , BGMSound);
+	// 		audioComp->OnAudioFinished.AddDynamic(this , &AMR_Controller::OnMyFinishedAudio);
+	// 		//audioComp->Play(0.f);
+	// 	}
+	// }
 }
 
 void AMR_Controller::SetupInputComponent()
@@ -135,8 +135,8 @@ void AMR_Controller::MulticastMoveToMeetingRoomMap_Implementation(APlayerCharact
 	{
 		return;
 	}
-	if (audioComp)
-		audioComp->SetPaused(true);
+	// if (audioComp)
+	// 	audioComp->SetPaused(true);
 	TArray<AActor*> MeetingRoomActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MeetingRoom") , MeetingRoomActors);
 
@@ -180,8 +180,8 @@ void AMR_Controller::MulticastMoveToMainMap_Implementation(APlayerCharacter* Pla
 	{
 		return;
 	}
-	if (audioComp)
-		audioComp->SetPaused(false);
+	// if (audioComp)
+	// 	audioComp->SetPaused(false);
 	TArray<AActor*> MainMapActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld() , FName("MainRoom") , MainMapActors);
 
@@ -210,6 +210,12 @@ void AMR_Controller::OnMyFinishedAudio()
 {
 	if (audioComp)
 		audioComp->Play(0.f);
+}
+
+void AMR_Controller::AudioPause()
+{
+	if(audioComp)
+		audioComp->SetPaused(true);
 }
 
 //플레이어리스트=====================================================================================
