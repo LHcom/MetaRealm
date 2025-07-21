@@ -75,7 +75,7 @@
 
 | 역할 | 담당 내용 |
 |---|---|
-| **XR (팀장)** | 세션/로그인/회원가입, REST API 연동, DataAsset 설계, DB 설계 |
+| XR (팀장) | 세션/로그인/회원가입, REST API 연동, DataAsset 설계, DB 설계 |
 | XR | 캐릭터 커스터마이징, 채팅 시스템, 레벨 구성 |
 | XR | 회의 음성 녹음, 서버 전송, UI 구현 |
 | XR | Pixel Streaming 환경 구성, Application 화면 스트리밍 |
